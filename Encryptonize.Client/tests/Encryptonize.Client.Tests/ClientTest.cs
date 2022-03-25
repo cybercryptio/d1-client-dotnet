@@ -15,33 +15,10 @@ public class ClientTest {
     Scope.Update, Scope.Delete};
 
     public ClientTest() {
-        var encryptonizeUserEnv = Environment.GetEnvironmentVariable("E2E_TEST_UID");
-        if (encryptonizeUserEnv == null) {
-            throw new ArgumentNullException("E2E_TEST_UID must be set");
-        } else {
-            encryptonizeUser = encryptonizeUserEnv;
-        }
-
-        var encryptonizePasswordEnv = Environment.GetEnvironmentVariable("E2E_TEST_PASS");
-        if (encryptonizePasswordEnv == null) {
-            throw new ArgumentNullException("E2E_TEST_PASS must be set");
-        } else {
-            encryptonizePassword = encryptonizePasswordEnv;
-        }
-
-        var encryptonizeClientCertEnv = Environment.GetEnvironmentVariable("E2E_TEST_CERT");
-        if (encryptonizeClientCertEnv == null) {
-            encryptonizeClientCert = "";
-        } else {
-            encryptonizeClientCert = encryptonizeClientCertEnv;
-        }
-
-        var encryptonizeEndpointEnv = Environment.GetEnvironmentVariable("E2E_TEST_URL");
-        if (encryptonizeEndpointEnv == null) {
-            encryptonizeEndpoint = "http://127.0.0.1:9000";
-        } else {
-            encryptonizeEndpoint = encryptonizeEndpointEnv;
-        }
+        encryptonizeUser = Environment.GetEnvironmentVariable("E2E_TEST_UID") ?? throw new ArgumentNullException("E2E_TEST_UID must be set");
+        encryptonizePassword = Environment.GetEnvironmentVariable("E2E_TEST_PASS") ?? throw new ArgumentNullException("E2E_TEST_PASS must be set");
+        encryptonizeClientCert = Environment.GetEnvironmentVariable("E2E_TEST_CERT") ?? "";
+        encryptonizeEndpoint = Environment.GetEnvironmentVariable("E2E_TEST_URL") ?? "http://127.0.0.1:9000";
     }
 
     [Fact]

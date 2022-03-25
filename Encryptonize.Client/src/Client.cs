@@ -1,4 +1,4 @@
-﻿// Copyright 2020-2022 CYBERCRYPT
+// Copyright 2020-2022 CYBERCRYPT
 using System.Security.Cryptography.X509Certificates;
 using Grpc.Net.Client;
 using Grpc.Core;
