@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <CorePath>..\..\..\..\..\..\encryptonize-core\encryption-service</CorePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.19.4" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.44.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.32.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.44.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\common\scopes.proto" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\app\app.proto" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authn\authn.proto" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\enc\enc.proto" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\storage\storage.proto" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authz\authz.proto" />
+  </ItemGroup>
+</Project>
