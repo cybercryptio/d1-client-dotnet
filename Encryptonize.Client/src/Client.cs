@@ -8,11 +8,9 @@ using Encryptonize.Client.Response;
 
 namespace Encryptonize.Client;
 
-public class Client {
-    private string? accessToken;
-    public string? AccessToken { get { return accessToken; } }
-    private long expiryTime;
-    public long ExpiryTime { get { return expiryTime; } }
+public class Client : IDisposable, IAsyncDisposable {
+    public string? AccessToken { get; private set; }
+    public long ExpiryTime { get; private set; }
     private Metadata requestHeaders = new Metadata();
     private GrpcChannel channel;
     private App.Encryptonize.EncryptonizeClient appClient;
@@ -40,16 +38,36 @@ public class Client {
         authzClient = new Authz.Encryptonize.EncryptonizeClient(channel);
     }
 
-    public void CloseConnection() {
-        channel.ShutdownAsync().Wait();
+    public void Dispose() {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing) {
+        if (disposing) {
+            channel.Dispose();
+        }
+    }
+
+    public async ValueTask DisposeAsync() {
+        await DisposeAsyncCore().ConfigureAwait(false);
+
+        Dispose(disposing: false);
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
+        GC.SuppressFinalize(this);
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore() {
+        await channel.ShutdownAsync().ConfigureAwait(false);
     }
 
     /////////////////////////////////////////////////////////////////////////
     //                               Utility                               //
     /////////////////////////////////////////////////////////////////////////
 
-    public VersionResponse Version() {
-        var response = appClient.Version(new App.VersionRequest(), requestHeaders);
+    public async Task<VersionResponse> Version() {
+        var response = await appClient.VersionAsync(new App.VersionRequest(), requestHeaders).ConfigureAwait(false);
         return new VersionResponse(response.Commit, response.Tag);
     }
 
@@ -57,64 +75,66 @@ public class Client {
     //                           User Management                           //
     /////////////////////////////////////////////////////////////////////////
 
-    public void Login(string user, string password) {
-        var response = authnClient.LoginUser(new Authn.LoginUserRequest{ UserId = user, Password = password });
+    public async Task Login(string user, string password) {
+        var response = await authnClient.LoginUserAsync(new Authn.LoginUserRequest{ UserId = user, Password = password }).ConfigureAwait(false);
 
-        accessToken = response.AccessToken;
-        expiryTime = response.ExpiryTime;
+        AccessToken = response.AccessToken;
+        ExpiryTime = response.ExpiryTime;
 
         requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        requestHeaders.Add("Authorization", $"Bearer {AccessToken}");
     }
 
-    public CreateUserResponse CreateUser(IList<Scope> scopes) {
+    public async Task<CreateUserResponse> CreateUser(IList<Scope> scopes) {
         var request = new Authn.CreateUserRequest();
         foreach (Scope scope in scopes) {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = authnClient.CreateUser(request, requestHeaders);
+        var response = await authnClient.CreateUserAsync(request, requestHeaders).ConfigureAwait(false);
 
         return new CreateUserResponse(response.UserId, response.Password);
     }
 
-    public void RemoveUser(string userId) {
-        authnClient.RemoveUser(new Authn.RemoveUserRequest{ UserId = userId }, requestHeaders);
+    public async Task RemoveUser(string userId) {
+        await authnClient.RemoveUserAsync(new Authn.RemoveUserRequest{ UserId = userId }, requestHeaders).ConfigureAwait(false);
     }
 
-    public CreateGroupResponse CreateGroup(IList<Scope> scopes) {
+    public async Task<CreateGroupResponse> CreateGroup(IList<Scope> scopes) {
         var request = new Authn.CreateGroupRequest();
         foreach (Scope scope in scopes) {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = authnClient.CreateGroup(request, requestHeaders);
+        var response = await authnClient.CreateGroupAsync(request, requestHeaders).ConfigureAwait(false);
 
         return new CreateGroupResponse(response.GroupId);
     }
 
-    public void AddUserToGroup(string userId, string groupId) {
-        authnClient.AddUserToGroup(new Authn.AddUserToGroupRequest{ UserId = userId, GroupId = groupId }, requestHeaders);
+    public async Task AddUserToGroup(string userId, string groupId) {
+        await authnClient.AddUserToGroupAsync(new Authn.AddUserToGroupRequest{ UserId = userId, GroupId = groupId }, requestHeaders)
+            .ConfigureAwait(false);
     }
 
-    public void RemoveUserFromGroup(string userId, string groupId) {
-        authnClient.RemoveUserFromGroup(new Authn.RemoveUserFromGroupRequest{ UserId = userId, GroupId = groupId },
-            requestHeaders);
+    public async Task RemoveUserFromGroup(string userId, string groupId) {
+        await authnClient.RemoveUserFromGroupAsync(new Authn.RemoveUserFromGroupRequest{ UserId = userId, GroupId = groupId },
+            requestHeaders).ConfigureAwait(false);
     }
 
     /////////////////////////////////////////////////////////////////////////
     //                              Encryption                             //
     /////////////////////////////////////////////////////////////////////////
 
-    public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData) {
-        var response = encClient.Encrypt(new Enc.EncryptRequest{ Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders);
+    public async Task<EncryptResponse> Encrypt(byte[] plaintext, byte[] associatedData) {
+        var response = await encClient.EncryptAsync(new Enc.EncryptRequest{ Plaintext = ByteString.CopyFrom(plaintext),
+            AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
-    public DecryptResponse Decrypt(string objectId, byte[] ciphertext, byte[] associatedData) {
-        var response = encClient.Decrypt(new Enc.DecryptRequest{ ObjectId = objectId,
-            Ciphertext = ByteString.CopyFrom(ciphertext), AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders);
+    public async Task<DecryptResponse> Decrypt(string objectId, byte[] ciphertext, byte[] associatedData) {
+        var response = await encClient.DecryptAsync(new Enc.DecryptRequest{ ObjectId = objectId,
+            Ciphertext = ByteString.CopyFrom(ciphertext), AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders)
+            .ConfigureAwait(false);
         return new DecryptResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
@@ -122,40 +142,43 @@ public class Client {
     //                               Storage                               //
     /////////////////////////////////////////////////////////////////////////
 
-    public StoreResponse Store(byte[] plaintext, byte[] associatedData) {
-        var response = storageClient.Store(new Storage.StoreRequest{ Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders);
+    public async Task<StoreResponse> Store(byte[] plaintext, byte[] associatedData) {
+        var response = await storageClient.StoreAsync(new Storage.StoreRequest{ Plaintext = ByteString.CopyFrom(plaintext),
+            AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
         return new StoreResponse(response.ObjectId);
     }
 
-    public RetrieveResponse Retrieve(string objectId) {
-        var response = storageClient.Retrieve(new Storage.RetrieveRequest{ ObjectId = objectId }, requestHeaders);
+    public async Task<RetrieveResponse> Retrieve(string objectId) {
+        var response = await storageClient.RetrieveAsync(new Storage.RetrieveRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
-    public void Update(string objectId, byte[] plaintext, byte[] associatedData) {
-        storageClient.Update(new Storage.UpdateRequest{ ObjectId = objectId, Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders);
+    public async Task Update(string objectId, byte[] plaintext, byte[] associatedData) {
+        await storageClient.UpdateAsync(new Storage.UpdateRequest{ ObjectId = objectId, Plaintext = ByteString.CopyFrom(plaintext),
+            AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
     }
 
-    public void Delete(string objectId) {
-        storageClient.Delete(new Storage.DeleteRequest{ ObjectId = objectId }, requestHeaders);
+    public async Task Delete(string objectId) {
+        await storageClient.DeleteAsync(new Storage.DeleteRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
     }
 
     /////////////////////////////////////////////////////////////////////////
     //                             Permissions                             //
     /////////////////////////////////////////////////////////////////////////
 
-    public GetPermissionsResponse GetPermissions(string objectId) {
-        var response = authzClient.GetPermissions(new Authz.GetPermissionsRequest{ ObjectId = objectId }, requestHeaders);
+    public async Task<GetPermissionsResponse> GetPermissions(string objectId) {
+        var response = await authzClient.GetPermissionsAsync(new Authz.GetPermissionsRequest{ ObjectId = objectId }, requestHeaders)
+            .ConfigureAwait(false);
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
 
-    public void AddPermission(string objectId, string groupId) {
-        authzClient.AddPermission(new Authz.AddPermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders);
+    public async Task AddPermission(string objectId, string groupId) {
+        await authzClient.AddPermissionAsync(new Authz.AddPermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
+            .ConfigureAwait(false);
     }
 
-    public void RemovePermission(string objectId, string groupId) {
-        authzClient.RemovePermission(new Authz.RemovePermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders);
+    public async Task RemovePermission(string objectId, string groupId) {
+        await authzClient.RemovePermissionAsync(new Authz.RemovePermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
+            .ConfigureAwait(false);
     }
 }

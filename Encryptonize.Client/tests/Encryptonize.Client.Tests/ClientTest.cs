@@ -1,16 +1,18 @@
 // Copyright 2020-2022 CYBERCRYPT
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 using Encryptonize.Client.Utils;
 
 namespace Encryptonize.Client.Tests;
 
-public class ClientTest {
+public class ClientTest : IDisposable, IAsyncDisposable {
     private string encryptonizeUser;
     private string encryptonizePassword;
     private string encryptonizeClientCert;
     private string encryptonizeEndpoint;
+    private Client client;
     private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.Index, Scope.ObjectPermissions, Scope.UserManagement,
     Scope.Update, Scope.Delete};
 
@@ -19,135 +21,113 @@ public class ClientTest {
         encryptonizePassword = Environment.GetEnvironmentVariable("E2E_TEST_PASS") ?? throw new ArgumentNullException("E2E_TEST_PASS must be set");
         encryptonizeClientCert = Environment.GetEnvironmentVariable("E2E_TEST_CERT") ?? "";
         encryptonizeEndpoint = Environment.GetEnvironmentVariable("E2E_TEST_URL") ?? "http://127.0.0.1:9000";
+        client = new Client(encryptonizeEndpoint, encryptonizeClientCert);
     }
 
-    [Fact]
-    public void TestClientConnection() {
-        Client? client = null;
-        try {
-            client = new Client(encryptonizeEndpoint, encryptonizeClientCert);
-            client.Login(encryptonizeUser, encryptonizePassword);
+    public void Dispose() {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
-            client.Version();
-        } finally {
-            if (client != null) {
-                client.CloseConnection();
-            }
+    protected virtual void Dispose(bool disposing) {
+        if (disposing) {
+            client.Dispose();
         }
     }
 
-    [Fact]
-    public void TestUserManagement() {
-        Client? client = null;
-        try {
-            client = new Client(encryptonizeEndpoint, encryptonizeClientCert);
-            client.Login(encryptonizeUser, encryptonizePassword);
+    public async ValueTask DisposeAsync() {
+        await DisposeAsyncCore().ConfigureAwait(false);
 
-            var createUserResponse = client.CreateUser(allScopes);
-            var createGroupResponse = client.CreateGroup(allScopes);
+        Dispose(disposing: false);
+#pragma warning disable CA1816 // Dispose methods should call SuppressFinalize
+        GC.SuppressFinalize(this);
+#pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
+    }
 
-            client.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
-            client.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
-
-            client.RemoveUser(createUserResponse.UserId);
-        } finally {
-            if (client != null) {
-                client.CloseConnection();
-            }
-        }
+    protected virtual async ValueTask DisposeAsyncCore() {
+        await client.DisposeAsync().ConfigureAwait(false);
     }
 
     [Fact]
-    public void TestEncryption() {
+    public async void TestClientConnection() {
+        await client.Login(encryptonizeUser, encryptonizePassword).ConfigureAwait(false);
+        await client.Version().ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async void TestUserManagement() {
+        await client.Login(encryptonizeUser, encryptonizePassword).ConfigureAwait(false);
+        var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
+        var createGroupResponse = await client.CreateGroup(allScopes).ConfigureAwait(false);
+        await client.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
+        await client.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
+        await client.RemoveUser(createUserResponse.UserId).ConfigureAwait(false);
+    }
+
+    [Fact]
+    public async void TestEncryption() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        Client? client = null;
-        try {
-            client = new Client(encryptonizeEndpoint, encryptonizeClientCert);
-            client.Login(encryptonizeUser, encryptonizePassword);
+        await client.Login(encryptonizeUser, encryptonizePassword).ConfigureAwait(false);
 
-            var createUserResponse = client.CreateUser(allScopes);
-            client.Login(createUserResponse.UserId, createUserResponse.Password);
+        var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
+        await client.Login(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
 
-            var encryptResponse = client.Encrypt(plaintext, associatedData);
-            var decryptResponse = client.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
-            Assert.Equal(plaintext, decryptResponse.Plaintext);
-            Assert.Equal(associatedData, decryptResponse.AssociatedData);
-        } finally {
-            if (client != null) {
-                client.CloseConnection();
-            }
-        }
+        var encryptResponse = await client.Encrypt(plaintext, associatedData).ConfigureAwait(false);
+        var decryptResponse = await client.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData)
+            .ConfigureAwait(false);
+        Assert.Equal(plaintext, decryptResponse.Plaintext);
+        Assert.Equal(associatedData, decryptResponse.AssociatedData);
     }
 
     [Fact]
-    public void TestStore() {
+    public async void TestStore() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
         var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        Client? client = null;
-        try {
-            client = new Client(encryptonizeEndpoint, encryptonizeClientCert);
-            client.Login(encryptonizeUser, encryptonizePassword);
+        await client.Login(encryptonizeUser, encryptonizePassword).ConfigureAwait(false);
 
-            var createUserResponse = client.CreateUser(allScopes);
-            client.Login(createUserResponse.UserId, createUserResponse.Password);
+        var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
+        await client.Login(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
 
-            var storeResponse = client.Store(plaintext, associatedData);
-            var retrieveResponse = client.Retrieve(storeResponse.ObjectId);
-            Assert.Equal(plaintext, retrieveResponse.Plaintext);
-            Assert.Equal(associatedData, retrieveResponse.AssociatedData);
+        var storeResponse = await client.Store(plaintext, associatedData).ConfigureAwait(false);
+        var retrieveResponse = await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false);
+        Assert.Equal(plaintext, retrieveResponse.Plaintext);
+        Assert.Equal(associatedData, retrieveResponse.AssociatedData);
 
-            client.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData);
-            var retrieveResponseAfterUpdate = client.Retrieve(storeResponse.ObjectId);
-            Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
-            Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
+        await client.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData).ConfigureAwait(false);
+        var retrieveResponseAfterUpdate = await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false);
+        Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
+        Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
 
-            client.Delete(storeResponse.ObjectId);
-            try {
-                var retrieveResponseAfterDelete = client.Retrieve(storeResponse.ObjectId);
-            } catch (Grpc.Core.RpcException e) {
-                Assert.Equal("NotFound", e.StatusCode.ToString());
-            }
-        } finally {
-            if (client != null) {
-                client.CloseConnection();
-            }
-        }
+        await client.Delete(storeResponse.ObjectId).ConfigureAwait(false);
+        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false))
+            .ConfigureAwait(false);
+        Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
     }
 
     [Fact]
-    public void TestPermissions() {
+    public async void TestPermissions() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        Client? client = null;
-        try {
-            client = new Client(encryptonizeEndpoint, encryptonizeClientCert);
-            client.Login(encryptonizeUser, encryptonizePassword);
+        await client.Login(encryptonizeUser, encryptonizePassword).ConfigureAwait(false);
 
-            var createUserResponse = client.CreateUser(allScopes);
-            client.Login(createUserResponse.UserId, createUserResponse.Password);
+        var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
+        await client.Login(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
 
-            var storeResponse = client.Store(plaintext, associatedData);
+        var storeResponse = await client.Store(plaintext, associatedData).ConfigureAwait(false);
 
-            client.AddPermission(storeResponse.ObjectId, createUserResponse.UserId);
-            var getPermissionsResponse = client.GetPermissions(storeResponse.ObjectId);
-            Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
+        await client.AddPermission(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        var getPermissionsResponse = await client.GetPermissions(storeResponse.ObjectId).ConfigureAwait(false);
+        Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-            client.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId);
-            try {
-                var getPermissionsResponseAfterRemovePermission = client.GetPermissions(storeResponse.ObjectId);
-            } catch (Grpc.Core.RpcException e) {
-                Assert.Equal("PermissionDenied", e.StatusCode.ToString());
-            }
-        } finally {
-            if (client != null) {
-                client.CloseConnection();
-            }
-        }
+        await client.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.GetPermissions(storeResponse.ObjectId).ConfigureAwait(false))
+            .ConfigureAwait(false);
+        Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
     }
 }
