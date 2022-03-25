@@ -2,10 +2,9 @@
 namespace Encryptonize.Client.Response;
 
 public class CreateGroupResponse {
-    private string groupId;
-    public string GroupId { get { return groupId; } }
+    public string GroupId { get; private set; }
 
-    public CreateGroupResponse(string groupId) {
-        this.groupId = groupId;
+    public CreateGroupResponse(string GroupId) {
+        this.GroupId = GroupId;
     }
 }

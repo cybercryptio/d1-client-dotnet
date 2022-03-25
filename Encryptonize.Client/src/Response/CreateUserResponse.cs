@@ -2,13 +2,11 @@
 namespace Encryptonize.Client.Response;
 
 public class CreateUserResponse {
-    private string userId;
-    public string UserId { get { return userId; } }
-    private string password;
-    public string Password { get { return password; } }
+    public string UserId { get; private set; }
+    public string Password { get; private set; }
 
-    public CreateUserResponse(string userId, string password) {
-        this.userId = userId;
-        this.password = password;
+    public CreateUserResponse(string UserId, string Password) {
+        this.UserId = UserId;
+        this.Password = Password;
     }
 }

@@ -2,10 +2,9 @@
 namespace Encryptonize.Client.Response;
 
 public class GetPermissionsResponse {
-    private List<string> groupIds;
-    public List<string> GroupIds { get { return groupIds; } }
+    public List<string> GroupIds { get; private set; }
 
-    public GetPermissionsResponse(List<string> groupIds) {
-        this.groupIds = groupIds;
+    public GetPermissionsResponse(List<string> GroupIds) {
+        this.GroupIds = GroupIds;
     }
 }

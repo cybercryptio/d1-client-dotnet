@@ -2,16 +2,13 @@
 namespace Encryptonize.Client.Response;
 
 public class EncryptResponse {
-    private string objectId;
-    public string ObjectId { get { return objectId; } }
-    private byte[] ciphertext;
-    public byte[] Ciphertext { get { return ciphertext; } }
-    private byte[] associatedData;
-    public byte[] AssociatedData { get { return associatedData; } }
+    public string ObjectId { get; private set; }
+    public byte[] Ciphertext { get; private set; }
+    public byte[] AssociatedData { get; private set; }
 
-    public EncryptResponse(string objectId, byte[] ciphertext, byte[] associatedData) {
-        this.objectId = objectId;
-        this.ciphertext = ciphertext;
-        this.associatedData = associatedData;
+    public EncryptResponse(string ObjectId, byte[] Ciphertext, byte[] AssociatedData) {
+        this.ObjectId = ObjectId;
+        this.Ciphertext = Ciphertext;
+        this.AssociatedData = AssociatedData;
     }
 }

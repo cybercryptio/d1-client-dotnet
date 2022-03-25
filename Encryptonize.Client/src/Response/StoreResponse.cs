@@ -2,10 +2,9 @@
 namespace Encryptonize.Client.Response;
 
 public class StoreResponse {
-    private string objectId;
-    public string ObjectId { get { return objectId; } }
+    public string ObjectId { get; private set; }
 
-    public StoreResponse(string objectId) {
-        this.objectId = objectId;
+    public StoreResponse(string ObjectId) {
+        this.ObjectId = ObjectId;
     }
 }

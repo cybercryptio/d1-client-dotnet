@@ -2,13 +2,11 @@
 namespace Encryptonize.Client.Response;
 
 public class VersionResponse {
-    private string commit;
-    public string Commit { get { return commit; } }
-    private string tag;
-    public string Tag { get { return tag; } }
+    public string Commit { get; private set; }
+    public string Tag { get; private set; }
 
-    public VersionResponse(string commit, string tag) {
-        this.commit = commit;
-        this.tag = tag;
+    public VersionResponse(string Commit, string Tag) {
+        this.Commit = Commit;
+        this.Tag = Tag;
     }
 }

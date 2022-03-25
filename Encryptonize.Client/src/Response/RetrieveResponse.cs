@@ -2,13 +2,11 @@
 namespace Encryptonize.Client.Response;
 
 public class RetrieveResponse {
-    private byte[] plaintext;
-    public byte[] Plaintext { get { return plaintext; } }
-    private byte[] associatedData;
-    public byte[] AssociatedData { get { return associatedData; } }
+    public byte[] Plaintext { get; private set; }
+    public byte[] AssociatedData { get; private set; }
 
-    public RetrieveResponse(byte[] plaintext, byte[] associatedData) {
-        this.plaintext = plaintext;
-        this.associatedData = associatedData;
+    public RetrieveResponse(byte[] Plaintext, byte[] AssociatedData) {
+        this.Plaintext = Plaintext;
+        this.AssociatedData = AssociatedData;
     }
 }
