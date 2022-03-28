@@ -130,4 +130,20 @@ public class ClientTest : IDisposable, IAsyncDisposable {
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
     }
+
+    [Fact]
+    public async void TestClientRefreshToken() {
+        var client = await ClientRT.New(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        
+        var initialAccessToken = client.AccessToken;
+
+        client.ExpiryTime = DateTime.Now;
+
+        await client.Version().ConfigureAwait(false);
+
+        Assert.NotEqual(client.AccessToken, initialAccessToken);
+        Assert.False(string.IsNullOrWhiteSpace(client.AccessToken));
+
+        client.Dispose();
+    }
 }
