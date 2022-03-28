@@ -12,7 +12,7 @@ public enum Scope {
 }
 
 public static class ScopeMapper {
-    public static Scopes.Scope GetServiceScope(this Scope scope) {
+    internal static Scopes.Scope GetServiceScope(this Scope scope) {
         switch (scope) {
             case Scope.Read:
                 return Scopes.Scope.Read;
