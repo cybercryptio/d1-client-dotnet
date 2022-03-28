@@ -19,8 +19,8 @@ public class Client : IDisposable, IAsyncDisposable {
     private Storage.Encryptonize.EncryptonizeClient storageClient;
     private Authz.Encryptonize.EncryptonizeClient authzClient;
 
-    public Client(string endpoint, string certPath) {
-        if (certPath.Equals("")) {
+    public Client(string endpoint, string certPath =  "") {
+        if (string.IsNullOrWhiteSpace(certPath)) {
             channel = GrpcChannel.ForAddress(endpoint);
         } else {
             var cert = new X509Certificate2(File.ReadAllBytes(certPath));

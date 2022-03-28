@@ -14,11 +14,11 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\common\scopes.proto" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\app\app.proto" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authn\authn.proto" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\enc\enc.proto" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\storage\storage.proto" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authz\authz.proto" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\common\scopes.proto" GrpcServices="Encryptonize" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\app\app.proto" GrpcServices="Encryptonize" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authn\authn.proto" GrpcServices="Encryptonize" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\enc\enc.proto" GrpcServices="Encryptonize" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\storage\storage.proto" GrpcServices="Encryptonize" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authz\authz.proto" GrpcServices="Encryptonize" />
   </ItemGroup>
 </Project>
