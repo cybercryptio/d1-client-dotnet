@@ -21,9 +21,7 @@ dotnet build src/Encryptonize.Client.csproj
 ```
 
 ## Run tests
-The tests require having the Encryptonize Core service running locally.
-
-You can configure the connection to the Encryptonize Service through environment variables:
+The tests require having the Encryptonize Service running. You can configure the connection to the service through environment variables:
 ```
 E2E_TEST_URL  = <Encryptonize Service endpoint>
 E2E_TEST_CERT = <Client certificate>
@@ -36,7 +34,7 @@ To run the tests:
 dotnet test tests/Encryptonize.Client.Tests/Encryptonize.Client.Tests.csproj
 ```
 
-To build and run a Dockerized instance of the Encryptonize Core service and run the tests against it you can use the make target from [`encryptonize-premium`](https://github.com/cyber-crypt-com/encryptonize-premium/blob/master/encryption-service/makefile):
+To build and run a Dockerized instance of the Encryptonize Service and run the tests against it you can use the make target from [`encryptonize-premium`](https://github.com/cyber-crypt-com/encryptonize-premium/blob/master/encryption-service/makefile):
 ```
 make dotnet-tests
 ```
