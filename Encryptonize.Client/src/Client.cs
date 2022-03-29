@@ -12,6 +12,8 @@ using Encryptonize.Client.Response;
 namespace Encryptonize.Client;
 
 public class Client : IDisposable, IAsyncDisposable {
+    public string User { get; private set; }
+    public string Password { get; private set; }
     public string? AccessToken { get; private set; }
     public DateTime ExpiryTime { get; internal set; }
     private Metadata requestHeaders = new Metadata();
@@ -22,7 +24,7 @@ public class Client : IDisposable, IAsyncDisposable {
     private Storage.Encryptonize.EncryptonizeClient storageClient;
     private Authz.Encryptonize.EncryptonizeClient authzClient;
 
-    public Client(string endpoint, string certPath =  "") {
+    private Client(string endpoint, string certPath =  "") {
         if (string.IsNullOrWhiteSpace(certPath)) {
             channel = GrpcChannel.ForAddress(endpoint);
         } else {
@@ -39,6 +41,15 @@ public class Client : IDisposable, IAsyncDisposable {
         encClient = new Enc.Encryptonize.EncryptonizeClient(channel);
         storageClient = new Storage.Encryptonize.EncryptonizeClient(channel);
         authzClient = new Authz.Encryptonize.EncryptonizeClient(channel);
+
+        User = "";
+        Password = "";
+    }
+
+    public static async Task<Client> New(string endpoint, string user, string password, string certPath =  "") {
+        var client = new Client(endpoint, certPath);
+        await client.Login(user, password).ConfigureAwait(false);
+        return client;
     }
 
     public void Dispose() {
@@ -65,12 +76,21 @@ public class Client : IDisposable, IAsyncDisposable {
         await channel.ShutdownAsync().ConfigureAwait(false);
     }
 
+    private async Task RefreshToken() {
+        if (DateTime.Now > ExpiryTime.AddMinutes(-1)) {
+            await Login(User, Password).ConfigureAwait(false);
+        }
+    }
+
     /////////////////////////////////////////////////////////////////////////
     //                               Utility                               //
     /////////////////////////////////////////////////////////////////////////
 
-    public virtual async Task<VersionResponse> Version() {
+    public async Task<VersionResponse> Version() {
+        await RefreshToken().ConfigureAwait(false);
+
         var response = await appClient.VersionAsync(new App.VersionRequest(), requestHeaders).ConfigureAwait(false);
+
         return new VersionResponse(response.Commit, response.Tag);
     }
 
@@ -78,9 +98,11 @@ public class Client : IDisposable, IAsyncDisposable {
     //                           User Management                           //
     /////////////////////////////////////////////////////////////////////////
 
-    public virtual async Task Login(string user, string password) {
+    public async Task Login(string user, string password) {
         var response = await authnClient.LoginUserAsync(new Authn.LoginUserRequest{ UserId = user, Password = password }).ConfigureAwait(false);
 
+        User = user;
+        Password = password;
         AccessToken = response.AccessToken;
         ExpiryTime = new DateTime(response.ExpiryTime);
 
@@ -88,7 +110,9 @@ public class Client : IDisposable, IAsyncDisposable {
         requestHeaders.Add("Authorization", $"Bearer {AccessToken}");
     }
 
-    public virtual async Task<CreateUserResponse> CreateUser(IList<Scope> scopes) {
+    public async Task<CreateUserResponse> CreateUser(IList<Scope> scopes) {
+        await RefreshToken().ConfigureAwait(false);
+
         var request = new Authn.CreateUserRequest();
         foreach (Scope scope in scopes) {
             request.Scopes.Add(scope.GetServiceScope());
@@ -99,11 +123,15 @@ public class Client : IDisposable, IAsyncDisposable {
         return new CreateUserResponse(response.UserId, response.Password);
     }
 
-    public virtual async Task RemoveUser(string userId) {
+    public async Task RemoveUser(string userId) {
+        await RefreshToken().ConfigureAwait(false);
+
         await authnClient.RemoveUserAsync(new Authn.RemoveUserRequest{ UserId = userId }, requestHeaders).ConfigureAwait(false);
     }
 
-    public virtual async Task<CreateGroupResponse> CreateGroup(IList<Scope> scopes) {
+    public async Task<CreateGroupResponse> CreateGroup(IList<Scope> scopes) {
+        await RefreshToken().ConfigureAwait(false);
+
         var request = new Authn.CreateGroupRequest();
         foreach (Scope scope in scopes) {
             request.Scopes.Add(scope.GetServiceScope());
@@ -114,12 +142,16 @@ public class Client : IDisposable, IAsyncDisposable {
         return new CreateGroupResponse(response.GroupId);
     }
 
-    public virtual async Task AddUserToGroup(string userId, string groupId) {
+    public async Task AddUserToGroup(string userId, string groupId) {
+        await RefreshToken().ConfigureAwait(false);
+
         await authnClient.AddUserToGroupAsync(new Authn.AddUserToGroupRequest{ UserId = userId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 
-    public virtual async Task RemoveUserFromGroup(string userId, string groupId) {
+    public async Task RemoveUserFromGroup(string userId, string groupId) {
+        await RefreshToken().ConfigureAwait(false);
+
         await authnClient.RemoveUserFromGroupAsync(new Authn.RemoveUserFromGroupRequest{ UserId = userId, GroupId = groupId },
             requestHeaders).ConfigureAwait(false);
     }
@@ -128,16 +160,22 @@ public class Client : IDisposable, IAsyncDisposable {
     //                              Encryption                             //
     /////////////////////////////////////////////////////////////////////////
 
-    public virtual async Task<EncryptResponse> Encrypt(byte[] plaintext, byte[] associatedData) {
+    public async Task<EncryptResponse> Encrypt(byte[] plaintext, byte[] associatedData) {
+        await RefreshToken().ConfigureAwait(false);
+
         var response = await encClient.EncryptAsync(new Enc.EncryptRequest{ Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
+        
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
-    public virtual async Task<DecryptResponse> Decrypt(string objectId, byte[] ciphertext, byte[] associatedData) {
+    public async Task<DecryptResponse> Decrypt(string objectId, byte[] ciphertext, byte[] associatedData) {
+        await RefreshToken().ConfigureAwait(false);
+
         var response = await encClient.DecryptAsync(new Enc.DecryptRequest{ ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext), AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders)
             .ConfigureAwait(false);
+        
         return new DecryptResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
@@ -145,23 +183,33 @@ public class Client : IDisposable, IAsyncDisposable {
     //                               Storage                               //
     /////////////////////////////////////////////////////////////////////////
 
-    public virtual async Task<StoreResponse> Store(byte[] plaintext, byte[] associatedData) {
+    public async Task<StoreResponse> Store(byte[] plaintext, byte[] associatedData) {
+        await RefreshToken().ConfigureAwait(false);
+
         var response = await storageClient.StoreAsync(new Storage.StoreRequest{ Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
+        
         return new StoreResponse(response.ObjectId);
     }
 
-    public virtual async Task<RetrieveResponse> Retrieve(string objectId) {
+    public async Task<RetrieveResponse> Retrieve(string objectId) {
+        await RefreshToken().ConfigureAwait(false);
+
         var response = await storageClient.RetrieveAsync(new Storage.RetrieveRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
-    public virtual async Task Update(string objectId, byte[] plaintext, byte[] associatedData) {
+    public async Task Update(string objectId, byte[] plaintext, byte[] associatedData) {
+        await RefreshToken().ConfigureAwait(false);
+
         await storageClient.UpdateAsync(new Storage.UpdateRequest{ ObjectId = objectId, Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
     }
 
-    public virtual async Task Delete(string objectId) {
+    public async Task Delete(string objectId) {
+        await RefreshToken().ConfigureAwait(false);
+
         await storageClient.DeleteAsync(new Storage.DeleteRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
     }
 
@@ -169,18 +217,25 @@ public class Client : IDisposable, IAsyncDisposable {
     //                             Permissions                             //
     /////////////////////////////////////////////////////////////////////////
 
-    public virtual async Task<GetPermissionsResponse> GetPermissions(string objectId) {
+    public async Task<GetPermissionsResponse> GetPermissions(string objectId) {
+        await RefreshToken().ConfigureAwait(false);
+
         var response = await authzClient.GetPermissionsAsync(new Authz.GetPermissionsRequest{ ObjectId = objectId }, requestHeaders)
             .ConfigureAwait(false);
+        
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
 
-    public virtual async Task AddPermission(string objectId, string groupId) {
+    public async Task AddPermission(string objectId, string groupId) {
+        await RefreshToken().ConfigureAwait(false);
+
         await authzClient.AddPermissionAsync(new Authz.AddPermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 
-    public virtual async Task RemovePermission(string objectId, string groupId) {
+    public async Task RemovePermission(string objectId, string groupId) {
+        await RefreshToken().ConfigureAwait(false);
+
         await authzClient.RemovePermissionAsync(new Authz.RemovePermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
