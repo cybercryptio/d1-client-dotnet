@@ -3,7 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <CorePath>..\..\..\..\..\..\encryptonize-core\integrations\protobuf</CorePath>
+    <CorePath>..\..\..\..\..\..\..\encryptonize-core\encryption-service</CorePath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.19.4" />
