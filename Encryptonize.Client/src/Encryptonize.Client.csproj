@@ -3,7 +3,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <CorePath>..\..\..\..\..\..\encryptonize-core\encryption-service</CorePath>
+    <CorePath>..\..\..\..\..\..\encryptonize-core\integrations\protobuf</CorePath>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.19.4" />
@@ -14,11 +14,11 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\common\scopes.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\app\app.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authn\authn.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\enc\enc.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\storage\storage.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\services\authz\authz.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\scopes.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\version.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\authn.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\authz.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\eaas.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(CorePath)" Include="$(CorePath)\objects.proto" GrpcServices="client" Access="internal" />
   </ItemGroup>
 </Project>

@@ -12,22 +12,22 @@ public enum Scope {
 }
 
 public static class ScopeMapper {
-    internal static Scopes.Scope GetServiceScope(this Scope scope) {
+    internal static Protobuf.Scope GetServiceScope(this Scope scope) {
         switch (scope) {
             case Scope.Read:
-                return Scopes.Scope.Read;
+                return Protobuf.Scope.Read;
             case Scope.Create:
-                return Scopes.Scope.Create;
+                return Protobuf.Scope.Create;
             case Scope.Index:
-                return Scopes.Scope.Index;
+                return Protobuf.Scope.Index;
             case Scope.ObjectPermissions:
-                return Scopes.Scope.Objectpermissions;
+                return Protobuf.Scope.Objectpermissions;
             case Scope.UserManagement:
-                return Scopes.Scope.Usermanagement;
+                return Protobuf.Scope.Usermanagement;
             case Scope.Update:
-                return Scopes.Scope.Update;
+                return Protobuf.Scope.Update;
             case Scope.Delete:
-                return Scopes.Scope.Delete;
+                return Protobuf.Scope.Delete;
             default:
                 throw new ArgumentException("Unsupported Scope");
         }

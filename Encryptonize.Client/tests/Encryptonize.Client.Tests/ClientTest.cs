@@ -64,59 +64,59 @@ public class ClientTest {
         await client.DisposeAsync();
     }
 
-    [Fact]
-    public async void TestStore() {
-        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
-        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
-        var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
-        var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
+    // [Fact]
+    // public async void TestStore() {
+    //     var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+    //     var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+    //     var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
+    //     var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        var client = await Client.New(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+    //     var client = await Client.New(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
-        var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
-        await client.Login(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
+    //     var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
+    //     await client.Login(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
 
-        var storeResponse = await client.Store(plaintext, associatedData).ConfigureAwait(false);
-        var retrieveResponse = await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false);
-        Assert.Equal(plaintext, retrieveResponse.Plaintext);
-        Assert.Equal(associatedData, retrieveResponse.AssociatedData);
+    //     var storeResponse = await client.Store(plaintext, associatedData).ConfigureAwait(false);
+    //     var retrieveResponse = await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false);
+    //     Assert.Equal(plaintext, retrieveResponse.Plaintext);
+    //     Assert.Equal(associatedData, retrieveResponse.AssociatedData);
 
-        await client.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData).ConfigureAwait(false);
-        var retrieveResponseAfterUpdate = await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false);
-        Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
-        Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
+    //     await client.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData).ConfigureAwait(false);
+    //     var retrieveResponseAfterUpdate = await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false);
+    //     Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
+    //     Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
 
-        await client.Delete(storeResponse.ObjectId).ConfigureAwait(false);
-        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false))
-            .ConfigureAwait(false);
-        Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
+    //     await client.Delete(storeResponse.ObjectId).ConfigureAwait(false);
+    //     var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.Retrieve(storeResponse.ObjectId).ConfigureAwait(false))
+    //         .ConfigureAwait(false);
+    //     Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
 
-        await client.DisposeAsync();
-    }
+    //     await client.DisposeAsync();
+    // }
 
-    [Fact]
-    public async void TestPermissions() {
-        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
-        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+    // [Fact]
+    // public async void TestPermissions() {
+    //     var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+    //     var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = await Client.New(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+    //     var client = await Client.New(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
-        var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
-        await client.Login(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
+    //     var createUserResponse = await client.CreateUser(allScopes).ConfigureAwait(false);
+    //     await client.Login(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
 
-        var storeResponse = await client.Store(plaintext, associatedData).ConfigureAwait(false);
+    //     var storeResponse = await client.Store(plaintext, associatedData).ConfigureAwait(false);
 
-        await client.AddPermission(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
-        var getPermissionsResponse = await client.GetPermissions(storeResponse.ObjectId).ConfigureAwait(false);
-        Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
+    //     await client.AddPermission(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+    //     var getPermissionsResponse = await client.GetPermissions(storeResponse.ObjectId).ConfigureAwait(false);
+    //     Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-        await client.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
-        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.GetPermissions(storeResponse.ObjectId).ConfigureAwait(false))
-            .ConfigureAwait(false);
-        Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
+    //     await client.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+    //     var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.GetPermissions(storeResponse.ObjectId).ConfigureAwait(false))
+    //         .ConfigureAwait(false);
+    //     Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
 
-        await client.DisposeAsync();
-    }
+    //     await client.DisposeAsync();
+    // }
 
     [Fact]
     public async void TestClientRefreshToken() {
