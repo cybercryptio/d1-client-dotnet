@@ -1,0 +1,13 @@
+# Copyright 2020-2022 CYBERCRYPT
+
+# UID of the Encryptonize user on the server
+export E2E_TEST_UID=
+
+# Password of the Encryptonize user on the server
+export E2E_TEST_PASS=
+
+# Optional path to the certificate used to connect to Encryptonize
+export E2E_TEST_CERT=""
+
+# The URL of the Encryptonize server
+export E2E_TEST_URL="http://127.0.0.1:9000"
