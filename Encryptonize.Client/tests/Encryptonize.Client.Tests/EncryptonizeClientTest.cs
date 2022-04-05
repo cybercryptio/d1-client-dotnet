@@ -22,7 +22,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    public async void TestClientConnection() {
+    public async void TestClientConnectionAsync() {
         var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         await client.VersionAsync().ConfigureAwait(false);
@@ -31,7 +31,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    public async void TestUserManagement() {
+    public async void TestUserManagementAsync() {
         var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
@@ -46,7 +46,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    public async void TestEncryption() {
+    public async void TestEncryptionAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
@@ -65,7 +65,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    public async void TestStore() {
+    public async void TestStoreAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
@@ -95,7 +95,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    public async void TestPermissions() {
+    public async void TestPermissionsAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
@@ -119,7 +119,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    public async void TestClientRefreshToken() {
+    public async void TestClientRefreshTokenAsync() {
         var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
         
         var initialAccessToken = client.accessToken;
@@ -132,5 +132,115 @@ public class EncryptonizeClientTest {
         Assert.False(string.IsNullOrWhiteSpace(client.accessToken));
 
         await client.DisposeAsync();
+    }
+
+    [Fact]
+    public void TestClientConnection() {
+        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+
+        client.Version();
+
+        client.Dispose();
+    }
+
+    [Fact]
+    public void TestUserManagement() {
+        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+
+        var createUserResponse = client.CreateUserAsync(allScopes);
+        var createGroupResponse = client.CreateGroupAsync(allScopes);
+
+        client.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
+        client.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
+
+        client.RemoveUser(createUserResponse.UserId);
+
+        client.Dispose();
+    }
+
+    [Fact]
+    public void TestEncryption() {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+
+        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+
+        var createUserResponse = client.CreateUser(allScopes);
+        client.Login(createUserResponse.UserId, createUserResponse.Password);
+
+        var encryptResponse = client.Encrypt(plaintext, associatedData);
+        var decryptResponse = client.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
+        Assert.Equal(plaintext, decryptResponse.Plaintext);
+        Assert.Equal(associatedData, decryptResponse.AssociatedData);
+
+        client.Dispose();
+    }
+
+    [Fact]
+    public void TestStore() {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+        var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
+        var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
+
+        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+
+        var createUserResponse = client.CreateUserAsync(allScopes);
+        client.Login(createUserResponse.UserId, createUserResponse.Password);
+
+        var storeResponse = client.Store(plaintext, associatedData);
+        var retrieveResponse = client.Retrieve(storeResponse.ObjectId);
+        Assert.Equal(plaintext, retrieveResponse.Plaintext);
+        Assert.Equal(associatedData, retrieveResponse.AssociatedData);
+
+        client.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData);
+        var retrieveResponseAfterUpdate = client.Retrieve(storeResponse.ObjectId);
+        Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
+        Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
+
+        client.Delete(storeResponse.ObjectId);
+        var e = Assert.Throws<Grpc.Core.RpcException>(() => client.Retrieve(storeResponse.ObjectId));
+        Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
+
+        client.Dispose();
+    }
+
+    [Fact]
+    public void TestPermissions() {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+
+        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+
+        var createUserResponse = client.CreateUser(allScopes);
+        client.Login(createUserResponse.UserId, createUserResponse.Password);
+
+        var storeResponse = client.Store(plaintext, associatedData);
+
+        client.AddPermission(storeResponse.ObjectId, createUserResponse.UserId);
+        var getPermissionsResponse = client.GetPermissions(storeResponse.ObjectId);
+        Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
+
+        client.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId);
+        var e = Assert.Throws<Grpc.Core.RpcException>(() => client.GetPermissions(storeResponse.ObjectId));
+        Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
+
+        client.Dispose();
+    }
+
+    [Fact]
+    public void TestClientRefreshToken() {
+        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        
+        var initialAccessToken = client.accessToken;
+
+        client.ExpiryTime = DateTime.Now;
+
+        client.Version();
+
+        Assert.NotEqual(client.accessToken, initialAccessToken);
+        Assert.False(string.IsNullOrWhiteSpace(client.accessToken));
+
+        client.Dispose();
     }
 }
