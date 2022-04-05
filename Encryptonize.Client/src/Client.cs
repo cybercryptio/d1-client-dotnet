@@ -18,11 +18,11 @@ public class Client : IDisposable, IAsyncDisposable {
     public DateTime ExpiryTime { get; internal set; }
     private Metadata requestHeaders = new Metadata();
     private GrpcChannel channel;
-    private App.Encryptonize.EncryptonizeClient appClient;
-    private Authn.Encryptonize.EncryptonizeClient authnClient;
-    private Enc.Encryptonize.EncryptonizeClient encClient;
-    private Storage.Encryptonize.EncryptonizeClient storageClient;
-    private Authz.Encryptonize.EncryptonizeClient authzClient;
+    private Protobuf.Version.VersionClient versionClient;
+    private Protobuf.Authn.AuthnClient authnClient;
+    private Protobuf.Authz.AuthzClient authzClient;
+    private Protobuf.EAAS.EAASClient eaasClient;
+    private Protobuf.Objects.ObjectsClient objectsClient;
 
     private Client(string endpoint, string certPath =  "") {
         if (string.IsNullOrWhiteSpace(certPath)) {
@@ -36,11 +36,11 @@ public class Client : IDisposable, IAsyncDisposable {
             channel = GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions{HttpHandler = handler});
         }
         
-        appClient = new App.Encryptonize.EncryptonizeClient(channel);
-        authnClient = new Authn.Encryptonize.EncryptonizeClient(channel);
-        encClient = new Enc.Encryptonize.EncryptonizeClient(channel);
-        storageClient = new Storage.Encryptonize.EncryptonizeClient(channel);
-        authzClient = new Authz.Encryptonize.EncryptonizeClient(channel);
+        versionClient = new Protobuf.Version.VersionClient(channel);
+        authnClient = new Protobuf.Authn.AuthnClient(channel);
+        authzClient = new Protobuf.Authz.AuthzClient(channel);
+        eaasClient = new Protobuf.EAAS.EAASClient(channel);
+        objectsClient = new Protobuf.Objects.ObjectsClient(channel);
 
         User = "";
         Password = "";
@@ -89,7 +89,7 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task<VersionResponse> Version() {
         await RefreshToken().ConfigureAwait(false);
 
-        var response = await appClient.VersionAsync(new App.VersionRequest(), requestHeaders).ConfigureAwait(false);
+        var response = await versionClient.VersionAsync(new Protobuf.VersionRequest(), requestHeaders).ConfigureAwait(false);
 
         return new VersionResponse(response.Commit, response.Tag);
     }
@@ -99,7 +99,7 @@ public class Client : IDisposable, IAsyncDisposable {
     /////////////////////////////////////////////////////////////////////////
 
     public async Task Login(string user, string password) {
-        var response = await authnClient.LoginUserAsync(new Authn.LoginUserRequest{ UserId = user, Password = password }).ConfigureAwait(false);
+        var response = await authnClient.LoginUserAsync(new Protobuf.LoginUserRequest{ UserId = user, Password = password }).ConfigureAwait(false);
 
         User = user;
         Password = password;
@@ -113,7 +113,7 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task<CreateUserResponse> CreateUser(IList<Scope> scopes) {
         await RefreshToken().ConfigureAwait(false);
 
-        var request = new Authn.CreateUserRequest();
+        var request = new Protobuf.CreateUserRequest();
         foreach (Scope scope in scopes) {
             request.Scopes.Add(scope.GetServiceScope());
         }
@@ -126,13 +126,13 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task RemoveUser(string userId) {
         await RefreshToken().ConfigureAwait(false);
 
-        await authnClient.RemoveUserAsync(new Authn.RemoveUserRequest{ UserId = userId }, requestHeaders).ConfigureAwait(false);
+        await authnClient.RemoveUserAsync(new Protobuf.RemoveUserRequest{ UserId = userId }, requestHeaders).ConfigureAwait(false);
     }
 
     public async Task<CreateGroupResponse> CreateGroup(IList<Scope> scopes) {
         await RefreshToken().ConfigureAwait(false);
 
-        var request = new Authn.CreateGroupRequest();
+        var request = new Protobuf.CreateGroupRequest();
         foreach (Scope scope in scopes) {
             request.Scopes.Add(scope.GetServiceScope());
         }
@@ -145,14 +145,14 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task AddUserToGroup(string userId, string groupId) {
         await RefreshToken().ConfigureAwait(false);
 
-        await authnClient.AddUserToGroupAsync(new Authn.AddUserToGroupRequest{ UserId = userId, GroupId = groupId }, requestHeaders)
+        await authnClient.AddUserToGroupAsync(new Protobuf.AddUserToGroupRequest{ UserId = userId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 
     public async Task RemoveUserFromGroup(string userId, string groupId) {
         await RefreshToken().ConfigureAwait(false);
 
-        await authnClient.RemoveUserFromGroupAsync(new Authn.RemoveUserFromGroupRequest{ UserId = userId, GroupId = groupId },
+        await authnClient.RemoveUserFromGroupAsync(new Protobuf.RemoveUserFromGroupRequest{ UserId = userId, GroupId = groupId },
             requestHeaders).ConfigureAwait(false);
     }
 
@@ -163,7 +163,7 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task<EncryptResponse> Encrypt(byte[] plaintext, byte[] associatedData) {
         await RefreshToken().ConfigureAwait(false);
 
-        var response = await encClient.EncryptAsync(new Enc.EncryptRequest{ Plaintext = ByteString.CopyFrom(plaintext),
+        var response = await eaasClient.EncryptAsync(new Protobuf.EncryptRequest{ Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
         
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
@@ -172,7 +172,7 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task<DecryptResponse> Decrypt(string objectId, byte[] ciphertext, byte[] associatedData) {
         await RefreshToken().ConfigureAwait(false);
 
-        var response = await encClient.DecryptAsync(new Enc.DecryptRequest{ ObjectId = objectId,
+        var response = await eaasClient.DecryptAsync(new Protobuf.DecryptRequest{ ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext), AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders)
             .ConfigureAwait(false);
         
@@ -186,7 +186,7 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task<StoreResponse> Store(byte[] plaintext, byte[] associatedData) {
         await RefreshToken().ConfigureAwait(false);
 
-        var response = await storageClient.StoreAsync(new Storage.StoreRequest{ Plaintext = ByteString.CopyFrom(plaintext),
+        var response = await objectsClient.StoreAsync(new Protobuf.StoreRequest{ Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
         
         return new StoreResponse(response.ObjectId);
@@ -195,7 +195,7 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task<RetrieveResponse> Retrieve(string objectId) {
         await RefreshToken().ConfigureAwait(false);
 
-        var response = await storageClient.RetrieveAsync(new Storage.RetrieveRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+        var response = await objectsClient.RetrieveAsync(new Protobuf.RetrieveRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -203,14 +203,14 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task Update(string objectId, byte[] plaintext, byte[] associatedData) {
         await RefreshToken().ConfigureAwait(false);
 
-        await storageClient.UpdateAsync(new Storage.UpdateRequest{ ObjectId = objectId, Plaintext = ByteString.CopyFrom(plaintext),
+        await objectsClient.UpdateAsync(new Protobuf.UpdateRequest{ ObjectId = objectId, Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData) }, requestHeaders).ConfigureAwait(false);
     }
 
     public async Task Delete(string objectId) {
         await RefreshToken().ConfigureAwait(false);
 
-        await storageClient.DeleteAsync(new Storage.DeleteRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+        await objectsClient.DeleteAsync(new Protobuf.DeleteRequest{ ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task<GetPermissionsResponse> GetPermissions(string objectId) {
         await RefreshToken().ConfigureAwait(false);
 
-        var response = await authzClient.GetPermissionsAsync(new Authz.GetPermissionsRequest{ ObjectId = objectId }, requestHeaders)
+        var response = await authzClient.GetPermissionsAsync(new Protobuf.GetPermissionsRequest{ ObjectId = objectId }, requestHeaders)
             .ConfigureAwait(false);
         
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
@@ -229,14 +229,14 @@ public class Client : IDisposable, IAsyncDisposable {
     public async Task AddPermission(string objectId, string groupId) {
         await RefreshToken().ConfigureAwait(false);
 
-        await authzClient.AddPermissionAsync(new Authz.AddPermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
+        await authzClient.AddPermissionAsync(new Protobuf.AddPermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 
     public async Task RemovePermission(string objectId, string groupId) {
         await RefreshToken().ConfigureAwait(false);
 
-        await authzClient.RemovePermissionAsync(new Authz.RemovePermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
+        await authzClient.RemovePermissionAsync(new Protobuf.RemovePermissionRequest{ ObjectId = objectId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 }

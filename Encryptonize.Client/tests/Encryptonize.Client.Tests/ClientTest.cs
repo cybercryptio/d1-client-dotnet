@@ -64,7 +64,7 @@ public class ClientTest {
         await client.DisposeAsync();
     }
 
-    [Fact]
+    [Fact(Skip = "Currently skipped because of service split")]
     public async void TestStore() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -94,7 +94,7 @@ public class ClientTest {
         await client.DisposeAsync();
     }
 
-    [Fact]
+    [Fact(Skip = "Currently skipped because of service split")]
     public async void TestPermissions() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
