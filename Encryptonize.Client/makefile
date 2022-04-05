@@ -10,15 +10,20 @@ SHELL := /bin/bash
 
 ##### Files #####
 test_env = ./env/test_env
+proto_path = ../../../../../encryptonize-core/integrations/protobuf
 
 ##### Build targets #####
+.PHONY: protos
+protos:
+	mkdir -p ./src/protos
+	cp $(proto_path)/*.proto ./src/protos
+
 .PHONY: build
-build:
+build: protos
 	dotnet build ./src
 
 .PHONY: test
 test: build
-# TODO: Setup env variables in script
 	source $(test_env) && \
 	dotnet test ./tests/Encryptonize.Client.Tests --no-build
 
