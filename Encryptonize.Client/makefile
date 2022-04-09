@@ -37,3 +37,4 @@ clean :
 	dotnet clean ./src
 	dotnet clean ./tests/Encryptonize.Client.Tests
 	rm -rf ./artifacts/
+	rm -rf ./src/protos
