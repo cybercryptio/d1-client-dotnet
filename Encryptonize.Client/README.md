@@ -1,7 +1,36 @@
-# .NET client library for Encryptonize-as-a-Service v3.1.0
-*Currently the library does not support any of the premium features.*
+# .NET client library for Encryptonize-as-a-Service
 
-## Build
+## Getting started
+
+### Prerequisites
+
+- The [Encryptonize Core](https://github.com/cyber-crypt-com/encryptonize-core) service must be deployed and accessible. **TODO**: Link to information on how to deploy?
+
+### Installation
+
+**TODO**: How do we want to install it? Through nuget.org, private repository, shipping DLLs, or something else?
+
+### How to use
+
+#### Configuring the client
+
+Creating a new client is easy, it only requires you to pass the URL of the Encryptonize service, the username and the password into the constructor:
+
+```csharp
+using Encryptonize.Client;
+
+var client = new EncryptonizeClient(encryptonizeUrl, encryptonizeUsername, encryptonizePassword);
+```
+
+Afterwards the client is ready to be used, and the different methods can be called. See the [API reference](#api-reference) for a description of all the available methods.
+
+## API reference
+
+**TODO**: Insert link to API reference.
+
+## Development
+
+### Build
 Required directory structure:
 ```
 .
@@ -20,7 +49,7 @@ Build the library:
 dotnet build src/Encryptonize.Client.csproj
 ```
 
-## Run tests
+### Run tests
 The tests require having the Encryptonize Service running. You can configure the connection to the service through environment variables:
 ```
 E2E_TEST_URL  = <Encryptonize Service endpoint>
@@ -39,5 +68,6 @@ To build and run a Dockerized instance of the Encryptonize Service and run the t
 make dotnet-tests
 ```
 
-## Usage
-The library is intended for internal use only. It can be imported by adding a project reference to `Encryptonize.Client.csproj`.
+## Limitations
+
+- Currently the library does not support any of the premium features
