@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Grpc.Net.Client;
 using Grpc.Core;
 using Google.Protobuf;
+using Encryptonize.Client;
 using Encryptonize.Client.Utils;
 using Encryptonize.Client.Response;
 
@@ -60,11 +61,11 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
     private Metadata requestHeaders = new Metadata();
     private GrpcChannel channel;
-    private App.Encryptonize.EncryptonizeClient appClient;
-    private Authn.Encryptonize.EncryptonizeClient authnClient;
-    private Enc.Encryptonize.EncryptonizeClient encClient;
-    private Storage.Encryptonize.EncryptonizeClient storageClient;
-    private Authz.Encryptonize.EncryptonizeClient authzClient;
+    private Protobuf.Version.VersionClient versionClient;
+    private Protobuf.Authn.AuthnClient authnClient;
+    private Protobuf.Authz.AuthzClient authzClient;
+    private Protobuf.EAAS.EAASClient eaasClient;
+    private Protobuf.Objects.ObjectsClient objectsClient;
 
     public EncryptonizeClient(string endpoint, string username, string password, string certPath = "")
     {
@@ -82,11 +83,11 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
             channel = GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions { HttpHandler = handler });
         }
 
-        appClient = new App.Encryptonize.EncryptonizeClient(channel);
-        authnClient = new Authn.Encryptonize.EncryptonizeClient(channel);
-        encClient = new Enc.Encryptonize.EncryptonizeClient(channel);
-        storageClient = new Storage.Encryptonize.EncryptonizeClient(channel);
-        authzClient = new Authz.Encryptonize.EncryptonizeClient(channel);
+        versionClient = new(channel);
+        authnClient = new(channel);
+        authzClient = new(channel);
+        eaasClient = new(channel);
+        objectsClient = new(channel);
 
         User = username;
         this.password = password;
@@ -145,7 +146,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await appClient.VersionAsync(new App.VersionRequest(), requestHeaders).ConfigureAwait(false);
+        var response = await versionClient.VersionAsync(new Protobuf.VersionRequest(), requestHeaders).ConfigureAwait(false);
 
         return new VersionResponse(response.Commit, response.Tag);
     }
@@ -154,7 +155,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = appClient.Version(new App.VersionRequest(), requestHeaders);
+        var response = versionClient.Version(new Protobuf.VersionRequest(), requestHeaders);
 
         return new VersionResponse(response.Commit, response.Tag);
     }
@@ -165,7 +166,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
 
     public async Task LoginAsync(string user, string password)
     {
-        var response = await authnClient.LoginUserAsync(new Authn.LoginUserRequest { UserId = user, Password = password }).ConfigureAwait(false);
+        var response = await authnClient.LoginUserAsync(new Protobuf.LoginUserRequest { UserId = user, Password = password }).ConfigureAwait(false);
 
         User = user;
         this.password = password;
@@ -178,7 +179,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
 
     public void Login(string user, string password)
     {
-        var response = authnClient.LoginUser(new Authn.LoginUserRequest { UserId = user, Password = password });
+        var response = authnClient.LoginUser(new Protobuf.LoginUserRequest { UserId = user, Password = password });
 
         User = user;
         this.password = password;
@@ -193,7 +194,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var request = new Authn.CreateUserRequest();
+        var request = new Protobuf.CreateUserRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -208,7 +209,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var request = new Authn.CreateUserRequest();
+        var request = new Protobuf.CreateUserRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -223,21 +224,21 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await authnClient.RemoveUserAsync(new Authn.RemoveUserRequest { UserId = userId }, requestHeaders).ConfigureAwait(false);
+        await authnClient.RemoveUserAsync(new Protobuf.RemoveUserRequest { UserId = userId }, requestHeaders).ConfigureAwait(false);
     }
 
     public void RemoveUser(string userId)
     {
         RefreshToken();
 
-        authnClient.RemoveUser(new Authn.RemoveUserRequest { UserId = userId }, requestHeaders);
+        authnClient.RemoveUser(new Protobuf.RemoveUserRequest { UserId = userId }, requestHeaders);
     }
 
     public async Task<CreateGroupResponse> CreateGroupAsync(IList<Scope> scopes)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var request = new Authn.CreateGroupRequest();
+        var request = new Protobuf.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -252,7 +253,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var request = new Authn.CreateGroupRequest();
+        var request = new Protobuf.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -267,7 +268,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await authnClient.AddUserToGroupAsync(new Authn.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, requestHeaders)
+        await authnClient.AddUserToGroupAsync(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 
@@ -275,14 +276,14 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        authnClient.AddUserToGroup(new Authn.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, requestHeaders);
+        authnClient.AddUserToGroup(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, requestHeaders);
     }
 
     public async Task RemoveUserFromGroupAsync(string userId, string groupId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await authnClient.RemoveUserFromGroupAsync(new Authn.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId },
+        await authnClient.RemoveUserFromGroupAsync(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId },
             requestHeaders).ConfigureAwait(false);
     }
 
@@ -290,7 +291,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        authnClient.RemoveUserFromGroup(new Authn.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId },
+        authnClient.RemoveUserFromGroup(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId },
             requestHeaders);
     }
 
@@ -302,7 +303,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await encClient.EncryptAsync(new Enc.EncryptRequest
+        var response = await eaasClient.EncryptAsync(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -315,7 +316,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = encClient.Encrypt(new Enc.EncryptRequest
+        var response = eaasClient.Encrypt(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -328,7 +329,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await encClient.DecryptAsync(new Enc.DecryptRequest
+        var response = await eaasClient.DecryptAsync(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
@@ -343,7 +344,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = encClient.Decrypt(new Enc.DecryptRequest
+        var response = eaasClient.Decrypt(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
@@ -361,7 +362,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await storageClient.StoreAsync(new Storage.StoreRequest
+        var response = await objectsClient.StoreAsync(new Protobuf.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -374,7 +375,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = storageClient.Store(new Storage.StoreRequest
+        var response = objectsClient.Store(new Protobuf.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -387,7 +388,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await storageClient.RetrieveAsync(new Storage.RetrieveRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+        var response = await objectsClient.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -396,7 +397,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = storageClient.Retrieve(new Storage.RetrieveRequest { ObjectId = objectId }, requestHeaders);
+        var response = objectsClient.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders);
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -405,7 +406,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await storageClient.UpdateAsync(new Storage.UpdateRequest
+        await objectsClient.UpdateAsync(new Protobuf.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
@@ -417,7 +418,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        storageClient.Update(new Storage.UpdateRequest
+        objectsClient.Update(new Protobuf.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
@@ -429,14 +430,14 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await storageClient.DeleteAsync(new Storage.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+        await objectsClient.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
     }
 
     public void Delete(string objectId)
     {
         RefreshToken();
 
-        storageClient.Delete(new Storage.DeleteRequest { ObjectId = objectId }, requestHeaders);
+        objectsClient.Delete(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders);
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -447,7 +448,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await authzClient.GetPermissionsAsync(new Authz.GetPermissionsRequest { ObjectId = objectId }, requestHeaders)
+        var response = await authzClient.GetPermissionsAsync(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, requestHeaders)
             .ConfigureAwait(false);
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
@@ -457,7 +458,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = authzClient.GetPermissions(new Authz.GetPermissionsRequest { ObjectId = objectId }, requestHeaders);
+        var response = authzClient.GetPermissions(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, requestHeaders);
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
@@ -466,7 +467,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await authzClient.AddPermissionAsync(new Authz.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders)
+        await authzClient.AddPermissionAsync(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 
@@ -474,14 +475,14 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        authzClient.AddPermission(new Authz.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders);
+        authzClient.AddPermission(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders);
     }
 
     public async Task RemovePermissionAsync(string objectId, string groupId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await authzClient.RemovePermissionAsync(new Authz.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders)
+        await authzClient.RemovePermissionAsync(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders)
             .ConfigureAwait(false);
     }
 
@@ -489,6 +490,6 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        authzClient.RemovePermission(new Authz.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders);
+        authzClient.RemovePermission(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders);
     }
 }

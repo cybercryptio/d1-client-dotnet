@@ -147,8 +147,8 @@ public class EncryptonizeClientTest {
     public void TestUserManagement() {
         var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
-        var createUserResponse = client.CreateUserAsync(allScopes);
-        var createGroupResponse = client.CreateGroupAsync(allScopes);
+        var createUserResponse = client.CreateUser(allScopes);
+        var createGroupResponse = client.CreateGroup(allScopes);
 
         client.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
         client.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
@@ -185,7 +185,7 @@ public class EncryptonizeClientTest {
 
         var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
-        var createUserResponse = client.CreateUserAsync(allScopes);
+        var createUserResponse = client.CreateUser(allScopes);
         client.Login(createUserResponse.UserId, createUserResponse.Password);
 
         var storeResponse = client.Store(plaintext, associatedData);

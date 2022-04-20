@@ -1,4 +1,7 @@
 // Copyright 2020-2022 CYBERCRYPT
+
+using Encryptonize.Client.Protobuf;
+
 namespace Encryptonize.Client.Utils;
 
 public enum Scope {
