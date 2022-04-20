@@ -12,53 +12,202 @@ using Encryptonize.Client.Response;
 
 namespace Encryptonize.Client;
 
+/// <summary>
+/// Interface for Encryption service client
+/// </summary>
 public interface IEncryptonizeClient
 {
+    /// <summary>
+    /// Gets or sets the username used to authenticate with the Encryptonize server.
+    /// </summary>
     string User { get; }
+
+    /// <summary>
+    /// Gets the expiration time of the access token.
+    /// </summary>
+    /// <remarks>
+    /// When no access token is cached, the value is <c>DateTime.MinValue.AddMinutes(1)</c>
+    /// </remarks>
     DateTime ExpiryTime { get; }
 
+    /// <summary>
+    /// Give a group permission to access an object.
+    /// </summary>
+    /// <param name="objectId">The ID of the object.</param>
+    /// <param name="groupId">The ID of the group.</param>
     void AddPermission(string objectId, string groupId);
+
+    /// <inheritdoc cref="AddPermission"/>
     Task AddPermissionAsync(string objectId, string groupId);
+
+    /// <summary>
+    /// Add a user to a group.
+    /// </summary>
+    /// <param name="userId">The ID of the user.</param>
+    /// <param name="groupId">The ID of group.</param>
     void AddUserToGroup(string userId, string groupId);
+
+    /// <inheritdoc cref="AddUserToGroup"/>
     Task AddUserToGroupAsync(string userId, string groupId);
+
+    /// <summary>
+    /// Create a new group.
+    /// </summary>
+    /// <param name="scopes">List of scopes assigned to the new group.</param>
+    /// <returns>An instance of <see cref="CreateGroupResponse"/>.</returns>
     CreateGroupResponse CreateGroup(IList<Scope> scopes);
+
+    /// <inheritdoc cref="CreateGroup"/>
     Task<CreateGroupResponse> CreateGroupAsync(IList<Scope> scopes);
+
+    /// <summary>
+    /// Create a new user.
+    /// </summary>
+    /// <param name="scopes">List of scopes assigned to the new user.</param>
+    /// <returns>An instance of <see cref="CreateUserResponse"/>.</returns>
     CreateUserResponse CreateUser(IList<Scope> scopes);
+
+    /// <inheritdoc cref="CreateUser"/>
     Task<CreateUserResponse> CreateUserAsync(IList<Scope> scopes);
+
+    /// <summary>
+    /// Decrypt some data.
+    /// </summary>
+    /// <param name="objectId">The ID of the object.</param>
+    /// <param name="ciphertext">The ciphertext.</param>
+    /// <param name="associatedData">The associated data attached to the data.</param>
+    /// <returns>An instance of <see cref="DecryptResponse" />.</returns>
     DecryptResponse Decrypt(string objectId, byte[] ciphertext, byte[] associatedData);
+
+    /// <inheritdoc cref="Decrypt"/>
     Task<DecryptResponse> DecryptAsync(string objectId, byte[] ciphertext, byte[] associatedData);
+
+    /// <summary>
+    /// Delete data encrypted in the storage attached to Encryptonize.
+    /// </summary>
+    /// <param name="objectId">The ID of the object.</param>
     void Delete(string objectId);
+
+    /// <inheritdoc cref="Delete"/>
     Task DeleteAsync(string objectId);
-    void Dispose();
-    ValueTask DisposeAsync();
+
+    /// <summary>
+    /// Encrypt some data.
+    /// </summary>
+    /// <param name="plaintext">The plaintext to encrypt.</param>
+    /// <param name="associatedData">The attached associated data.</param>
+    /// <returns>An instance of <see cref="EncryptResponse" />.</returns>
     EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData);
+
+    /// <inheritdoc cref="Encrypt"/>
     Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData);
+
+    /// <summary>
+    /// Get the permission applied to an object.
+    /// </summary>
+    /// <param name="objectId">The ID of the object.</param>
+    /// <returns>An instance of <see cref="GetPermissionsResponse" />.</returns>
     GetPermissionsResponse GetPermissions(string objectId);
+
+    /// <inheritdoc cref="GetPermissions"/>
     Task<GetPermissionsResponse> GetPermissionsAsync(string objectId);
+
+    /// <summary>
+    /// Login to the Encryptonize service.
+    /// </summary>
     void Login(string user, string password);
+
+    /// <inheritdoc cref="Login"/>
     Task LoginAsync(string user, string password);
+
+    /// <summary>
+    /// Revoke a groups permission to access an object.
+    /// </summary>
+    /// <param name="objectId">The ID of the object.</param>
+    /// <param name="groupId">The ID of the group.</param>
     void RemovePermission(string objectId, string groupId);
+
+    /// <inheritdoc cref="RemovePermission"/>
     Task RemovePermissionAsync(string objectId, string groupId);
+
+    /// <summary>
+    /// Delete a user.
+    /// </summary>
+    /// <param name="userId">ID of the user to delete.</param>
     void RemoveUser(string userId);
+
+    /// <inheritdoc cref="RemoveUser"/>
     Task RemoveUserAsync(string userId);
+
+    /// <summary>
+    /// Remove a user from a group.
+    /// </summary>
+    /// <param name="userId">The ID of the user.</param>
+    /// <param name="groupId">The ID of group.</param>
     void RemoveUserFromGroup(string userId, string groupId);
+
+    /// <inheritdoc cref="RemoveUserFromGroup"/>
     Task RemoveUserFromGroupAsync(string userId, string groupId);
+
+    /// <summary>
+    /// Retreive some data encrypted in the storage attached to Encryptonize.
+    /// </summary>
+    /// <param name="objectId">The ID of the object.</param>
+    /// <returns>An instance of <see cref="RetrieveResponse" />.</returns>
     RetrieveResponse Retrieve(string objectId);
+
+    /// <inheritdoc cref="Retrieve"/>
     Task<RetrieveResponse> RetrieveAsync(string objectId);
+
+    /// <summary>
+    /// Store some data encrypted in the storage attached to Encryptonize.
+    /// </summary>
+    /// <param name="plaintext">The plaintext to store.</param>
+    /// <param name="associatedData">The attached associated data.</param>
+    /// <returns>An instance of <see cref="StoreResponse" />.</returns>
     StoreResponse Store(byte[] plaintext, byte[] associatedData);
+
+    /// <inheritdoc cref="Store"/>
     Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData);
+
+    /// <summary>
+    /// Update some data stored in the storage attached to Encryptonize.
+    /// </summary>
+    /// <param name="objectId">The ID of the object.</param>
+    /// <param name="plaintext">The plaintext to store.</param>
+    /// <param name="associatedData">The attached associated data.</param>
     void Update(string objectId, byte[] plaintext, byte[] associatedData);
+
+    /// <inheritdoc cref="Update"/>
     Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData);
+
+    /// <summary>
+    /// Get the version of the Encryptonize server.
+    /// </summary>
+    /// <returns>An instance of <see cref="VersionResponse"/>.</returns>
     VersionResponse Version();
+
+    /// <inheritdoc cref="Version"/>
     Task<VersionResponse> VersionAsync();
 }
 
+/// <summary>
+/// Client for connection to an Encryptonize server.
+/// </summary>
+/// <remarks>
+/// Login is done on-demand and the access token is automatically refreshed when it expires.
+/// </remarks>
 public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeClient
 {
     private string password = string.Empty;
     internal string accessToken = string.Empty;
+
+    /// <inheritdoc />
     public string User { get; private set; }
+
+    /// <inheritdoc />
     public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
+
     private Metadata requestHeaders = new Metadata();
     private GrpcChannel channel;
     private Protobuf.Version.VersionClient versionClient;
@@ -67,6 +216,14 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     private Protobuf.EAAS.EAASClient eaasClient;
     private Protobuf.Objects.ObjectsClient objectsClient;
 
+    /// <summary>
+    /// Initialize a new instance of the <see cref="EncryptonizeClient"/> class.
+    /// </summary>
+    /// <param name="endpoint">The endpoint of the Encryptonize server.</param>
+    /// <param name="username">The username used to authenticate with the Encryptonize server.</param>
+    /// <param name="password">The password used to authenticate with the Encryptonize server.</param>
+    /// <param name="certPath">The optional path to the certificate used to authenticate with the Encryptonize server when mTLS is enabled.</param>
+    /// <returns>A new instance of the <see cref="EncryptonizeClient"/> class.</returns>
     public EncryptonizeClient(string endpoint, string username, string password, string certPath = "")
     {
         if (string.IsNullOrWhiteSpace(certPath))
@@ -93,12 +250,18 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         this.password = password;
     }
 
+    /// <summary>
+    /// Dispose the client.
+    /// </summary>
     public void Dispose()
     {
         Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Dispose the client.
+    /// </summary>
     protected virtual void Dispose(bool disposing)
     {
         if (disposing)
@@ -107,6 +270,9 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         }
     }
 
+    /// <summary>
+    /// Asynchronously dispose the client.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await DisposeAsyncCore().ConfigureAwait(false);
@@ -117,6 +283,9 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
 #pragma warning restore CA1816 // Dispose methods should call SuppressFinalize
     }
 
+    /// <summary>
+    /// Asynchronously dispose the client.
+    /// </summary>
     protected virtual async ValueTask DisposeAsyncCore()
     {
         await channel.ShutdownAsync().ConfigureAwait(false);
@@ -142,6 +311,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     //                               Utility                               //
     /////////////////////////////////////////////////////////////////////////
 
+    /// <inheritdoc />
     public async Task<VersionResponse> VersionAsync()
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -151,6 +321,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new VersionResponse(response.Commit, response.Tag);
     }
 
+    /// <inheritdoc />
     public VersionResponse Version()
     {
         RefreshToken();
@@ -164,6 +335,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     //                           User Management                           //
     /////////////////////////////////////////////////////////////////////////
 
+    /// <inheritdoc />
     public async Task LoginAsync(string user, string password)
     {
         var response = await authnClient.LoginUserAsync(new Protobuf.LoginUserRequest { UserId = user, Password = password }).ConfigureAwait(false);
@@ -177,6 +349,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         requestHeaders.Add("Authorization", $"Bearer {accessToken}");
     }
 
+    /// <inheritdoc />
     public void Login(string user, string password)
     {
         var response = authnClient.LoginUser(new Protobuf.LoginUserRequest { UserId = user, Password = password });
@@ -190,6 +363,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         requestHeaders.Add("Authorization", $"Bearer {accessToken}");
     }
 
+    /// <inheritdoc />
     public async Task<CreateUserResponse> CreateUserAsync(IList<Scope> scopes)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -205,6 +379,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new CreateUserResponse(response.UserId, response.Password);
     }
 
+    /// <inheritdoc />
     public CreateUserResponse CreateUser(IList<Scope> scopes)
     {
         RefreshToken();
@@ -220,6 +395,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new CreateUserResponse(response.UserId, response.Password);
     }
 
+    /// <inheritdoc />
     public async Task RemoveUserAsync(string userId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -227,6 +403,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         await authnClient.RemoveUserAsync(new Protobuf.RemoveUserRequest { UserId = userId }, requestHeaders).ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public void RemoveUser(string userId)
     {
         RefreshToken();
@@ -234,6 +411,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         authnClient.RemoveUser(new Protobuf.RemoveUserRequest { UserId = userId }, requestHeaders);
     }
 
+    /// <inheritdoc />
     public async Task<CreateGroupResponse> CreateGroupAsync(IList<Scope> scopes)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -249,6 +427,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new CreateGroupResponse(response.GroupId);
     }
 
+    /// <inheritdoc />
     public CreateGroupResponse CreateGroup(IList<Scope> scopes)
     {
         RefreshToken();
@@ -264,6 +443,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new CreateGroupResponse(response.GroupId);
     }
 
+    /// <inheritdoc />
     public async Task AddUserToGroupAsync(string userId, string groupId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -272,6 +452,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public void AddUserToGroup(string userId, string groupId)
     {
         RefreshToken();
@@ -279,6 +460,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         authnClient.AddUserToGroup(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, requestHeaders);
     }
 
+    /// <inheritdoc />
     public async Task RemoveUserFromGroupAsync(string userId, string groupId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -287,6 +469,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
             requestHeaders).ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public void RemoveUserFromGroup(string userId, string groupId)
     {
         RefreshToken();
@@ -299,6 +482,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     //                              Encryption                             //
     /////////////////////////////////////////////////////////////////////////
 
+    /// <inheritdoc />
     public async Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -312,6 +496,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
+    /// <inheritdoc />
     public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData)
     {
         RefreshToken();
@@ -325,6 +510,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
+    /// <inheritdoc />
     public async Task<DecryptResponse> DecryptAsync(string objectId, byte[] ciphertext, byte[] associatedData)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -340,6 +526,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new DecryptResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
+    /// <inheritdoc />
     public DecryptResponse Decrypt(string objectId, byte[] ciphertext, byte[] associatedData)
     {
         RefreshToken();
@@ -358,6 +545,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     //                               Storage                               //
     /////////////////////////////////////////////////////////////////////////
 
+    /// <inheritdoc />
     public async Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -371,6 +559,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new StoreResponse(response.ObjectId);
     }
 
+    /// <inheritdoc />
     public StoreResponse Store(byte[] plaintext, byte[] associatedData)
     {
         RefreshToken();
@@ -384,6 +573,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new StoreResponse(response.ObjectId);
     }
 
+    /// <inheritdoc />
     public async Task<RetrieveResponse> RetrieveAsync(string objectId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -393,6 +583,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
+    /// <inheritdoc />
     public RetrieveResponse Retrieve(string objectId)
     {
         RefreshToken();
@@ -402,6 +593,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
+    /// <inheritdoc />
     public async Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -414,6 +606,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         }, requestHeaders).ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public void Update(string objectId, byte[] plaintext, byte[] associatedData)
     {
         RefreshToken();
@@ -426,6 +619,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         }, requestHeaders);
     }
 
+    /// <inheritdoc />
     public async Task DeleteAsync(string objectId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -433,6 +627,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         await objectsClient.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public void Delete(string objectId)
     {
         RefreshToken();
@@ -444,6 +639,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     //                             Permissions                             //
     /////////////////////////////////////////////////////////////////////////
 
+    /// <inheritdoc />
     public async Task<GetPermissionsResponse> GetPermissionsAsync(string objectId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -454,6 +650,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
 
+    /// <inheritdoc />
     public GetPermissionsResponse GetPermissions(string objectId)
     {
         RefreshToken();
@@ -463,6 +660,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
 
+    /// <inheritdoc />
     public async Task AddPermissionAsync(string objectId, string groupId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -471,6 +669,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public void AddPermission(string objectId, string groupId)
     {
         RefreshToken();
@@ -478,6 +677,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         authzClient.AddPermission(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders);
     }
 
+    /// <inheritdoc />
     public async Task RemovePermissionAsync(string objectId, string groupId)
     {
         await RefreshTokenAsync().ConfigureAwait(false);
@@ -486,6 +686,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
             .ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
     public void RemovePermission(string objectId, string groupId)
     {
         RefreshToken();

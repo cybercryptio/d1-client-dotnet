@@ -1,12 +1,27 @@
 // Copyright 2020-2022 CYBERCRYPT
 namespace Encryptonize.Client.Response;
 
+/// <summary>
+/// Response from <see cref="IEncryptonizeClient.Version"/> or <see cref="IEncryptonizeClient.VersionAsync"/>.
+/// </summary>
 public class VersionResponse {
+    /// <summary>
+    /// Gets the Git commit.
+    /// </summary>
     public string Commit { get; private set; }
+
+    /// <summary>
+    /// Gets the Git tag.
+    /// </summary>
     public string Tag { get; private set; }
 
-    public VersionResponse(string Commit, string Tag) {
-        this.Commit = Commit;
-        this.Tag = Tag;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VersionResponse"/>.
+    /// </summary>
+    /// <param name="commit">The Git commit.</param>
+    /// <param name="tag">The Git tag.</param>
+    public VersionResponse(string commit, string tag) {
+        Commit = commit;
+        Tag = tag;
     }
 }
