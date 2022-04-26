@@ -30,6 +30,8 @@ Afterwards the client is ready to be used, and the different methods can be call
 
 ## Development
 
+If you want to modify the generated client, then you would need to ensure that you have the correct project structure as well as the tooling needed to build the client.
+
 ### Build
 Required directory structure:
 ```
