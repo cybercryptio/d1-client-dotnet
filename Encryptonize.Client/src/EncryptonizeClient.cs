@@ -71,7 +71,7 @@ public interface IEncryptonizeClient
     Task<CreateUserResponse> CreateUserAsync(IList<Scope> scopes);
 
     /// <summary>
-    /// Decrypt some data.
+    /// Decrypt an encrypted object.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
     /// <param name="ciphertext">The ciphertext.</param>
@@ -92,7 +92,7 @@ public interface IEncryptonizeClient
     Task DeleteAsync(string objectId);
 
     /// <summary>
-    /// Encrypt some data.
+    /// Encrypt an object with associated data.
     /// </summary>
     /// <param name="plaintext">The plaintext to encrypt.</param>
     /// <param name="associatedData">The attached associated data.</param>
@@ -103,7 +103,7 @@ public interface IEncryptonizeClient
     Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData);
 
     /// <summary>
-    /// Get the permission applied to an object.
+    /// Get the permissions applied to an object.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
     /// <returns>An instance of <see cref="GetPermissionsResponse" />.</returns>

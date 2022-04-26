@@ -23,7 +23,7 @@ public enum Scope {
     /// </summary>
     ObjectPermissions,
     /// <summary>
-    /// Scope to manage users.
+    /// Scope to manage users and groups.
     /// </summary>
     UserManagement,
     /// <summary>
