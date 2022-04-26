@@ -18,6 +18,8 @@ public class RetrieveResponse {
     /// <summary>
     /// Initializes a new instance of the <see cref="RetrieveResponse"/>.
     /// </summary>
+    /// <param name="plaintext">The plaintext.</param>
+    /// <param name="associatedData">The associated data.</param>
     public RetrieveResponse(byte[] plaintext, byte[] associatedData) {
         Plaintext = plaintext;
         AssociatedData = associatedData;
