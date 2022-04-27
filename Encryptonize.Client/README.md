@@ -2,13 +2,21 @@
 
 ## Getting started
 
+**TODO**: Vanja any good ideas? :)
+For a description of Encryptonize please take a look at [TODO](insert link).
+The client is used to communicate with the Encryptonize service, to manage encrypted data.
+
 ### Prerequisites
 
 - The [Encryptonize Core](https://github.com/cyber-crypt-com/encryptonize-core) service must be deployed and accessible. **TODO**: Link to information on how to deploy?
 
 ### Installation
 
-**TODO**: How do we want to install it? Through nuget.org, private repository, shipping DLLs, or something else?
+The client library is available through nuget.org. The latest version can be installed using the following command:
+
+```bash
+dotnet add package Encryptonize.Client
+```
 
 ### How to use
 
@@ -19,6 +27,9 @@ Creating a new client is easy, it only requires you to pass the URL of the Encry
 ```csharp
 using Encryptonize.Client;
 
+var encryptonizeUrl = "https://localhost:9000";
+var encryptonizeUsername = "bd778920-f130-4a5c-b577-79d71bedae67";
+var encryptonizePassword = "Iy7ZH89rUj4H8dqagKUSqmkVOFULxghtgJR-rSreeVk";
 var client = new EncryptonizeClient(encryptonizeUrl, encryptonizeUsername, encryptonizePassword);
 ```
 
