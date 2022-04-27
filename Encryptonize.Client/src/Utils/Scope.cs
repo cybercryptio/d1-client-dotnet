@@ -7,11 +7,11 @@ namespace Encryptonize.Client.Utils;
 /// </summary>
 public enum Scope {
     /// <summary>
-    /// Scope to read object.
+    /// Scope to read and decrypt objects.
     /// </summary>
     Read,
     /// <summary>
-    /// Scope to create new objects.
+    /// Scope to create new and encrypt objects.
     /// </summary>
     Create,
     /// <summary>
