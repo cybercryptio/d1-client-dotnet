@@ -46,6 +46,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
+    [Trait("Category", "EAAS")]
     public async void TestEncryptionAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -65,6 +66,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
+    [Trait("Category", "Objects")]
     public async void TestStoreAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -95,6 +97,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
+    [Trait("Category", "Objects")]
     public async void TestPermissionsAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -159,6 +162,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
+    [Trait("Category", "EAAS")]
     public void TestEncryption() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -177,6 +181,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
+    [Trait("Category", "Objects")]
     public void TestStore() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -206,6 +211,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
+    [Trait("Category", "Objects")]
     public void TestPermissions() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
