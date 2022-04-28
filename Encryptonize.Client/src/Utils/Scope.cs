@@ -1,20 +1,42 @@
 // Copyright 2020-2022 CYBERCRYPT
 
-using Encryptonize.Client.Protobuf;
-
 namespace Encryptonize.Client.Utils;
 
+/// <summary>
+/// The possible permission scopes.
+/// </summary>
 public enum Scope {
+    /// <summary>
+    /// Scope to read and decrypt objects.
+    /// </summary>
     Read,
+    /// <summary>
+    /// Scope to create new and encrypt objects.
+    /// </summary>
     Create,
+    /// <summary>
+    /// Scope for getting object permission.
+    /// </summary>
     Index,
+    /// <summary>
+    /// Scope to manage object permissions.
+    /// </summary>
     ObjectPermissions,
+    /// <summary>
+    /// Scope to manage users and groups.
+    /// </summary>
     UserManagement,
+    /// <summary>
+    /// Scope to update objects.
+    /// </summary>
     Update,
+    /// <summary>
+    /// Scope to delete objects.
+    /// </summary>
     Delete
 }
 
-public static class ScopeMapper {
+internal static class ScopeMapper {
     internal static Protobuf.Scope GetServiceScope(this Scope scope) {
         switch (scope) {
             case Scope.Read:
