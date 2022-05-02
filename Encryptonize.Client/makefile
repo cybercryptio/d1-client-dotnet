@@ -9,8 +9,8 @@ help:  ## Display this help
 SHELL := /bin/bash
 
 ##### Files #####
-# TODO Update
-proto_path ?= ../../encryptonize-core/integrations/protobuf
+core_proto_path ?= ../../encryptonize-core/protobuf
+objects_proto_path ?= ../../encryptonize-objects/protobuf
 
 # Check that given variables are set and all have non-empty values,
 # die with an error otherwise.
@@ -29,48 +29,49 @@ __check_defined = \
 .PHONY: protos
 protos: ## Copy protos to build directory
 	mkdir -p ./src/protos
-	cp $(proto_path)/*.proto ./src/protos
+	cp $(core_proto_path)/*.proto ./src/protos
+	cp $(objects_proto_path)/*.proto ./src/protos
 
 .PHONY: build
 build: protos ## Build
 	dotnet build
 
-.PHONY: test
-test: docker-eaas-test docker-objects-test ## Run all tests
+.PHONY: tests
+tests: docker-core-tests docker-objects-tests ## Run all tests
 
-.PHONY: docker-eaas-test
-docker-eaas-test: docker-eaas-test-up## Run EAAS tests
-	USER_INFO=$$(docker exec encryptonize-eaas /eaas create-user rcudiom  | tail -n 1) && \
+.PHONY: docker-core-tests
+docker-core-tests: protos docker-core-tests-up ## Run Core tests
+	USER_INFO=$$(docker exec encryptonize-core /encryptonize-core create-user rcudiom  | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
-		dotnet test --no-build --filter Category!=Objects
-	@make docker-eaas-test-down
+		dotnet test --filter Category!=Objects
+	@make docker-core-tests-down
 
-.PHONY: docker-eaas-test-up
-docker-eaas-test-up: ## Start docker EAAS test environment
+.PHONY: docker-core-tests-up
+docker-core-tests-up: ## Start docker Core test environment
 	cd tests && \
 		docker-compose --profile eaas up -d
 
-.PHONY: docker-eaas-test-down
-docker-eaas-test-down: ## Stop docker EAAS test environment
-	docker-compose --profile eaas -f tests/compose.yaml down
+.PHONY: docker-core-tests-down
+docker-core-tests-down: ## Stop docker Core test environment
+	docker-compose --profile eaas -f tests/compose.yaml down -v
 
-.PHONY: docker-objects-test
-docker-objects-test: docker-objects-test-up ## Run objects tests
-	USER_INFO=$$(docker exec encryptonize-objects /objects create-user rcudiom  | tail -n 1) && \
+.PHONY: docker-objects-tests
+docker-objects-tests: protos docker-objects-tests-up ## Run objects tests
+	USER_INFO=$$(docker exec encryptonize-objects /encryptonize-objects create-user rcudiom  | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
-		dotnet test --no-build --filter Category!=EAAS
-	@make docker-objects-test-down
+		dotnet test --filter Category!=EAAS
+	@make docker-objects-tests-down
 
-.PHONY: docker-objects-test-up
-docker-objects-test-up: ## Start docker Objects test environment
+.PHONY: docker-objects-tests-up
+docker-objects-tests-up: ## Start docker Objects test environment
 	cd tests && \
 		docker-compose --profile objects up -d
 
 .PHONY: docker-objects-test-down
-docker-objects-test-down: ## Stop docker Objects test environment
-	docker-compose --profile objects -f tests/compose.yaml down
+docker-objects-tests-down: ## Stop docker Objects test environment
+	docker-compose --profile objects -f tests/compose.yaml down -v
 
 .PHONY: pack
 pack: protos ## Pack the library

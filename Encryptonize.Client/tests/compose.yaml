@@ -16,7 +16,7 @@ x-config: &config
 
 services:
   encryptonize-objects:
-    image: ghcr.io/cyber-crypt-com/encryptonize-objects:latest
+    image: ghcr.io/cyber-crypt-com/encryptonize-objects:v0.1.8
     container_name: encryptonize-objects
     environment:
       <<: *config
@@ -37,9 +37,9 @@ services:
     profiles:
       - objects
 
-  encryptonize-eaas:
-    image: ghcr.io/cyber-crypt-com/encryptonize-eaas:latest
-    container_name: encryptonize-eaas
+  encryptonize-core:
+    image: ghcr.io/cyber-crypt-com/encryptonize-core:v0.1.20
+    container_name: encryptonize-core
     environment:
       <<: *config
     volumes:

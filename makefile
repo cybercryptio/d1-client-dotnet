@@ -8,8 +8,8 @@ help:  ## Display this help
 SHELL := /bin/bash
 
 ##### Files #####
-# TODO Update
-export proto_path = ../../encryptonize-core/integrations/protobuf
+export core_proto_path ?= ../../encryptonize-core/protobuf
+export objects_proto_path ?= ../../encryptonize-objects/protobuf
 
 ##### Build targets #####
 .PHONY: build
@@ -20,13 +20,13 @@ build: # Build all clients
 build-client: ## Build Encryptonize client
 	@make -C Encryptonize.Client build
 
-.PHONY: test
-test: ## Run all tests
-	@make test-client
+.PHONY: tests
+tests: ## Run all tests
+	@make client-tests
 
-.PHONY: test-client
-test-client: ## Run Encryptonize client tests
-	@make -C Encryptonize.Client test
+.PHONY: client-tests
+client-tests: ## Run Encryptonize client tests
+	@make -C Encryptonize.Client tests
 
 .PHONY: publish
 publish: ## Publish packages
