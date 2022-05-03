@@ -1,0 +1,125 @@
+version: '3.9'
+
+x-config: &config
+  ECTNZ_SERVICE_INSECURE: "1"
+
+  # Auth storage
+  ECTNZ_AUTHSTORAGE_HOST: "cockroachdb"
+  ECTNZ_AUTHSTORAGE_PORT: "26257"
+  ECTNZ_AUTHSTORAGE_SCHEMA: "./auth_storage_basic.sql"
+
+  # Object storage
+  ECTNZ_OBJECTSTORAGE_URL: "http://minio:9000"
+  ECTNZ_OBJECTSTORAGE_BUCKET: &storage_bucket "objects"
+  ECTNZ_OBJECTSTORAGE_ID: &storage_id "storageid"
+  ECTNZ_OBJECTSTORAGE_KEY: &storage_key "storagekey"
+
+services:
+  encryptonize-objects:
+    image: ghcr.io/cyber-crypt-com/encryptonize-objects:v0.1.8
+    container_name: encryptonize-objects
+    environment:
+      <<: *config
+    volumes:
+      - ${PWD}/config.toml:/config.toml
+    ports:
+      - 9000:9000
+    depends_on:
+      cockroachdb:
+        condition: service_healthy
+      cockroachdb-init:
+        condition: service_completed_successfully
+      minio:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    tty: true
+    profiles:
+      - objects
+
+  encryptonize-core:
+    image: ghcr.io/cyber-crypt-com/encryptonize-core:v0.1.20
+    container_name: encryptonize-core
+    environment:
+      <<: *config
+    volumes:
+      - ${PWD}/config.toml:/config.toml
+    ports:
+      - 9000:9000
+    depends_on:
+      cockroachdb:
+        condition: service_healthy
+      cockroachdb-init:
+        condition: service_completed_successfully
+    tty: true
+    profiles:
+      - eaas
+
+  cockroachdb:
+    image: cockroachdb/cockroach:v21.2.7
+    container_name: cockroachdb
+    volumes:
+      - /cockroach/cockroach-data
+    command: start-single-node --insecure
+    ports:
+      - 26257:26257
+      - 7001:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:8080/health?ready=1"]
+      timeout: 30s
+      interval: 5s
+      retries: 5
+
+  cockroachdb-init:
+    image: cockroachdb/cockroach:v21.2.7
+    container_name: cockroachdb-init
+    environment:
+      CRDB: "/cockroach/cockroach --host cockroachdb"
+    entrypoint: |
+      /bin/sh -c "
+      echo 'CREATE DATABASE IF NOT EXISTS auth;' | $${CRDB} sql --insecure;
+      echo 'CREATE USER IF NOT EXISTS encryptonize;' | $${CRDB} sql --insecure;
+      echo 'GRANT ALL ON DATABASE auth TO encryptonize;' | $${CRDB} sql --insecure;
+      "
+    depends_on:
+      cockroachdb:
+        condition: service_healthy
+
+  minio:
+    image: minio/minio:RELEASE.2022-03-22T02-05-10Z
+    container_name: minio
+    volumes:
+      - /data
+    ports:
+      - 7000:9000
+    environment:
+      MINIO_ACCESS_KEY: *storage_id
+      MINIO_SECRET_KEY: *storage_key
+      MINIO_DEFAULT_BUCKETS: *storage_bucket
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:9000/minio/health/live"]
+      timeout: 30s
+      interval: 5s
+      retries: 5
+    profiles:
+      - objects
+
+  minio-init:
+    image: minio/mc:RELEASE.2022-03-17T20-25-06Z
+    container_name: minio-init
+    environment:
+      MINIO_ACCESS_KEY: *storage_id
+      MINIO_SECRET_KEY: *storage_key
+      MINIO_DEFAULT_BUCKETS: *storage_bucket
+    entrypoint: |
+      /bin/sh -c "
+      /usr/bin/mc config host add --api s3v4 storage http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY};
+      /usr/bin/mc mb storage/$${MINIO_DEFAULT_BUCKETS};
+      /usr/bin/mc policy set public storage/$${MINIO_DEFAULT_BUCKETS};
+      "
+    depends_on:
+      minio:
+        condition: service_healthy
+    profiles:
+      - objects

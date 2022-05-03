@@ -1,5 +1,7 @@
 # .NET client library for Encryptonize-as-a-Service
 
+**TODO**: Generally update links
+
 ## Getting started
 
 **TODO**: Vanja any good ideas? :)
@@ -44,27 +46,19 @@ Afterwards the client is ready to be used, and the different methods can be call
 If you want to modify the generated client, then you would need to ensure that you have the correct project structure as well as the tooling needed to build the client.
 
 ### Build
-Required directory structure:
-```
-.
-├── encryptonize-core
-└── encryptonize-premium/
-    └── clients/
-        └── encryption-service/
-            └── dotnet/
-                └── Encryptonize.Client/
-                    ├── src
-                    └── tests/
-                        └── Encryptonize.Client.Tests
-```
+
+To be able to locate the necessary protobuf files, you can either define the environment variable `PROTOBUF_PATH` to point to the directory containing the protobuf files, or checkout the [encryptonize-core repository](https://github.com/cyber-crypt-com/encryptonize-core) on the relative path `../encryptonize-core/` and the [encryptonize-objects repository](https://github.com/cyber-crypt-com/encryptonize-objects) on the relative path `../encryptonize-objects`.
 Build the library:
-```
+
+```bash
 dotnet build src/Encryptonize.Client.csproj
 ```
 
 ### Run tests
+
 The tests require having the Encryptonize Service running. You can configure the connection to the service through environment variables:
-```
+
+```text
 E2E_TEST_URL  = <Encryptonize Service endpoint>
 E2E_TEST_CERT = <Client certificate>
 E2E_TEST_UID  = <Encryptonize User ID>
@@ -72,12 +66,14 @@ E2E_TEST_PASS = <Encryptonize User Password>
 ```
 
 To run the tests:
-```
+
+```bash
 dotnet test tests/Encryptonize.Client.Tests/Encryptonize.Client.Tests.csproj
 ```
 
 To build and run a Dockerized instance of the Encryptonize Service and run the tests against it you can use the make target from [`encryptonize-premium`](https://github.com/cyber-crypt-com/encryptonize-premium/blob/master/encryption-service/makefile):
-```
+
+```bash
 make dotnet-tests
 ```
 
