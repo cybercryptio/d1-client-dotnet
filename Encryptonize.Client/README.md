@@ -47,9 +47,7 @@ If you want to modify the generated client, then you would need to ensure that y
 
 ### Build
 
-**TODO**: Change description here
-
-To be able to locate the necessary protobuf files, you can either define the environment variable `PROTOBUF_PATH` to point to the directory containing the protobuf files, or checkout the [TODO repository](TODO) on the relative path `../encryptonize-core/` **TODO** change to correct path.
+To be able to locate the necessary protobuf files, you can either define the environment variable `PROTOBUF_PATH` to point to the directory containing the protobuf files, or checkout the [encryptonize-core repository](https://github.com/cyber-crypt-com/encryptonize-core) on the relative path `../encryptonize-core/` and the [encryptonize-objects repository](https://github.com/cyber-crypt-com/encryptonize-objects) on the relative path `../encryptonize-objects`.
 Build the library:
 
 ```bash
@@ -57,6 +55,7 @@ dotnet build src/Encryptonize.Client.csproj
 ```
 
 ### Run tests
+
 The tests require having the Encryptonize Service running. You can configure the connection to the service through environment variables:
 
 ```text
