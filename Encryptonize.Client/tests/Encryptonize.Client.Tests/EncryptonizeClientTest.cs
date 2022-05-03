@@ -46,7 +46,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    [Trait("Category", "EAAS")]
+    [Trait("Category", "Core")]
     public async void TestEncryptionAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -162,7 +162,7 @@ public class EncryptonizeClientTest {
     }
 
     [Fact]
-    [Trait("Category", "EAAS")]
+    [Trait("Category", "Core")]
     public void TestEncryption() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");

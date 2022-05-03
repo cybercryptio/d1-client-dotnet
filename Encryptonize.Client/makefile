@@ -61,7 +61,7 @@ docker-objects-tests: protos docker-objects-tests-up ## Run objects tests
 	USER_INFO=$$(docker exec encryptonize-objects /encryptonize-objects create-user rcudiom  | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
-		dotnet test --filter Category!=EAAS
+		dotnet test --filter Category!=Core
 	@make docker-objects-tests-down
 
 .PHONY: docker-objects-tests-up
