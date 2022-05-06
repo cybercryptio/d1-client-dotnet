@@ -213,7 +213,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     private Protobuf.Version.VersionClient versionClient;
     private Protobuf.Authn.AuthnClient authnClient;
     private Protobuf.Authz.AuthzClient authzClient;
-    private Protobuf.EAAS.EAASClient eaasClient;
+    private Protobuf.Core.CoreClient coreClient;
     private Protobuf.Objects.ObjectsClient objectsClient;
 
     /// <summary>
@@ -243,7 +243,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         versionClient = new(channel);
         authnClient = new(channel);
         authzClient = new(channel);
-        eaasClient = new(channel);
+        coreClient = new(channel);
         objectsClient = new(channel);
 
         User = username;
@@ -487,7 +487,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await eaasClient.EncryptAsync(new Protobuf.EncryptRequest
+        var response = await coreClient.EncryptAsync(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -501,7 +501,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = eaasClient.Encrypt(new Protobuf.EncryptRequest
+        var response = coreClient.Encrypt(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -515,7 +515,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await eaasClient.DecryptAsync(new Protobuf.DecryptRequest
+        var response = await coreClient.DecryptAsync(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
@@ -531,7 +531,7 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     {
         RefreshToken();
 
-        var response = eaasClient.Decrypt(new Protobuf.DecryptRequest
+        var response = coreClient.Decrypt(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),

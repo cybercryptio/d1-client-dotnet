@@ -50,11 +50,11 @@ docker-core-tests: protos docker-core-tests-up ## Run Core tests
 .PHONY: docker-core-tests-up
 docker-core-tests-up: ## Start docker Core test environment
 	cd tests && \
-		docker-compose --profile eaas up -d
+		docker-compose --profile core up -d
 
 .PHONY: docker-core-tests-down
 docker-core-tests-down: ## Stop docker Core test environment
-	docker-compose --profile eaas -f tests/compose.yaml down -v
+	docker-compose --profile core -f tests/compose.yaml down -v
 
 .PHONY: docker-objects-tests
 docker-objects-tests: protos docker-objects-tests-up ## Run objects tests
@@ -84,8 +84,8 @@ publish: pack ## Publish the NuGet package
 	dotnet nuget push ./artifacts/Encryptonize.Client.${VERSION}.nupkg --source "${PACKAGE_SOURCE}" --api-key "${API_KEY}"
 
 ##### Cleanup targets #####
-.PHONY: clean  ## Remove build artifacts
-clean :
+.PHONY: clean
+clean: ## Remove build artifacts
 	dotnet clean
 	rm -rf ./artifacts/
 	rm -rf ./src/protos

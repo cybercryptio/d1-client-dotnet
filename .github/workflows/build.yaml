@@ -25,14 +25,14 @@ jobs:
       with:
         repository: cyber-crypt-com/encryptonize-core
         path: encryptonize-core
-        ref: v0.1.20
+        ref: v0.1.25
 
     - name: Check out repository
       uses: actions/checkout@v2
       with:
         repository: cyber-crypt-com/encryptonize-objects
         path: encryptonize-objects
-        ref: v0.1.8
+        ref: v0.1.12
 
     - name: Setup and cache dependencies
       uses: cyber-crypt-com/build-setup-action@master
