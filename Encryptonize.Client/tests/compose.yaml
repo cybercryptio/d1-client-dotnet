@@ -16,7 +16,7 @@ x-config: &config
 
 services:
   encryptonize-objects:
-    image: ghcr.io/cyber-crypt-com/encryptonize-objects:v0.1.8
+    image: ghcr.io/cyber-crypt-com/encryptonize-objects:v0.1.12
     container_name: encryptonize-objects
     environment:
       <<: *config
@@ -38,7 +38,7 @@ services:
       - objects
 
   encryptonize-core:
-    image: ghcr.io/cyber-crypt-com/encryptonize-core:v0.1.20
+    image: ghcr.io/cyber-crypt-com/encryptonize-core:v0.1.25
     container_name: encryptonize-core
     environment:
       <<: *config
@@ -53,7 +53,7 @@ services:
         condition: service_completed_successfully
     tty: true
     profiles:
-      - eaas
+      - core
 
   cockroachdb:
     image: cockroachdb/cockroach:v21.2.7

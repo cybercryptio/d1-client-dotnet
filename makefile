@@ -33,6 +33,6 @@ publish: ## Publish packages
 	@make -C Encryptonize.Client publish
 
 ##### Cleanup targets #####
-.PHONY: clean  ## Remove build artifacts
-clean :
+.PHONY: clean
+clean: ## Remove build artifacts
 	@make -C Encryptonize.Client clean
