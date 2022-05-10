@@ -8,6 +8,11 @@ help:  ## Display this help
 # Change shell to bash to allow sourcing of env variables
 SHELL := /bin/bash
 
+publishDir = ./artifacts/publish
+library = "$(publishDir)/Encryptonize.Client.dll"
+apiDocsDir = ../documentation/api
+apiSourceUrl = "https://github.com/cyber-crypt-com/encryptonize-client-dotnet/tree/master/Encryptonize.Client/src"
+
 ##### Files #####
 core_proto_path ?= ../../encryptonize-core/protobuf
 objects_proto_path ?= ../../encryptonize-objects/protobuf
@@ -73,15 +78,27 @@ docker-objects-tests-up: ## Start docker Objects test environment
 docker-objects-tests-down: ## Stop docker Objects test environment
 	docker-compose --profile objects -f tests/compose.yaml down -v
 
-.PHONY: pack
+.PHONY: nuget-pack
 pack: protos ## Pack the library
 	$(call check_defined, VERSION)
 	dotnet pack --output ./artifacts/ --configuration Release /p:Version=${VERSION}
 
-.PHONY: publish
-publish: pack ## Publish the NuGet package
+.PHONY: nuget-publish
+nuget-publish: nuget-pack ## Publish the NuGet package
 	$(call check_defined, PACKAGE_SOURCE, API_KEY)
 	dotnet nuget push ./artifacts/Encryptonize.Client.${VERSION}.nupkg --source "${PACKAGE_SOURCE}" --api-key "${API_KEY}"
+
+.PHONY: publish
+publish: ## Publish the library and its dependencies to a local directory
+	dotnet publish -o $(publishDir) --configuration Release ./src/
+
+.PHONY: apidocs
+apidocs: publish ## Generate API documentation
+	xmldocmd $(library) $(apiDocsDir) --source $(apiSourceUrl)
+
+.PHONY: apidocs-verify
+apidocs-verify: publish ## Verify API documentation is up-to-date
+	xmldocmd $(library) $(apiDocsDir) --source $(apiSourceUrl) --verify
 
 ##### Cleanup targets #####
 .PHONY: clean
