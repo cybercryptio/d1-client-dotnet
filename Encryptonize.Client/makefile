@@ -79,7 +79,7 @@ docker-objects-tests-down: ## Stop docker Objects test environment
 	docker-compose --profile objects -f tests/compose.yaml down -v
 
 .PHONY: nuget-pack
-pack: protos ## Pack the library
+nuget-pack: protos ## Pack the library
 	$(call check_defined, VERSION)
 	dotnet pack --output ./artifacts/ --configuration Release /p:Version=${VERSION}
 
