@@ -29,7 +29,7 @@ tests: ## Run all tests
 client-tests: ## Run Encryptonize client tests
 	@make -C Encryptonize.Client tests
 
-.PHONY: publish
+.PHONY: nuget-publish
 nuget-publish: ## Publish packages
 	@make -C Encryptonize.Client nuget-publish
 
