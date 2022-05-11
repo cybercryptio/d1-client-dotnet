@@ -15,6 +15,7 @@ export objects_proto_path ?= ../../encryptonize-objects/protobuf
 .PHONY: build
 build: # Build all clients
 	@make build-client
+	@make apidocs
 
 .PHONY: build-client
 build-client: ## Build Encryptonize client
@@ -29,8 +30,16 @@ client-tests: ## Run Encryptonize client tests
 	@make -C Encryptonize.Client tests
 
 .PHONY: publish
-publish: ## Publish packages
-	@make -C Encryptonize.Client publish
+nuget-publish: ## Publish packages
+	@make -C Encryptonize.Client nuget-publish
+
+.PHONY: apidocs
+apidocs: ## Generate API documentation
+	@make -C Encryptonize.Client apidocs
+
+.PHONY: apidocs-verify
+apidocs-verify: ## Verify API documentation is up-to-date
+	@make -C Encryptonize.Client apidocs-verify
 
 ##### Cleanup targets #####
 .PHONY: clean
