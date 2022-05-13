@@ -32,7 +32,9 @@ using Encryptonize.Client;
 var encryptonizeUrl = "https://localhost:9000";
 var encryptonizeUsername = "bd778920-f130-4a5c-b577-79d71bedae67";
 var encryptonizePassword = "Iy7ZH89rUj4H8dqagKUSqmkVOFULxghtgJR-rSreeVk";
-var client = new EncryptonizeClient(encryptonizeUrl, encryptonizeUsername, encryptonizePassword);
+var client = new EncryptonizeCoreClient(encryptonizeUrl, encryptonizeUsername, encryptonizePassword);
+// OR
+var client = new EncryptonizeObjectsClient(encryptonizeUrl, encryptonizeUsername, encryptonizePassword);
 ```
 
 Afterwards the client is ready to be used, and the different methods can be called. See the [API reference](#api-reference) for a description of all the available methods.

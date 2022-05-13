@@ -32,10 +32,11 @@ __check_defined = \
 
 ##### Build targets #####
 .PHONY: protos
-protos: ## Copy protos to build directory
+protos: ## Copy protos to build directory and cleanup files to avoid .NET build warnings
 	mkdir -p ./src/protos
 	cp $(core_proto_path)/*.proto ./src/protos
 	cp $(objects_proto_path)/*.proto ./src/protos
+	grep -r -l "///" ./src/protos | xargs sed -i 's/\/\/\//\/\//g'
 
 .PHONY: build
 build: protos ## Build

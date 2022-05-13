@@ -2,7 +2,7 @@
 namespace Encryptonize.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeClient.Store"/> or <see cref="IEncryptonizeClient.StoreAsync"/>.
+/// Response from <see cref="IEncryptonizeObjects.Store"/> or <see cref="IEncryptonizeObjects.StoreAsync"/>.
 /// </summary>
 public class StoreResponse {
     /// <summary>

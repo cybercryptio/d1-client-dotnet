@@ -2,7 +2,7 @@
 namespace Encryptonize.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeClient.CreateGroup"/> or <see cref="IEncryptonizeClient.CreateGroupAsync"/>.
+/// Response from <see cref="IEncryptonizeBase.CreateGroup"/> or <see cref="IEncryptonizeBase.CreateGroupAsync"/>.
 /// </summary>
 public class CreateGroupResponse {
     /// <summary>

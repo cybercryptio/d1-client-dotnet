@@ -1,21 +1,16 @@
 // Copyright 2020-2022 CYBERCRYPT
 using System.Security.Cryptography.X509Certificates;
-using System.Runtime.CompilerServices;
 using Grpc.Net.Client;
 using Grpc.Core;
-using Google.Protobuf;
-using Encryptonize.Client;
 using Encryptonize.Client.Utils;
 using Encryptonize.Client.Response;
-
-[assembly: InternalsVisibleTo("Encryptonize.Client.Tests")]
 
 namespace Encryptonize.Client;
 
 /// <summary>
 /// Interface for Encryption service client
 /// </summary>
-public interface IEncryptonizeClient
+public interface IEncryptonizeBase
 {
     /// <summary>
     /// Gets or sets the username used to authenticate with the Encryptonize server.
@@ -29,6 +24,14 @@ public interface IEncryptonizeClient
     /// When no access token is cached, the value is <c>DateTime.MinValue.AddMinutes(1)</c>
     /// </remarks>
     DateTime ExpiryTime { get; }
+
+    /// <summary>
+    /// Login to the Encryptonize service.
+    /// </summary>
+    void Login(string user, string password);
+
+    /// <inheritdoc cref="Login"/>
+    Task LoginAsync(string user, string password);
 
     /// <summary>
     /// Give a group permission to access an object.
@@ -71,38 +74,6 @@ public interface IEncryptonizeClient
     Task<CreateUserResponse> CreateUserAsync(IList<Scope> scopes);
 
     /// <summary>
-    /// Decrypt an encrypted object.
-    /// </summary>
-    /// <param name="objectId">The ID of the object.</param>
-    /// <param name="ciphertext">The ciphertext.</param>
-    /// <param name="associatedData">The associated data attached to the data.</param>
-    /// <returns>An instance of <see cref="DecryptResponse" />.</returns>
-    DecryptResponse Decrypt(string objectId, byte[] ciphertext, byte[] associatedData);
-
-    /// <inheritdoc cref="Decrypt"/>
-    Task<DecryptResponse> DecryptAsync(string objectId, byte[] ciphertext, byte[] associatedData);
-
-    /// <summary>
-    /// Delete data encrypted in the storage attached to Encryptonize.
-    /// </summary>
-    /// <param name="objectId">The ID of the object.</param>
-    void Delete(string objectId);
-
-    /// <inheritdoc cref="Delete"/>
-    Task DeleteAsync(string objectId);
-
-    /// <summary>
-    /// Encrypt an object with associated data.
-    /// </summary>
-    /// <param name="plaintext">The plaintext to encrypt.</param>
-    /// <param name="associatedData">The attached associated data.</param>
-    /// <returns>An instance of <see cref="EncryptResponse" />.</returns>
-    EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData);
-
-    /// <inheritdoc cref="Encrypt"/>
-    Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData);
-
-    /// <summary>
     /// Get the permissions applied to an object.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
@@ -111,14 +82,6 @@ public interface IEncryptonizeClient
 
     /// <inheritdoc cref="GetPermissions"/>
     Task<GetPermissionsResponse> GetPermissionsAsync(string objectId);
-
-    /// <summary>
-    /// Login to the Encryptonize service.
-    /// </summary>
-    void Login(string user, string password);
-
-    /// <inheritdoc cref="Login"/>
-    Task LoginAsync(string user, string password);
 
     /// <summary>
     /// Revoke a groups permission to access an object.
@@ -150,38 +113,6 @@ public interface IEncryptonizeClient
     Task RemoveUserFromGroupAsync(string userId, string groupId);
 
     /// <summary>
-    /// Retreive some data encrypted in the storage attached to Encryptonize.
-    /// </summary>
-    /// <param name="objectId">The ID of the object.</param>
-    /// <returns>An instance of <see cref="RetrieveResponse" />.</returns>
-    RetrieveResponse Retrieve(string objectId);
-
-    /// <inheritdoc cref="Retrieve"/>
-    Task<RetrieveResponse> RetrieveAsync(string objectId);
-
-    /// <summary>
-    /// Store some data encrypted in the storage attached to Encryptonize.
-    /// </summary>
-    /// <param name="plaintext">The plaintext to store.</param>
-    /// <param name="associatedData">The attached associated data.</param>
-    /// <returns>An instance of <see cref="StoreResponse" />.</returns>
-    StoreResponse Store(byte[] plaintext, byte[] associatedData);
-
-    /// <inheritdoc cref="Store"/>
-    Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData);
-
-    /// <summary>
-    /// Update some data stored in the storage attached to Encryptonize.
-    /// </summary>
-    /// <param name="objectId">The ID of the object.</param>
-    /// <param name="plaintext">The plaintext to store.</param>
-    /// <param name="associatedData">The attached associated data.</param>
-    void Update(string objectId, byte[] plaintext, byte[] associatedData);
-
-    /// <inheritdoc cref="Update"/>
-    Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData);
-
-    /// <summary>
     /// Get the version of the Encryptonize server.
     /// </summary>
     /// <returns>An instance of <see cref="VersionResponse"/>.</returns>
@@ -197,10 +128,20 @@ public interface IEncryptonizeClient
 /// <remarks>
 /// Login is done on-demand and the access token is automatically refreshed when it expires.
 /// </remarks>
-public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeClient
+public abstract class EncryptonizeBaseClient : IDisposable, IAsyncDisposable, IEncryptonizeBase
 {
     private string password = string.Empty;
     internal string accessToken = string.Empty;
+
+    /// <summary>
+    /// Grpc channel used for communication.
+    /// </summary>
+    protected GrpcChannel channel;
+
+    /// <summary>
+    /// Request headers.
+    /// </summary>
+    protected Metadata requestHeaders = new Metadata();
 
     /// <inheritdoc />
     public string User { get; private set; }
@@ -208,23 +149,19 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
     /// <inheritdoc />
     public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
 
-    private Metadata requestHeaders = new Metadata();
-    private GrpcChannel channel;
     private Protobuf.Version.VersionClient versionClient;
     private Protobuf.Authn.AuthnClient authnClient;
     private Protobuf.Authz.AuthzClient authzClient;
-    private Protobuf.Core.CoreClient coreClient;
-    private Protobuf.Objects.ObjectsClient objectsClient;
 
     /// <summary>
-    /// Initialize a new instance of the <see cref="EncryptonizeClient"/> class.
+    /// Initialize a new instance of the <see cref="EncryptonizeBaseClient"/> class.
     /// </summary>
     /// <param name="endpoint">The endpoint of the Encryptonize server.</param>
     /// <param name="username">The username used to authenticate with the Encryptonize server.</param>
     /// <param name="password">The password used to authenticate with the Encryptonize server.</param>
     /// <param name="certPath">The optional path to the certificate used to authenticate with the Encryptonize server when mTLS is enabled.</param>
-    /// <returns>A new instance of the <see cref="EncryptonizeClient"/> class.</returns>
-    public EncryptonizeClient(string endpoint, string username, string password, string certPath = "")
+    /// <returns>A new instance of the <see cref="EncryptonizeBaseClient"/> class.</returns>
+    protected EncryptonizeBaseClient(string endpoint, string username, string password, string certPath = "")
     {
         if (string.IsNullOrWhiteSpace(certPath))
         {
@@ -243,8 +180,6 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         versionClient = new(channel);
         authnClient = new(channel);
         authzClient = new(channel);
-        coreClient = new(channel);
-        objectsClient = new(channel);
 
         User = username;
         this.password = password;
@@ -291,7 +226,8 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         await channel.ShutdownAsync().ConfigureAwait(false);
     }
 
-    private async Task RefreshTokenAsync()
+    /// <inheritdoc cref="RefreshToken" />
+    protected async Task RefreshTokenAsync()
     {
         if (DateTime.Now > ExpiryTime.AddMinutes(-1))
         {
@@ -299,7 +235,10 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
         }
     }
 
-    private void RefreshToken()
+    /// <summary>
+    /// Refresh the token.
+    /// </summary>
+    protected void RefreshToken()
     {
         if (DateTime.Now > ExpiryTime.AddMinutes(-1))
         {
@@ -476,163 +415,6 @@ public class EncryptonizeClient : IDisposable, IAsyncDisposable, IEncryptonizeCl
 
         authnClient.RemoveUserFromGroup(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId },
             requestHeaders);
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-    //                              Encryption                             //
-    /////////////////////////////////////////////////////////////////////////
-
-    /// <inheritdoc />
-    public async Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await coreClient.EncryptAsync(new Protobuf.EncryptRequest
-        {
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders).ConfigureAwait(false);
-
-        return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /// <inheritdoc />
-    public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData)
-    {
-        RefreshToken();
-
-        var response = coreClient.Encrypt(new Protobuf.EncryptRequest
-        {
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders);
-
-        return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /// <inheritdoc />
-    public async Task<DecryptResponse> DecryptAsync(string objectId, byte[] ciphertext, byte[] associatedData)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await coreClient.DecryptAsync(new Protobuf.DecryptRequest
-        {
-            ObjectId = objectId,
-            Ciphertext = ByteString.CopyFrom(ciphertext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders)
-            .ConfigureAwait(false);
-
-        return new DecryptResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /// <inheritdoc />
-    public DecryptResponse Decrypt(string objectId, byte[] ciphertext, byte[] associatedData)
-    {
-        RefreshToken();
-
-        var response = coreClient.Decrypt(new Protobuf.DecryptRequest
-        {
-            ObjectId = objectId,
-            Ciphertext = ByteString.CopyFrom(ciphertext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders);
-
-        return new DecryptResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-    //                               Storage                               //
-    /////////////////////////////////////////////////////////////////////////
-
-    /// <inheritdoc />
-    public async Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await objectsClient.StoreAsync(new Protobuf.StoreRequest
-        {
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders).ConfigureAwait(false);
-
-        return new StoreResponse(response.ObjectId);
-    }
-
-    /// <inheritdoc />
-    public StoreResponse Store(byte[] plaintext, byte[] associatedData)
-    {
-        RefreshToken();
-
-        var response = objectsClient.Store(new Protobuf.StoreRequest
-        {
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders);
-
-        return new StoreResponse(response.ObjectId);
-    }
-
-    /// <inheritdoc />
-    public async Task<RetrieveResponse> RetrieveAsync(string objectId)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await objectsClient.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
-
-        return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /// <inheritdoc />
-    public RetrieveResponse Retrieve(string objectId)
-    {
-        RefreshToken();
-
-        var response = objectsClient.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders);
-
-        return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /// <inheritdoc />
-    public async Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await objectsClient.UpdateAsync(new Protobuf.UpdateRequest
-        {
-            ObjectId = objectId,
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public void Update(string objectId, byte[] plaintext, byte[] associatedData)
-    {
-        RefreshToken();
-
-        objectsClient.Update(new Protobuf.UpdateRequest
-        {
-            ObjectId = objectId,
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders);
-    }
-
-    /// <inheritdoc />
-    public async Task DeleteAsync(string objectId)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await objectsClient.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public void Delete(string objectId)
-    {
-        RefreshToken();
-
-        objectsClient.Delete(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders);
     }
 
     /////////////////////////////////////////////////////////////////////////

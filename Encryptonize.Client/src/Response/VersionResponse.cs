@@ -2,7 +2,7 @@
 namespace Encryptonize.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeClient.Version"/> or <see cref="IEncryptonizeClient.VersionAsync"/>.
+/// Response from <see cref="IEncryptonizeBase.Version"/> or <see cref="IEncryptonizeBase.VersionAsync"/>.
 /// </summary>
 public class VersionResponse {
     /// <summary>

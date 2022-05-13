@@ -23,7 +23,7 @@ public class EncryptonizeClientTest {
 
     [Fact]
     public async void TestClientConnectionAsync() {
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         await client.VersionAsync().ConfigureAwait(false);
 
@@ -32,7 +32,7 @@ public class EncryptonizeClientTest {
 
     [Fact]
     public async void TestUserManagementAsync() {
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         var createGroupResponse = await client.CreateGroupAsync(allScopes).ConfigureAwait(false);
@@ -51,7 +51,7 @@ public class EncryptonizeClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         await client.LoginAsync(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
@@ -73,7 +73,7 @@ public class EncryptonizeClientTest {
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
         var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeObjectsClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         await client.LoginAsync(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
@@ -102,7 +102,7 @@ public class EncryptonizeClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeObjectsClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         await client.LoginAsync(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
@@ -123,7 +123,7 @@ public class EncryptonizeClientTest {
 
     [Fact]
     public async void TestClientRefreshTokenAsync() {
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
         
         var initialAccessToken = client.accessToken;
 
@@ -139,7 +139,7 @@ public class EncryptonizeClientTest {
 
     [Fact]
     public void TestClientConnection() {
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         client.Version();
 
@@ -148,7 +148,7 @@ public class EncryptonizeClientTest {
 
     [Fact]
     public void TestUserManagement() {
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = client.CreateUser(allScopes);
         var createGroupResponse = client.CreateGroup(allScopes);
@@ -167,7 +167,7 @@ public class EncryptonizeClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = client.CreateUser(allScopes);
         client.Login(createUserResponse.UserId, createUserResponse.Password);
@@ -188,7 +188,7 @@ public class EncryptonizeClientTest {
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
         var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeObjectsClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = client.CreateUser(allScopes);
         client.Login(createUserResponse.UserId, createUserResponse.Password);
@@ -216,7 +216,7 @@ public class EncryptonizeClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeObjectsClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
 
         var createUserResponse = client.CreateUser(allScopes);
         client.Login(createUserResponse.UserId, createUserResponse.Password);
@@ -236,7 +236,7 @@ public class EncryptonizeClientTest {
 
     [Fact]
     public void TestClientRefreshToken() {
-        var client = new EncryptonizeClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
+        var client = new EncryptonizeCoreClient(encryptonizeEndpoint, encryptonizeUser, encryptonizePassword, encryptonizeClientCert);
         
         var initialAccessToken = client.accessToken;
 
