@@ -64,19 +64,3 @@ E2E_TEST_CERT = <Client certificate>
 E2E_TEST_UID  = <Encryptonize User ID>
 E2E_TEST_PASS = <Encryptonize User Password>
 ```
-
-To run the tests:
-
-```bash
-dotnet test tests/Encryptonize.Client.Tests/Encryptonize.Client.Tests.csproj
-```
-
-To build and run a Dockerized instance of the Encryptonize Service and run the tests against it you can use the make target from [`encryptonize-premium`](https://github.com/cyber-crypt-com/encryptonize-premium/blob/master/encryption-service/makefile):
-
-```bash
-make dotnet-tests
-```
-
-## Limitations
-
-- Currently the library does not support any of the premium features
