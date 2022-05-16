@@ -32,10 +32,14 @@ __check_defined = \
 
 ##### Build targets #####
 .PHONY: protos
-protos: ## Copy protos to build directory
+protos: ## Copy protos to build directory and cleanup files to avoid .NET build warnings
 	mkdir -p ./src/protos
 	cp $(core_proto_path)/*.proto ./src/protos
 	cp $(objects_proto_path)/*.proto ./src/protos
+	# For some reason the documentation comments doesn't like the comments in the protobuf files
+	# that starts with '///', instead it causes a lot of compilation warnings. Changing comments to '//'
+	# fixes the issue
+	grep -r -l "///" ./src/protos | xargs sed -i 's/\/\/\//\/\//g'
 
 .PHONY: build
 build: protos ## Build

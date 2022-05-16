@@ -2,7 +2,7 @@
 namespace Encryptonize.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeClient.CreateUser"/> or <see cref="IEncryptonizeClient.CreateUserAsync"/>.
+/// Response from <see cref="IEncryptonizeBase.CreateUser"/> or <see cref="IEncryptonizeBase.CreateUserAsync"/>.
 /// </summary>
 public class CreateUserResponse {
     /// <summary>

@@ -2,7 +2,7 @@
 namespace Encryptonize.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeClient.GetPermissions"/> or <see cref="IEncryptonizeClient.GetPermissionsAsync"/>.
+/// Response from <see cref="IEncryptonizeBase.GetPermissions"/> or <see cref="IEncryptonizeBase.GetPermissionsAsync"/>.
 /// </summary>
 public class GetPermissionsResponse {
     /// <summary>
