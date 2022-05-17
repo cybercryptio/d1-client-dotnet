@@ -1,6 +1,6 @@
 # StoreResponse class
 
-Response from [`Store`](../Encryptonize.Client/IEncryptonizeClient/Store.md) or [`StoreAsync`](../Encryptonize.Client/IEncryptonizeClient/StoreAsync.md).
+Response from [`Store`](../Encryptonize.Client/IEncryptonizeObjects/Store.md) or [`StoreAsync`](../Encryptonize.Client/IEncryptonizeObjects/StoreAsync.md).
 
 ```csharp
 public class StoreResponse

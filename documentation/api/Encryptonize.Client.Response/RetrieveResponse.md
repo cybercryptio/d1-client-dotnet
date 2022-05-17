@@ -1,6 +1,6 @@
 # RetrieveResponse class
 
-Response from [`Retrieve`](../Encryptonize.Client/IEncryptonizeClient/Retrieve.md) or [`RetrieveAsync`](../Encryptonize.Client/IEncryptonizeClient/RetrieveAsync.md).
+Response from [`Retrieve`](../Encryptonize.Client/IEncryptonizeObjects/Retrieve.md) or [`RetrieveAsync`](../Encryptonize.Client/IEncryptonizeObjects/RetrieveAsync.md).
 
 ```csharp
 public class RetrieveResponse

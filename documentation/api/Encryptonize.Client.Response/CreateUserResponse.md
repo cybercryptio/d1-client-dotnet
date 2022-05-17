@@ -1,6 +1,6 @@
 # CreateUserResponse class
 
-Response from [`CreateUser`](../Encryptonize.Client/IEncryptonizeClient/CreateUser.md) or [`CreateUserAsync`](../Encryptonize.Client/IEncryptonizeClient/CreateUserAsync.md).
+Response from [`CreateUser`](../Encryptonize.Client/IEncryptonizeBase/CreateUser.md) or [`CreateUserAsync`](../Encryptonize.Client/IEncryptonizeBase/CreateUserAsync.md).
 
 ```csharp
 public class CreateUserResponse
