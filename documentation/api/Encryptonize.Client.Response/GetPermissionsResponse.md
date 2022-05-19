@@ -1,6 +1,6 @@
 # GetPermissionsResponse class
 
-Response from [`GetPermissions`](../Encryptonize.Client/IEncryptonizeClient/GetPermissions.md) or [`GetPermissionsAsync`](../Encryptonize.Client/IEncryptonizeClient/GetPermissionsAsync.md).
+Response from [`GetPermissions`](../Encryptonize.Client/IEncryptonizeBase/GetPermissions.md) or [`GetPermissionsAsync`](../Encryptonize.Client/IEncryptonizeBase/GetPermissionsAsync.md).
 
 ```csharp
 public class GetPermissionsResponse

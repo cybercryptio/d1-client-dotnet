@@ -1,6 +1,6 @@
 # VersionResponse class
 
-Response from [`Version`](../Encryptonize.Client/IEncryptonizeClient/Version.md) or [`VersionAsync`](../Encryptonize.Client/IEncryptonizeClient/VersionAsync.md).
+Response from [`Version`](../Encryptonize.Client/IEncryptonizeBase/Version.md) or [`VersionAsync`](../Encryptonize.Client/IEncryptonizeBase/VersionAsync.md).
 
 ```csharp
 public class VersionResponse

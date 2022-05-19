@@ -1,6 +1,6 @@
 # DecryptResponse class
 
-Response from [`Decrypt`](../Encryptonize.Client/IEncryptonizeClient/Decrypt.md) or [`DecryptAsync`](../Encryptonize.Client/IEncryptonizeClient/DecryptAsync.md).
+Response from [`Decrypt`](../Encryptonize.Client/IEncryptonizeCore/Decrypt.md) or [`DecryptAsync`](../Encryptonize.Client/IEncryptonizeCore/DecryptAsync.md).
 
 ```csharp
 public class DecryptResponse

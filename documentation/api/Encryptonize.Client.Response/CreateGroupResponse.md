@@ -1,6 +1,6 @@
 # CreateGroupResponse class
 
-Response from [`CreateGroup`](../Encryptonize.Client/IEncryptonizeClient/CreateGroup.md) or [`CreateGroupAsync`](../Encryptonize.Client/IEncryptonizeClient/CreateGroupAsync.md).
+Response from [`CreateGroup`](../Encryptonize.Client/IEncryptonizeBase/CreateGroup.md) or [`CreateGroupAsync`](../Encryptonize.Client/IEncryptonizeBase/CreateGroupAsync.md).
 
 ```csharp
 public class CreateGroupResponse
