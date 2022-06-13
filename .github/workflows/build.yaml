@@ -26,6 +26,7 @@ jobs:
         repository: cybercryptio/d1-service-generic
         path: d1-service-generic
         ref: v0.1.25
+        token: ${{ secrets.CYBOT_TOKEN }}
 
     - name: Check out repository
       uses: actions/checkout@v2
@@ -33,6 +34,7 @@ jobs:
         repository: cybercryptio/d1-service-storage
         path: d1-service-storage
         ref: v0.1.12
+        token: ${{ secrets.CYBOT_TOKEN }}
 
     - name: Setup and cache dependencies
       uses: cybercryptio/build-setup-action@master
