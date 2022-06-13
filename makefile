@@ -8,8 +8,8 @@ help:  ## Display this help
 SHELL := /bin/bash
 
 ##### Files #####
-export core_proto_path ?= ../../encryptonize-core/protobuf
-export objects_proto_path ?= ../../encryptonize-objects/protobuf
+export generic_proto_path ?= ../../d1-service-generic/protobuf
+export storage_proto_path ?= ../../d1-service-storage/protobuf
 
 ##### Build targets #####
 .PHONY: build
