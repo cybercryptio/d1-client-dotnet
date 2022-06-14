@@ -23,19 +23,21 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
       with:
-        repository: cyber-crypt-com/encryptonize-core
-        path: encryptonize-core
+        repository: cybercryptio/d1-service-generic
+        path: d1-service-generic
         ref: v0.1.25
+        token: ${{ secrets.CYBOT_TOKEN }}
 
     - name: Check out repository
       uses: actions/checkout@v2
       with:
-        repository: cyber-crypt-com/encryptonize-objects
-        path: encryptonize-objects
+        repository: cybercryptio/d1-service-storage
+        path: d1-service-storage
         ref: v0.1.12
+        token: ${{ secrets.CYBOT_TOKEN }}
 
     - name: Setup and cache dependencies
-      uses: cyber-crypt-com/build-setup-action@master
+      uses: cybercryptio/build-setup-action@master
 
     - name: Install XmlDocMarkdown
       run: dotnet tool install xmldocmd -g
@@ -72,7 +74,7 @@ jobs:
     - name: Login into package feed
       if: github.ref_name == 'master'
       run: |
-        dotnet nuget add source --username cybot-cc --password ${{ secrets.CYBOT_TOKEN }} --store-password-in-clear-text --name ${{ env.PACKAGE_SOURCE }} "https://nuget.pkg.github.com/cyber-crypt-com/index.json"
+        dotnet nuget add source --username cybot-cc --password ${{ secrets.CYBOT_TOKEN }} --store-password-in-clear-text --name ${{ env.PACKAGE_SOURCE }} "https://nuget.pkg.github.com/cybercryptio/index.json"
 
     - name: Publish
       if: github.ref_name == 'master'

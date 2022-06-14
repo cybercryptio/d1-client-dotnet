@@ -11,11 +11,10 @@ SHELL := /bin/bash
 publishDir = ./artifacts/publish
 library = "$(publishDir)/Encryptonize.Client.dll"
 apiDocsDir = ../documentation/api
-apiSourceUrl = "https://github.com/cyber-crypt-com/encryptonize-client-dotnet/tree/master/Encryptonize.Client/src"
 
 ##### Files #####
-core_proto_path ?= ../../encryptonize-core/protobuf
-objects_proto_path ?= ../../encryptonize-objects/protobuf
+generic_proto_path ?= ../../d1-service-generic/protobuf
+storage_proto_path ?= ../../d1-service-storage/protobuf
 
 # Check that given variables are set and all have non-empty values,
 # die with an error otherwise.
@@ -34,8 +33,8 @@ __check_defined = \
 .PHONY: protos
 protos: ## Copy protos to build directory and cleanup files to avoid .NET build warnings
 	mkdir -p ./src/protos
-	cp $(core_proto_path)/*.proto ./src/protos
-	cp $(objects_proto_path)/*.proto ./src/protos
+	cp $(generic_proto_path)/*.proto ./src/protos
+	cp $(storage_proto_path)/*.proto ./src/protos
 	# For some reason the documentation comments doesn't like the comments in the protobuf files
 	# that starts with '///', instead it causes a lot of compilation warnings. Changing comments to '//'
 	# fixes the issue
@@ -98,7 +97,7 @@ publish: ## Publish the library and its dependencies to a local directory
 
 .PHONY: apidocs
 apidocs: publish ## Generate API documentation
-	xmldocmd $(library) $(apiDocsDir) --source $(apiSourceUrl)
+	xmldocmd $(library) $(apiDocsDir)
 
 .PHONY: apidocs-verify
 apidocs-verify: publish ## Verify API documentation is up-to-date
