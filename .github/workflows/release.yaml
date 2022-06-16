@@ -2,10 +2,10 @@ name: .NET build
 
 on:
   push:
-    branches:
+    branches-ignore:
       - '**'
-    tags-ignore:
-      - '**'
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 env:
   PACKAGE_SOURCE: github
@@ -23,7 +23,6 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: encryptonize-client-dotnet
-        fetch-depth: 0
 
     - name: Check out repository
       uses: actions/checkout@v2
@@ -50,40 +49,12 @@ jobs:
     - name: Build
       run: make build
 
-    - name: Test
-      run: make tests
-
-    - name: Verify API docs are up-to-date
-      run: make apidocs-verify
-
-    - name: Install GitVersion
-      if: github.ref_name == 'master'
-      uses: gittools/actions/gitversion/setup@v0.9.13
-      with:
-        versionSpec: '5.x'
-
-    - name: Determine Version
-      if: github.ref_name == 'master'
-      id: gitversion
-      uses: gittools/actions/gitversion/execute@v0.9.13
-      with:
-        targetPath: encryptonize-client-dotnet
-        additionalArguments: '/overrideconfig mode=ContinuousDeployment'
-
-    - name: Create tag
-      if: github.ref_name == 'master'
-      run: |
-        git tag ${{ steps.gitversion.outputs.semVer }}
-        git push origin ${{ steps.gitversion.outputs.semVer }}
-
     - name: Login into package feed
-      if: github.ref_name == 'master'
       run: |
         dotnet nuget add source --username cybot-cc --password ${{ secrets.CYBOT_TOKEN }} --store-password-in-clear-text --name ${{ env.PACKAGE_SOURCE }} "https://nuget.pkg.github.com/cybercryptio/index.json"
 
     - name: Publish
-      if: github.ref_name == 'master'
       run: make nuget-publish
       env:
         API_KEY: ${{ secrets.CYBOT_TOKEN }}
-        VERSION: ${{ steps.gitversion.outputs.semVer }}
+        VERSION: ${{ github.ref_name }}
