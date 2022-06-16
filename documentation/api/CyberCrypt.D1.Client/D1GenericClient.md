@@ -1,6 +1,6 @@
 # D1GenericClient class
 
-Client for connection to an D1 Generic server.
+Client for connection to a D1 Generic server.
 
 ```csharp
 public class D1GenericClient : D1BaseClient, ID1Generic

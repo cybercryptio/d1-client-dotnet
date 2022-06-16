@@ -1,6 +1,6 @@
 # D1BaseClient class
 
-Client for connection to an D1 server.
+Client for connection to a D1 server.
 
 ```csharp
 public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable

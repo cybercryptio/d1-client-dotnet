@@ -53,7 +53,7 @@ public interface ID1Storage : ID1Base
 }
 
 /// <summary>
-/// Client for connection to an D1 Objects server.
+/// Client for connection to a D1 Objects server.
 /// </summary>
 /// <remarks>
 /// Login is done on-demand and the access token is automatically refreshed when it expires.

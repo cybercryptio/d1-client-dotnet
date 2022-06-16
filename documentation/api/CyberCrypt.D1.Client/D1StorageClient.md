@@ -1,6 +1,6 @@
 # D1StorageClient class
 
-Client for connection to an D1 Objects server.
+Client for connection to a D1 Objects server.
 
 ```csharp
 public class D1StorageClient : D1BaseClient, ID1Storage

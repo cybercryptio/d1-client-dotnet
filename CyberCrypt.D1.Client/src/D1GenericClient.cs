@@ -38,7 +38,7 @@ public interface ID1Generic : ID1Base
 }
 
 /// <summary>
-/// Client for connection to an D1 Generic server.
+/// Client for connection to a D1 Generic server.
 /// </summary>
 /// <remarks>
 /// Login is done on-demand and the access token is automatically refreshed when it expires.
