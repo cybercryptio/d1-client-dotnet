@@ -15,9 +15,9 @@ x-config: &config
   ECTNZ_OBJECTSTORAGE_KEY: &storage_key "storagekey"
 
 services:
-  encryptonize-objects:
-    image: ghcr.io/cyber-crypt-com/encryptonize-objects:v0.1.12
-    container_name: encryptonize-objects
+  d1-service-storage:
+    image: ghcr.io/cyber-crypt-com/d1-service-storage:v0.1.12
+    container_name: d1-service-storage
     environment:
       <<: *config
     volumes:
@@ -37,9 +37,9 @@ services:
     profiles:
       - objects
 
-  encryptonize-core:
-    image: ghcr.io/cyber-crypt-com/encryptonize-core:v0.1.25
-    container_name: encryptonize-core
+  d1-service-generic:
+    image: ghcr.io/cyber-crypt-com/d1-service-generic:v0.1.25
+    container_name: d1-service-generic
     environment:
       <<: *config
     volumes:
@@ -78,8 +78,8 @@ services:
     entrypoint: |
       /bin/sh -c "
       echo 'CREATE DATABASE IF NOT EXISTS auth;' | $${CRDB} sql --insecure;
-      echo 'CREATE USER IF NOT EXISTS encryptonize;' | $${CRDB} sql --insecure;
-      echo 'GRANT ALL ON DATABASE auth TO encryptonize;' | $${CRDB} sql --insecure;
+      echo 'CREATE USER IF NOT EXISTS cybercryptd1;' | $${CRDB} sql --insecure;
+      echo 'GRANT ALL ON DATABASE auth TO cybercryptd1;' | $${CRDB} sql --insecure;
       "
     depends_on:
       cockroachdb:

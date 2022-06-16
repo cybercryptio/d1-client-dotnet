@@ -1,8 +1,8 @@
 // Copyright 2020-2022 CYBERCRYPT
-namespace Encryptonize.Client.Response;
+namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeObjects.Store"/> or <see cref="IEncryptonizeObjects.StoreAsync"/>.
+/// Response from <see cref="ID1Storage.Store"/> or <see cref="ID1Storage.StoreAsync"/>.
 /// </summary>
 public class StoreResponse {
     /// <summary>

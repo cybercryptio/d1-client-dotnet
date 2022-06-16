@@ -1,8 +1,8 @@
 // Copyright 2020-2022 CYBERCRYPT
-namespace Encryptonize.Client.Response;
+namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeBase.GetPermissions"/> or <see cref="IEncryptonizeBase.GetPermissionsAsync"/>.
+/// Response from <see cref="ID1Base.GetPermissions"/> or <see cref="ID1Base.GetPermissionsAsync"/>.
 /// </summary>
 public class GetPermissionsResponse {
     /// <summary>

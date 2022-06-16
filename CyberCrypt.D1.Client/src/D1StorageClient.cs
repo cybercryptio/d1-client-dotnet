@@ -1,16 +1,16 @@
 // Copyright 2020-2022 CYBERCRYPT
 using Google.Protobuf;
-using Encryptonize.Client.Response;
+using CyberCrypt.D1.Client.Response;
 
-namespace Encryptonize.Client;
+namespace CyberCrypt.D1.Client;
 
 /// <summary>
 /// Interface for Encryption Objects service client
 /// </summary>
-public interface IEncryptonizeObjects : IEncryptonizeBase
+public interface ID1Storage : ID1Base
 {
     /// <summary>
-    /// Delete data encrypted in the storage attached to Encryptonize.
+    /// Delete data encrypted in the storage attached to D1.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
     void Delete(string objectId);
@@ -19,7 +19,7 @@ public interface IEncryptonizeObjects : IEncryptonizeBase
     Task DeleteAsync(string objectId);
 
     /// <summary>
-    /// Retreive some data encrypted in the storage attached to Encryptonize.
+    /// Retreive some data encrypted in the storage attached to D1.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
     /// <returns>An instance of <see cref="RetrieveResponse" />.</returns>
@@ -29,7 +29,7 @@ public interface IEncryptonizeObjects : IEncryptonizeBase
     Task<RetrieveResponse> RetrieveAsync(string objectId);
 
     /// <summary>
-    /// Store some data encrypted in the storage attached to Encryptonize.
+    /// Store some data encrypted in the storage attached to D1.
     /// </summary>
     /// <param name="plaintext">The plaintext to store.</param>
     /// <param name="associatedData">The attached associated data.</param>
@@ -40,7 +40,7 @@ public interface IEncryptonizeObjects : IEncryptonizeBase
     Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData);
 
     /// <summary>
-    /// Update some data stored in the storage attached to Encryptonize.
+    /// Update some data stored in the storage attached to D1.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
     /// <param name="plaintext">The plaintext to store.</param>
@@ -52,24 +52,24 @@ public interface IEncryptonizeObjects : IEncryptonizeBase
 }
 
 /// <summary>
-/// Client for connection to an Encryptonize Objects server.
+/// Client for connection to an D1 Objects server.
 /// </summary>
 /// <remarks>
 /// Login is done on-demand and the access token is automatically refreshed when it expires.
 /// </remarks>
-public class EncryptonizeObjectsClient : EncryptonizeBaseClient, IEncryptonizeObjects
+public class D1StorageClient : D1BaseClient, ID1Storage
 {
     private Protobuf.Objects.ObjectsClient objectsClient;
 
     /// <summary>
-    /// Initialize a new instance of the <see cref="EncryptonizeObjectsClient"/> class.
+    /// Initialize a new instance of the <see cref="D1StorageClient"/> class.
     /// </summary>
-    /// <param name="endpoint">The endpoint of the Encryptonize server.</param>
-    /// <param name="username">The username used to authenticate with the Encryptonize server.</param>
-    /// <param name="password">The password used to authenticate with the Encryptonize server.</param>
-    /// <param name="certPath">The optional path to the certificate used to authenticate with the Encryptonize server when mTLS is enabled.</param>
-    /// <returns>A new instance of the <see cref="EncryptonizeObjectsClient"/> class.</returns>
-    public EncryptonizeObjectsClient(string endpoint, string username, string password, string certPath = "")
+    /// <param name="endpoint">The endpoint of the D1 server.</param>
+    /// <param name="username">The username used to authenticate with the D1 server.</param>
+    /// <param name="password">The password used to authenticate with the D1 server.</param>
+    /// <param name="certPath">The optional path to the certificate used to authenticate with the D1 server when mTLS is enabled.</param>
+    /// <returns>A new instance of the <see cref="D1StorageClient"/> class.</returns>
+    public D1StorageClient(string endpoint, string username, string password, string certPath = "")
         : base(endpoint, username, password, certPath)
     {
         objectsClient = new(channel);

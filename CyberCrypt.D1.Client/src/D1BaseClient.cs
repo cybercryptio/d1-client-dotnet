@@ -2,18 +2,18 @@
 using System.Security.Cryptography.X509Certificates;
 using Grpc.Net.Client;
 using Grpc.Core;
-using Encryptonize.Client.Utils;
-using Encryptonize.Client.Response;
+using CyberCrypt.D1.Client.Utils;
+using CyberCrypt.D1.Client.Response;
 
-namespace Encryptonize.Client;
+namespace CyberCrypt.D1.Client;
 
 /// <summary>
 /// Interface for Encryption service client
 /// </summary>
-public interface IEncryptonizeBase
+public interface ID1Base
 {
     /// <summary>
-    /// Gets or sets the username used to authenticate with the Encryptonize server.
+    /// Gets or sets the username used to authenticate with the D1 server.
     /// </summary>
     string User { get; }
 
@@ -26,7 +26,7 @@ public interface IEncryptonizeBase
     DateTime ExpiryTime { get; }
 
     /// <summary>
-    /// Login to the Encryptonize service.
+    /// Login to the D1 service.
     /// </summary>
     void Login(string user, string password);
 
@@ -113,7 +113,7 @@ public interface IEncryptonizeBase
     Task RemoveUserFromGroupAsync(string userId, string groupId);
 
     /// <summary>
-    /// Get the version of the Encryptonize server.
+    /// Get the version of the D1 server.
     /// </summary>
     /// <returns>An instance of <see cref="VersionResponse"/>.</returns>
     VersionResponse Version();
@@ -123,12 +123,12 @@ public interface IEncryptonizeBase
 }
 
 /// <summary>
-/// Client for connection to an Encryptonize server.
+/// Client for connection to an D1 server.
 /// </summary>
 /// <remarks>
 /// Login is done on-demand and the access token is automatically refreshed when it expires.
 /// </remarks>
-public abstract class EncryptonizeBaseClient : IDisposable, IAsyncDisposable, IEncryptonizeBase
+public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 {
     private string password = string.Empty;
     internal string accessToken = string.Empty;
@@ -154,14 +154,14 @@ public abstract class EncryptonizeBaseClient : IDisposable, IAsyncDisposable, IE
     private Protobuf.Authz.AuthzClient authzClient;
 
     /// <summary>
-    /// Initialize a new instance of the <see cref="EncryptonizeBaseClient"/> class.
+    /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
     /// </summary>
-    /// <param name="endpoint">The endpoint of the Encryptonize server.</param>
-    /// <param name="username">The username used to authenticate with the Encryptonize server.</param>
-    /// <param name="password">The password used to authenticate with the Encryptonize server.</param>
-    /// <param name="certPath">The optional path to the certificate used to authenticate with the Encryptonize server when mTLS is enabled.</param>
-    /// <returns>A new instance of the <see cref="EncryptonizeBaseClient"/> class.</returns>
-    protected EncryptonizeBaseClient(string endpoint, string username, string password, string certPath = "")
+    /// <param name="endpoint">The endpoint of the D1 server.</param>
+    /// <param name="username">The username used to authenticate with the D1 server.</param>
+    /// <param name="password">The password used to authenticate with the D1 server.</param>
+    /// <param name="certPath">The optional path to the certificate used to authenticate with the D1 server when mTLS is enabled.</param>
+    /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
+    protected D1BaseClient(string endpoint, string username, string password, string certPath = "")
     {
         if (string.IsNullOrWhiteSpace(certPath))
         {

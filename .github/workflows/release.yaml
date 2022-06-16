@@ -12,7 +12,7 @@ env:
 
 defaults:
   run:
-    working-directory: encryptonize-client-dotnet
+    working-directory: d1-client-dotnet
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
       with:
-        path: encryptonize-client-dotnet
+        path: d1-client-dotnet
 
     - name: Check out repository
       uses: actions/checkout@v2

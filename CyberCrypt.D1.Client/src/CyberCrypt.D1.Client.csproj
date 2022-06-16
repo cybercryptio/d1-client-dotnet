@@ -5,9 +5,9 @@
     <Nullable>enable</Nullable>
     <ProtoRoot>$(MSBuildProjectDirectory)\protos</ProtoRoot>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PackageId>Encryptonize.Client</PackageId>
+    <PackageId>CyberCrypt.D1.Client</PackageId>
     <Company>Cybercrypt A/S</Company>
-    <PackageDescription>Client for communicating with Encryptonize</PackageDescription>
+    <PackageDescription>Client for communicating with CyberCrypt D1</PackageDescription>
     <RepositoryUrl>https://github.com/cybercryptio/d1-client-dotnet</RepositoryUrl>
   </PropertyGroup>
   <ItemGroup>

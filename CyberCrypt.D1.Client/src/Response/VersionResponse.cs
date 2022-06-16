@@ -1,8 +1,8 @@
 // Copyright 2020-2022 CYBERCRYPT
-namespace Encryptonize.Client.Response;
+namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeBase.Version"/> or <see cref="IEncryptonizeBase.VersionAsync"/>.
+/// Response from <see cref="ID1Base.Version"/> or <see cref="ID1Base.VersionAsync"/>.
 /// </summary>
 public class VersionResponse {
     /// <summary>

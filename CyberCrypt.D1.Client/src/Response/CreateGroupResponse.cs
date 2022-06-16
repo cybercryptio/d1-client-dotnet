@@ -1,8 +1,8 @@
 // Copyright 2020-2022 CYBERCRYPT
-namespace Encryptonize.Client.Response;
+namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeBase.CreateGroup"/> or <see cref="IEncryptonizeBase.CreateGroupAsync"/>.
+/// Response from <see cref="ID1Base.CreateGroup"/> or <see cref="ID1Base.CreateGroupAsync"/>.
 /// </summary>
 public class CreateGroupResponse {
     /// <summary>

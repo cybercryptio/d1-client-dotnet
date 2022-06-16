@@ -1,16 +1,16 @@
 // Copyright 2020-2022 CYBERCRYPT
 using System.Runtime.CompilerServices;
 using Google.Protobuf;
-using Encryptonize.Client.Response;
+using CyberCrypt.D1.Client.Response;
 
-[assembly: InternalsVisibleTo("Encryptonize.Client.Tests")]
+[assembly: InternalsVisibleTo("CyberCrypt.D1.Client.Tests")]
 
-namespace Encryptonize.Client;
+namespace CyberCrypt.D1.Client;
 
 /// <summary>
 /// Interface for Encryption Core service client
 /// </summary>
-public interface IEncryptonizeCore : IEncryptonizeBase
+public interface ID1Generic : ID1Base
 {
     /// <summary>
     /// Decrypt an encrypted object.
@@ -37,24 +37,24 @@ public interface IEncryptonizeCore : IEncryptonizeBase
 }
 
 /// <summary>
-/// Client for connection to an Encryptonize Core server.
+/// Client for connection to an D1 Generic server.
 /// </summary>
 /// <remarks>
 /// Login is done on-demand and the access token is automatically refreshed when it expires.
 /// </remarks>
-public class EncryptonizeCoreClient : EncryptonizeBaseClient, IEncryptonizeCore
+public class D1GenericClient : D1BaseClient, ID1Generic
 {
     private Protobuf.Core.CoreClient coreClient;
 
     /// <summary>
-    /// Initialize a new instance of the <see cref="EncryptonizeCoreClient"/> class.
+    /// Initialize a new instance of the <see cref="D1GenericClient"/> class.
     /// </summary>
-    /// <param name="endpoint">The endpoint of the Encryptonize server.</param>
-    /// <param name="username">The username used to authenticate with the Encryptonize server.</param>
-    /// <param name="password">The password used to authenticate with the Encryptonize server.</param>
-    /// <param name="certPath">The optional path to the certificate used to authenticate with the Encryptonize server when mTLS is enabled.</param>
-    /// <returns>A new instance of the <see cref="EncryptonizeCoreClient"/> class.</returns>
-    public EncryptonizeCoreClient(string endpoint, string username, string password, string certPath = "")
+    /// <param name="endpoint">The endpoint of the D1 server.</param>
+    /// <param name="username">The username used to authenticate with the D1 server.</param>
+    /// <param name="password">The password used to authenticate with the D1 server.</param>
+    /// <param name="certPath">The optional path to the certificate used to authenticate with the D1 server when mTLS is enabled.</param>
+    /// <returns>A new instance of the <see cref="D1GenericClient"/> class.</returns>
+    public D1GenericClient(string endpoint, string username, string password, string certPath = "")
         : base(endpoint, username, password, certPath)
     {
         coreClient = new(channel);

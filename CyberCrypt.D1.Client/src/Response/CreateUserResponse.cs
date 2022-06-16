@@ -1,8 +1,8 @@
 // Copyright 2020-2022 CYBERCRYPT
-namespace Encryptonize.Client.Response;
+namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeBase.CreateUser"/> or <see cref="IEncryptonizeBase.CreateUserAsync"/>.
+/// Response from <see cref="ID1Base.CreateUser"/> or <see cref="ID1Base.CreateUserAsync"/>.
 /// </summary>
 public class CreateUserResponse {
     /// <summary>

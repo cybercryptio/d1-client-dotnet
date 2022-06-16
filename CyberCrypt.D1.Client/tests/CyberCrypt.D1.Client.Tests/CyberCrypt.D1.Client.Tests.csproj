@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Encryptonize.Client.csproj" />
+    <ProjectReference Include="..\..\src\CyberCrypt.D1.Client.csproj" />
   </ItemGroup>
 
 </Project>

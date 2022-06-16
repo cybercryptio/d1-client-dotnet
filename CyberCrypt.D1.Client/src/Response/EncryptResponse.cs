@@ -1,8 +1,8 @@
 // Copyright 2020-2022 CYBERCRYPT
-namespace Encryptonize.Client.Response;
+namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="IEncryptonizeCore.Encrypt"/> or <see cref="IEncryptonizeCore.EncryptAsync"/>.
+/// Response from <see cref="ID1Generic.Encrypt"/> or <see cref="ID1Generic.EncryptAsync"/>.
 /// </summary>
 public class EncryptResponse {
     /// <summary>

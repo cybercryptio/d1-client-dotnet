@@ -1,6 +1,6 @@
 // Copyright 2020-2022 CYBERCRYPT
 
-namespace Encryptonize.Client.Utils;
+namespace CyberCrypt.D1.Client.Utils;
 
 /// <summary>
 /// The possible permission scopes.

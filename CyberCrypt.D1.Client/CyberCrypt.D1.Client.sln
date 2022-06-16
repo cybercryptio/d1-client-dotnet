@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E21B03F0-DFDF-4802-BCC7-7AA02625F3E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encryptonize.Client.Tests", "tests\Encryptonize.Client.Tests\Encryptonize.Client.Tests.csproj", "{32A9E3D4-980A-41B8-BD41-96ECF88C1B8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberCrypt.D1.Client.Tests", "tests\CyberCrypt.D1.Client.Tests\CyberCrypt.D1.Client.Tests.csproj", "{32A9E3D4-980A-41B8-BD41-96ECF88C1B8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encryptonize.Client", "src\Encryptonize.Client.csproj", "{CDC7A9DA-568C-48A0-BDC2-AF4A8E81AE6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberCrypt.D1.Client", "src\CyberCrypt.D1.Client.csproj", "{CDC7A9DA-568C-48A0-BDC2-AF4A8E81AE6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

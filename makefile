@@ -18,30 +18,30 @@ build: # Build all clients
 	@make apidocs
 
 .PHONY: build-client
-build-client: ## Build Encryptonize client
-	@make -C Encryptonize.Client build
+build-client: ## Build D1 client
+	@make -C CyberCrypt.D1.Client build
 
 .PHONY: tests
 tests: ## Run all tests
 	@make client-tests
 
 .PHONY: client-tests
-client-tests: ## Run Encryptonize client tests
-	@make -C Encryptonize.Client tests
+client-tests: ## Run D1 client tests
+	@make -C CyberCrypt.D1.Client tests
 
 .PHONY: nuget-publish
 nuget-publish: ## Publish packages
-	@make -C Encryptonize.Client nuget-publish
+	@make -C CyberCrypt.D1.Client nuget-publish
 
 .PHONY: apidocs
 apidocs: ## Generate API documentation
-	@make -C Encryptonize.Client apidocs
+	@make -C CyberCrypt.D1.Client apidocs
 
 .PHONY: apidocs-verify
 apidocs-verify: ## Verify API documentation is up-to-date
-	@make -C Encryptonize.Client apidocs-verify
+	@make -C CyberCrypt.D1.Client apidocs-verify
 
 ##### Cleanup targets #####
 .PHONY: clean
 clean: ## Remove build artifacts
-	@make -C Encryptonize.Client clean
+	@make -C CyberCrypt.D1.Client clean
