@@ -4,6 +4,7 @@ using Grpc.Net.Client;
 using Grpc.Core;
 using CyberCrypt.D1.Client.Utils;
 using CyberCrypt.D1.Client.Response;
+using Protobuf = Encryptonize.Client.Protobuf;
 
 namespace CyberCrypt.D1.Client;
 

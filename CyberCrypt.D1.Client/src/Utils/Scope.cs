@@ -1,4 +1,5 @@
 // Copyright 2020-2022 CYBERCRYPT
+using Protobuf = Encryptonize.Client.Protobuf;
 
 namespace CyberCrypt.D1.Client.Utils;
 
