@@ -3,7 +3,7 @@
 Client for connection to an D1 server.
 
 ```csharp
-public abstract class D1BaseClient : IAsyncDisposable, IDisposable, ID1Base
+public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable
 ```
 
 ## Public Members

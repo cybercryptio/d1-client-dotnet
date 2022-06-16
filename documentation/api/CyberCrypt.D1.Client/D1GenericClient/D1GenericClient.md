@@ -3,8 +3,7 @@
 Initialize a new instance of the [`D1GenericClient`](../D1GenericClient.md) class.
 
 ```csharp
-public D1GenericClient(string endpoint, string username, string password, 
-    string certPath = "")
+public D1GenericClient(string endpoint, string username, string password, string certPath = "")
 ```
 
 | parameter | description |

@@ -3,8 +3,7 @@
 Initialize a new instance of the [`D1StorageClient`](../D1StorageClient.md) class.
 
 ```csharp
-public D1StorageClient(string endpoint, string username, string password, 
-    string certPath = "")
+public D1StorageClient(string endpoint, string username, string password, string certPath = "")
 ```
 
 | parameter | description |

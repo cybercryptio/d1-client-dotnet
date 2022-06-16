@@ -3,8 +3,7 @@
 Initialize a new instance of the [`D1BaseClient`](../D1BaseClient.md) class.
 
 ```csharp
-protected D1BaseClient(string endpoint, string username, string password, 
-    string certPath = "")
+protected D1BaseClient(string endpoint, string username, string password, string certPath = "")
 ```
 
 | parameter | description |
