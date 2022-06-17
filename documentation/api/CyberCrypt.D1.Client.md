@@ -6,10 +6,10 @@
 | --- | --- |
 | abstract class [D1BaseClient](./CyberCrypt.D1.Client/D1BaseClient.md) | Client for connection to a D1 server. |
 | class [D1GenericClient](./CyberCrypt.D1.Client/D1GenericClient.md) | Client for connection to a D1 Generic server. |
-| class [D1StorageClient](./CyberCrypt.D1.Client/D1StorageClient.md) | Client for connection to a D1 Objects server. |
+| class [D1StorageClient](./CyberCrypt.D1.Client/D1StorageClient.md) | Client for connection to a D1 Storage server. |
 | interface [ID1Base](./CyberCrypt.D1.Client/ID1Base.md) | Interface for Encryption service client |
-| interface [ID1Generic](./CyberCrypt.D1.Client/ID1Generic.md) | Interface for Encryption Core service client |
-| interface [ID1Storage](./CyberCrypt.D1.Client/ID1Storage.md) | Interface for Encryption Objects service client |
+| interface [ID1Generic](./CyberCrypt.D1.Client/ID1Generic.md) | Interface for D1 Generic service client |
+| interface [ID1Storage](./CyberCrypt.D1.Client/ID1Storage.md) | Interface for D1 Storage service client |
 
 ## CyberCrypt.D1.Client.Response namespace
 

@@ -1,6 +1,6 @@
 # ID1Storage interface
 
-Interface for Encryption Objects service client
+Interface for D1 Storage service client
 
 ```csharp
 public interface ID1Storage : ID1Base

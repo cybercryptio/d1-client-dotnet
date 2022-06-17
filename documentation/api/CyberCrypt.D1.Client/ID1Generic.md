@@ -1,6 +1,6 @@
 # ID1Generic interface
 
-Interface for Encryption Core service client
+Interface for D1 Generic service client
 
 ```csharp
 public interface ID1Generic : ID1Base
