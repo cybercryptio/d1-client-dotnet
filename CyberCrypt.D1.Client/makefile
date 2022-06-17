@@ -49,7 +49,7 @@ tests: docker-core-tests docker-objects-tests ## Run all tests
 
 .PHONY: docker-core-tests
 docker-core-tests: protos docker-core-tests-up ## Run Core tests
-	USER_INFO=$$(docker exec d1-service-generic /d1-service-generic create-user rcudiom  | tail -n 1) && \
+	USER_INFO=$$(docker exec d1-service-generic /encryptonize-core create-user rcudiom | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
 		dotnet test --filter Category!=Objects
@@ -66,7 +66,7 @@ docker-core-tests-down: ## Stop docker Core test environment
 
 .PHONY: docker-objects-tests
 docker-objects-tests: protos docker-objects-tests-up ## Run objects tests
-	USER_INFO=$$(docker exec d1-service-storage /d1-service-storage create-user rcudiom  | tail -n 1) && \
+	USER_INFO=$$(docker exec d1-service-storage /encryptonize-objects create-user rcudiom  | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
 		dotnet test --filter Category!=Core
