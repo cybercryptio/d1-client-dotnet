@@ -35,7 +35,7 @@ services:
         condition: service_completed_successfully
     tty: true
     profiles:
-      - objects
+      - storage
 
   d1-service-generic:
     image: ghcr.io/cybercryptio/d1-service-generic:v0.1.25
@@ -53,7 +53,7 @@ services:
         condition: service_completed_successfully
     tty: true
     profiles:
-      - core
+      - generic
 
   cockroachdb:
     image: cockroachdb/cockroach:v21.2.7
@@ -103,7 +103,7 @@ services:
       interval: 5s
       retries: 5
     profiles:
-      - objects
+      - storage
 
   minio-init:
     image: minio/mc:RELEASE.2022-03-17T20-25-06Z
@@ -122,4 +122,4 @@ services:
       minio:
         condition: service_healthy
     profiles:
-      - objects
+      - storage

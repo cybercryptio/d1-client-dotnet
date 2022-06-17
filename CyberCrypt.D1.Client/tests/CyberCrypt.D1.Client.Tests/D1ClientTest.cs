@@ -46,7 +46,7 @@ public class D1ClientTest {
     }
 
     [Fact]
-    [Trait("Category", "Core")]
+    [Trait("Category", "Generic")]
     public async void TestEncryptionAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -66,7 +66,7 @@ public class D1ClientTest {
     }
 
     [Fact]
-    [Trait("Category", "Objects")]
+    [Trait("Category", "Storage")]
     public async void TestStoreAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -97,7 +97,7 @@ public class D1ClientTest {
     }
 
     [Fact]
-    [Trait("Category", "Objects")]
+    [Trait("Category", "Storage")]
     public async void TestPermissionsAsync() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -162,7 +162,7 @@ public class D1ClientTest {
     }
 
     [Fact]
-    [Trait("Category", "Core")]
+    [Trait("Category", "Generic")]
     public void TestEncryption() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -181,7 +181,7 @@ public class D1ClientTest {
     }
 
     [Fact]
-    [Trait("Category", "Objects")]
+    [Trait("Category", "Storage")]
     public void TestStore() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
@@ -211,7 +211,7 @@ public class D1ClientTest {
     }
 
     [Fact]
-    [Trait("Category", "Objects")]
+    [Trait("Category", "Storage")]
     public void TestPermissions() {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");

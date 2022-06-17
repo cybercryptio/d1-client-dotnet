@@ -6,7 +6,7 @@ using Protobuf = Encryptonize.Client.Protobuf;
 namespace CyberCrypt.D1.Client;
 
 /// <summary>
-/// Interface for Encryption Objects service client
+/// Interface for D1 Storage service client
 /// </summary>
 public interface ID1Storage : ID1Base
 {
@@ -53,14 +53,14 @@ public interface ID1Storage : ID1Base
 }
 
 /// <summary>
-/// Client for connection to a D1 Objects server.
+/// Client for connection to a D1 Storage server.
 /// </summary>
 /// <remarks>
 /// Login is done on-demand and the access token is automatically refreshed when it expires.
 /// </remarks>
 public class D1StorageClient : D1BaseClient, ID1Storage
 {
-    private Protobuf.Objects.ObjectsClient objectsClient;
+    private Protobuf.Objects.ObjectsClient storageClient;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StorageClient"/> class.
@@ -73,7 +73,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     public D1StorageClient(string endpoint, string username, string password, string certPath = "")
         : base(endpoint, username, password, certPath)
     {
-        objectsClient = new(channel);
+        storageClient = new(channel);
     }
 
     /// <inheritdoc />
@@ -81,7 +81,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await objectsClient.StoreAsync(new Protobuf.StoreRequest
+        var response = await storageClient.StoreAsync(new Protobuf.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -95,7 +95,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         RefreshToken();
 
-        var response = objectsClient.Store(new Protobuf.StoreRequest
+        var response = storageClient.Store(new Protobuf.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -109,7 +109,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await objectsClient.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+        var response = await storageClient.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -119,7 +119,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         RefreshToken();
 
-        var response = objectsClient.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders);
+        var response = storageClient.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders);
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -129,7 +129,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await objectsClient.UpdateAsync(new Protobuf.UpdateRequest
+        await storageClient.UpdateAsync(new Protobuf.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
@@ -142,7 +142,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         RefreshToken();
 
-        objectsClient.Update(new Protobuf.UpdateRequest
+        storageClient.Update(new Protobuf.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
@@ -155,7 +155,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await objectsClient.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+        await storageClient.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -163,6 +163,6 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         RefreshToken();
 
-        objectsClient.Delete(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders);
+        storageClient.Delete(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders);
     }
 }

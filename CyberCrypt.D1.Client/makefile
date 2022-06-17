@@ -45,41 +45,41 @@ build: protos ## Build
 	dotnet build
 
 .PHONY: tests
-tests: docker-core-tests docker-objects-tests ## Run all tests
+tests: docker-generic-tests docker-storage-tests ## Run all tests
 
-.PHONY: docker-core-tests
-docker-core-tests: protos docker-core-tests-up ## Run Core tests
+.PHONY: docker-generic-tests
+docker-generic-tests: protos docker-generic-tests-up ## Run Generic tests
 	USER_INFO=$$(docker exec d1-service-generic /encryptonize-core create-user rcudiom | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
-		dotnet test --filter Category!=Objects
-	@make docker-core-tests-down
+		dotnet test --filter Category!=Storage
+	@make docker-generic-tests-down
 
-.PHONY: docker-core-tests-up
-docker-core-tests-up: ## Start docker Core test environment
+.PHONY: docker-generic-tests-up
+docker-generic-tests-up: ## Start docker Generic test environment
 	cd tests && \
-		docker-compose --profile core up -d
+		docker-compose --profile generic up -d
 
-.PHONY: docker-core-tests-down
-docker-core-tests-down: ## Stop docker Core test environment
-	docker-compose --profile core -f tests/compose.yaml down -v
+.PHONY: docker-generic-tests-down
+docker-generic-tests-down: ## Stop docker Generic test environment
+	docker-compose --profile generic -f tests/compose.yaml down -v
 
-.PHONY: docker-objects-tests
-docker-objects-tests: protos docker-objects-tests-up ## Run objects tests
+.PHONY: docker-storage-tests
+docker-storage-tests: protos docker-storage-tests-up ## Run Storage tests
 	USER_INFO=$$(docker exec d1-service-storage /encryptonize-objects create-user rcudiom  | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
-		dotnet test --filter Category!=Core
-	@make docker-objects-tests-down
+		dotnet test --filter Category!=Generic
+	@make docker-storage-tests-down
 
-.PHONY: docker-objects-tests-up
-docker-objects-tests-up: ## Start docker Objects test environment
+.PHONY: docker-storage-tests-up
+docker-storage-tests-up: ## Start docker Storage test environment
 	cd tests && \
-		docker-compose --profile objects up -d
+		docker-compose --profile storage up -d
 
-.PHONY: docker-objects-test-down
-docker-objects-tests-down: ## Stop docker Objects test environment
-	docker-compose --profile objects -f tests/compose.yaml down -v
+.PHONY: docker-storage-test-down
+docker-storage-tests-down: ## Stop docker Storage test environment
+	docker-compose --profile storage -f tests/compose.yaml down -v
 
 .PHONY: nuget-pack
 nuget-pack: protos ## Pack the library

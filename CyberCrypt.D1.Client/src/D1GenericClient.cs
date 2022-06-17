@@ -9,7 +9,7 @@ using Protobuf = Encryptonize.Client.Protobuf;
 namespace CyberCrypt.D1.Client;
 
 /// <summary>
-/// Interface for Encryption Core service client
+/// Interface for D1 Generic service client
 /// </summary>
 public interface ID1Generic : ID1Base
 {
@@ -45,7 +45,7 @@ public interface ID1Generic : ID1Base
 /// </remarks>
 public class D1GenericClient : D1BaseClient, ID1Generic
 {
-    private Protobuf.Core.CoreClient coreClient;
+    private Protobuf.Core.CoreClient genericClient;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1GenericClient"/> class.
@@ -58,7 +58,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     public D1GenericClient(string endpoint, string username, string password, string certPath = "")
         : base(endpoint, username, password, certPath)
     {
-        coreClient = new(channel);
+        genericClient = new(channel);
     }
 
     /// <inheritdoc />
@@ -66,7 +66,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await coreClient.EncryptAsync(new Protobuf.EncryptRequest
+        var response = await genericClient.EncryptAsync(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -80,7 +80,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     {
         RefreshToken();
 
-        var response = coreClient.Encrypt(new Protobuf.EncryptRequest
+        var response = genericClient.Encrypt(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -94,7 +94,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        var response = await coreClient.DecryptAsync(new Protobuf.DecryptRequest
+        var response = await genericClient.DecryptAsync(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
@@ -110,7 +110,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     {
         RefreshToken();
 
-        var response = coreClient.Decrypt(new Protobuf.DecryptRequest
+        var response = genericClient.Decrypt(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
