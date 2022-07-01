@@ -1,18 +1,18 @@
 version: '3.9'
 
 x-config: &config
-  ECTNZ_SERVICE_INSECURE: "1"
+  D1_SERVICE_INSECURE: "1"
 
   # Auth storage
-  ECTNZ_AUTHSTORAGE_HOST: "cockroachdb"
-  ECTNZ_AUTHSTORAGE_PORT: "26257"
-  ECTNZ_AUTHSTORAGE_SCHEMA: "./auth_storage_basic.sql"
+  D1_AUTHSTORAGE_HOST: "cockroachdb"
+  D1_AUTHSTORAGE_PORT: "26257"
+  D1_AUTHSTORAGE_SCHEMA: "./auth_storage_basic.sql"
 
   # Object storage
-  ECTNZ_OBJECTSTORAGE_URL: "http://minio:9000"
-  ECTNZ_OBJECTSTORAGE_BUCKET: &storage_bucket "objects"
-  ECTNZ_OBJECTSTORAGE_ID: &storage_id "storageid"
-  ECTNZ_OBJECTSTORAGE_KEY: &storage_key "storagekey"
+  D1_OBJECTSTORAGE_URL: "http://minio:9000"
+  D1_OBJECTSTORAGE_BUCKET: &storage_bucket "objects"
+  D1_OBJECTSTORAGE_ID: &storage_id "storageid"
+  D1_OBJECTSTORAGE_KEY: &storage_key "storagekey"
 
 services:
   d1-service-storage:
