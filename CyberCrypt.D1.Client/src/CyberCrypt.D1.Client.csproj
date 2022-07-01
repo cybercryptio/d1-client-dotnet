@@ -23,7 +23,7 @@
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\version.proto" GrpcServices="client" Access="internal" />
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\authn.proto" GrpcServices="client" Access="internal" />
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\authz.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\core.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\objects.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\generic.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\storage.proto" GrpcServices="client" Access="internal" />
   </ItemGroup>
 </Project>
