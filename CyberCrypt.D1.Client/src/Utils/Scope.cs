@@ -23,10 +23,6 @@ public enum Scope {
     /// </summary>
     ObjectPermissions,
     /// <summary>
-    /// Scope to manage users and groups.
-    /// </summary>
-    UserManagement,
-    /// <summary>
     /// Scope to update objects.
     /// </summary>
     Update,
@@ -47,8 +43,6 @@ internal static class ScopeMapper {
                 return Protobuf.Scope.Index;
             case Scope.ObjectPermissions:
                 return Protobuf.Scope.Objectpermissions;
-            case Scope.UserManagement:
-                return Protobuf.Scope.Usermanagement;
             case Scope.Update:
                 return Protobuf.Scope.Update;
             case Scope.Delete:

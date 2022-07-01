@@ -11,7 +11,7 @@ public class D1ClientTest {
     private string d1Password;
     private string d1ClientCert;
     private string d1Endpoint;
-    private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.Index, Scope.ObjectPermissions, Scope.UserManagement,
+    private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.Index, Scope.ObjectPermissions,
     Scope.Update, Scope.Delete};
 
     public D1ClientTest() {
