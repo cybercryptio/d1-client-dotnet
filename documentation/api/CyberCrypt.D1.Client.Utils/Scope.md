@@ -14,9 +14,8 @@ public enum Scope
 | Create | `1` | Scope to create new and encrypt objects. |
 | Index | `2` | Scope for getting object permission. |
 | ObjectPermissions | `3` | Scope to manage object permissions. |
-| UserManagement | `4` | Scope to manage users and groups. |
-| Update | `5` | Scope to update objects. |
-| Delete | `6` | Scope to delete objects. |
+| Update | `4` | Scope to update objects. |
+| Delete | `5` | Scope to delete objects. |
 
 ## See Also
 
