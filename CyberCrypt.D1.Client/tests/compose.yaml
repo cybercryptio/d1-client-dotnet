@@ -9,6 +9,9 @@ x-config: &config
   D1_IO_S3_ID: &storage_id "storageid"
   D1_IO_S3_KEY: &storage_key "storagekey"
 
+  # TiKV config
+  D1_IO_TIKV_ADDRESS: "pd:2379"
+
 services:
   d1-service-storage:
     image: ghcr.io/cybercryptio/d1-service-storage:v0.1.12
@@ -37,6 +40,9 @@ services:
       - ${PWD}/config.toml:/config.toml
     ports:
       - 9000:9000
+    depends_on:
+      - pd
+      - tikv
     tty: true
     profiles:
       - generic
@@ -79,3 +85,26 @@ services:
         condition: service_healthy
     profiles:
       - storage
+
+  # TiKV
+  pd:
+    image: pingcap/pd:v5.4.0
+    container_name: pd
+    command: |
+      --name pd
+      --client-urls http://0.0.0.0:2379
+      --peer-urls http://0.0.0.0:2380
+      --advertise-client-urls http://pd:2379
+      --advertise-peer-urls http://pd:2380
+    profiles:
+      - generic
+
+  tikv:
+    image: pingcap/tikv:v5.4.0
+    container_name: tikv
+    command: |
+      --addr 0.0.0.0:20160
+      --advertise-addr tikv:20160
+      --pd-endpoints pd:2379
+    profiles:
+      - generic
