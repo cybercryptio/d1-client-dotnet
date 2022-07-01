@@ -1,22 +1,20 @@
 version: '3.9'
 
 x-config: &config
-  ECTNZ_SERVICE_INSECURE: "1"
+  D1_SERVICE_INSECURE: "1"
 
-  # Auth storage
-  ECTNZ_AUTHSTORAGE_HOST: "cockroachdb"
-  ECTNZ_AUTHSTORAGE_PORT: "26257"
-  ECTNZ_AUTHSTORAGE_SCHEMA: "./auth_storage_basic.sql"
+  # S3 config
+  D1_IO_S3_URL: "http://minio:9000"
+  D1_IO_S3_BUCKET: &storage_bucket "objects"
+  D1_IO_S3_ID: &storage_id "storageid"
+  D1_IO_S3_KEY: &storage_key "storagekey"
 
-  # Object storage
-  ECTNZ_OBJECTSTORAGE_URL: "http://minio:9000"
-  ECTNZ_OBJECTSTORAGE_BUCKET: &storage_bucket "objects"
-  ECTNZ_OBJECTSTORAGE_ID: &storage_id "storageid"
-  ECTNZ_OBJECTSTORAGE_KEY: &storage_key "storagekey"
+  # TiKV config
+  D1_IO_TIKV_ADDRESS: "pd:2379"
 
 services:
   d1-service-storage:
-    image: ghcr.io/cybercryptio/d1-service-storage:v0.1.12
+    image: ghcr.io/cybercryptio/d1-service-storage:v0.1.25-ci.118
     container_name: d1-service-storage
     environment:
       <<: *config
@@ -25,10 +23,6 @@ services:
     ports:
       - 9000:9000
     depends_on:
-      cockroachdb:
-        condition: service_healthy
-      cockroachdb-init:
-        condition: service_completed_successfully
       minio:
         condition: service_healthy
       minio-init:
@@ -38,7 +32,7 @@ services:
       - storage
 
   d1-service-generic:
-    image: ghcr.io/cybercryptio/d1-service-generic:v0.1.25
+    image: ghcr.io/cybercryptio/d1-service-generic:v0.1.47-ci.71
     container_name: d1-service-generic
     environment:
       <<: *config
@@ -47,46 +41,15 @@ services:
     ports:
       - 9000:9000
     depends_on:
-      cockroachdb:
-        condition: service_healthy
-      cockroachdb-init:
-        condition: service_completed_successfully
+      - pd
+      - tikv
     tty: true
     profiles:
       - generic
 
-  cockroachdb:
-    image: cockroachdb/cockroach:v21.2.7
-    container_name: cockroachdb
-    volumes:
-      - /cockroach/cockroach-data
-    command: start-single-node --insecure
-    ports:
-      - 26257:26257
-      - 7001:8080
-    healthcheck:
-      test: ["CMD", "curl", "-f", "localhost:8080/health?ready=1"]
-      timeout: 30s
-      interval: 5s
-      retries: 5
-
-  cockroachdb-init:
-    image: cockroachdb/cockroach:v21.2.7
-    container_name: cockroachdb-init
-    environment:
-      CRDB: "/cockroach/cockroach --host cockroachdb"
-    entrypoint: |
-      /bin/sh -c "
-      echo 'CREATE DATABASE IF NOT EXISTS auth;' | $${CRDB} sql --insecure;
-      echo 'CREATE USER IF NOT EXISTS cybercryptd1;' | $${CRDB} sql --insecure;
-      echo 'GRANT ALL ON DATABASE auth TO cybercryptd1;' | $${CRDB} sql --insecure;
-      "
-    depends_on:
-      cockroachdb:
-        condition: service_healthy
-
+  # MinIO
   minio:
-    image: minio/minio:RELEASE.2022-03-22T02-05-10Z
+    image: minio/minio:RELEASE.2022-06-25T15-50-16Z
     container_name: minio
     volumes:
       - /data
@@ -106,7 +69,7 @@ services:
       - storage
 
   minio-init:
-    image: minio/mc:RELEASE.2022-03-17T20-25-06Z
+    image: minio/mc:RELEASE.2022-06-26T18-51-48Z
     container_name: minio-init
     environment:
       MINIO_ACCESS_KEY: *storage_id
@@ -123,3 +86,26 @@ services:
         condition: service_healthy
     profiles:
       - storage
+
+  # TiKV
+  pd:
+    image: pingcap/pd:v5.4.0
+    container_name: pd
+    command: |
+      --name pd
+      --client-urls http://0.0.0.0:2379
+      --peer-urls http://0.0.0.0:2380
+      --advertise-client-urls http://pd:2379
+      --advertise-peer-urls http://pd:2380
+    profiles:
+      - generic
+
+  tikv:
+    image: pingcap/tikv:v5.4.0
+    container_name: tikv
+    command: |
+      --addr 0.0.0.0:20160
+      --advertise-addr tikv:20160
+      --pd-endpoints pd:2379
+    profiles:
+      - generic

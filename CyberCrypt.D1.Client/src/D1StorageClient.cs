@@ -1,7 +1,6 @@
 // Copyright 2020-2022 CYBERCRYPT
 using Google.Protobuf;
 using CyberCrypt.D1.Client.Response;
-using Protobuf = Encryptonize.Client.Protobuf;
 
 namespace CyberCrypt.D1.Client;
 
@@ -60,7 +59,7 @@ public interface ID1Storage : ID1Base
 /// </remarks>
 public class D1StorageClient : D1BaseClient, ID1Storage
 {
-    private Protobuf.Objects.ObjectsClient storageClient;
+    private Protobuf.Storage.StorageClient storageClient;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StorageClient"/> class.

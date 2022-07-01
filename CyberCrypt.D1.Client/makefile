@@ -49,7 +49,7 @@ tests: docker-generic-tests docker-storage-tests ## Run all tests
 
 .PHONY: docker-generic-tests
 docker-generic-tests: protos docker-generic-tests-up ## Run Generic tests
-	USER_INFO=$$(docker exec d1-service-generic /encryptonize-core create-user rcudiom | tail -n 1) && \
+	USER_INFO=$$(docker exec d1-service-generic /d1-service-generic create-user | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
 		dotnet test --filter Category!=Storage
@@ -66,7 +66,7 @@ docker-generic-tests-down: ## Stop docker Generic test environment
 
 .PHONY: docker-storage-tests
 docker-storage-tests: protos docker-storage-tests-up ## Run Storage tests
-	USER_INFO=$$(docker exec d1-service-storage /encryptonize-objects create-user rcudiom  | tail -n 1) && \
+	USER_INFO=$$(docker exec d1-service-storage /d1-service-storage create-user | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
 		dotnet test --filter Category!=Generic
