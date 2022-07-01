@@ -3,11 +3,11 @@ version: '3.9'
 x-config: &config
   D1_SERVICE_INSECURE: "1"
 
-  # Object storage
-  D1_OBJECTSTORAGE_URL: "http://minio:9000"
-  D1_OBJECTSTORAGE_BUCKET: &storage_bucket "objects"
-  D1_OBJECTSTORAGE_ID: &storage_id "storageid"
-  D1_OBJECTSTORAGE_KEY: &storage_key "storagekey"
+  # S3 config
+  D1_IO_S3_URL: "http://minio:9000"
+  D1_IO_S3_BUCKET: &storage_bucket "objects"
+  D1_IO_S3_ID: &storage_id "storageid"
+  D1_IO_S3_KEY: &storage_key "storagekey"
 
 services:
   d1-service-storage:
