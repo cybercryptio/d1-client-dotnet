@@ -44,7 +44,7 @@ public interface ID1Generic : ID1Base
 /// </remarks>
 public class D1GenericClient : D1BaseClient, ID1Generic
 {
-    private Protobuf.Core.CoreClient genericClient;
+    private Protobuf.Generic.GenericClient genericClient;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1GenericClient"/> class.
