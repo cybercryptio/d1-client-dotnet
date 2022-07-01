@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using Google.Protobuf;
 using CyberCrypt.D1.Client.Response;
-using Protobuf = Encryptonize.Client.Protobuf;
 
 [assembly: InternalsVisibleTo("CyberCrypt.D1.Client.Tests")]
 

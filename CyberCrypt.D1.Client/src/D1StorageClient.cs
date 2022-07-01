@@ -1,7 +1,6 @@
 // Copyright 2020-2022 CYBERCRYPT
 using Google.Protobuf;
 using CyberCrypt.D1.Client.Response;
-using Protobuf = Encryptonize.Client.Protobuf;
 
 namespace CyberCrypt.D1.Client;
 
