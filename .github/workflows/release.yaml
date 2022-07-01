@@ -15,7 +15,7 @@ defaults:
     working-directory: d1-client-dotnet
 
 jobs:
-  build:
+  github-push:
     runs-on: ubuntu-20.04
 
     steps:
@@ -57,4 +57,45 @@ jobs:
       run: make nuget-publish
       env:
         API_KEY: ${{ secrets.CYBOT_TOKEN }}
+        VERSION: ${{ github.ref_name }}
+
+  nuget-push:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+      with:
+        path: d1-client-dotnet
+
+    - name: Check out repository
+      uses: actions/checkout@v2
+      with:
+        repository: cybercryptio/d1-service-generic
+        path: d1-service-generic
+        ref: v0.1.25
+        token: ${{ secrets.CYBOT_TOKEN }}
+
+    - name: Check out repository
+      uses: actions/checkout@v2
+      with:
+        repository: cybercryptio/d1-service-storage
+        path: d1-service-storage
+        ref: v0.1.12
+        token: ${{ secrets.CYBOT_TOKEN }}
+
+    - name: Setup and cache dependencies
+      uses: cybercryptio/build-setup-action@master
+
+    - name: Install XmlDocMarkdown
+      run: dotnet tool install xmldocmd -g
+
+    - name: Build
+      run: make build
+
+    - name: Publish
+      run: make nuget-publish
+      env:
+        PACKAGE_SOURCE: https://api.nuget.org/v3/index.json
+        API_KEY: ${{ secrets.NUGET_API_KEY }}
         VERSION: ${{ github.ref_name }}
