@@ -3,11 +3,6 @@ version: '3.9'
 x-config: &config
   D1_SERVICE_INSECURE: "1"
 
-  # Auth storage
-  D1_AUTHSTORAGE_HOST: "cockroachdb"
-  D1_AUTHSTORAGE_PORT: "26257"
-  D1_AUTHSTORAGE_SCHEMA: "./auth_storage_basic.sql"
-
   # Object storage
   D1_OBJECTSTORAGE_URL: "http://minio:9000"
   D1_OBJECTSTORAGE_BUCKET: &storage_bucket "objects"
@@ -25,10 +20,6 @@ services:
     ports:
       - 9000:9000
     depends_on:
-      cockroachdb:
-        condition: service_healthy
-      cockroachdb-init:
-        condition: service_completed_successfully
       minio:
         condition: service_healthy
       minio-init:
@@ -46,44 +37,9 @@ services:
       - ${PWD}/config.toml:/config.toml
     ports:
       - 9000:9000
-    depends_on:
-      cockroachdb:
-        condition: service_healthy
-      cockroachdb-init:
-        condition: service_completed_successfully
     tty: true
     profiles:
       - generic
-
-  cockroachdb:
-    image: cockroachdb/cockroach:v21.2.7
-    container_name: cockroachdb
-    volumes:
-      - /cockroach/cockroach-data
-    command: start-single-node --insecure
-    ports:
-      - 26257:26257
-      - 7001:8080
-    healthcheck:
-      test: ["CMD", "curl", "-f", "localhost:8080/health?ready=1"]
-      timeout: 30s
-      interval: 5s
-      retries: 5
-
-  cockroachdb-init:
-    image: cockroachdb/cockroach:v21.2.7
-    container_name: cockroachdb-init
-    environment:
-      CRDB: "/cockroach/cockroach --host cockroachdb"
-    entrypoint: |
-      /bin/sh -c "
-      echo 'CREATE DATABASE IF NOT EXISTS auth;' | $${CRDB} sql --insecure;
-      echo 'CREATE USER IF NOT EXISTS cybercryptd1;' | $${CRDB} sql --insecure;
-      echo 'GRANT ALL ON DATABASE auth TO cybercryptd1;' | $${CRDB} sql --insecure;
-      "
-    depends_on:
-      cockroachdb:
-        condition: service_healthy
 
   minio:
     image: minio/minio:RELEASE.2022-03-22T02-05-10Z
