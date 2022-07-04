@@ -1,0 +1,27 @@
+name: Snyk scan
+
+on: push
+
+jobs:
+  scan-dotnet:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Setup and cache dependencies
+      uses: cybercryptio/build-setup-action@master
+
+    - name: Install XmlDocMarkdown
+      run: dotnet tool install xmldocmd -g
+
+    - name: Build
+      run: make build
+
+    - name: Install Snyk CLI
+      uses: snyk/actions/setup@master
+
+    - name: Scan dotnet projects
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk test --file=CyberCrypt.D1.Client/src/obj/project.assets.json
