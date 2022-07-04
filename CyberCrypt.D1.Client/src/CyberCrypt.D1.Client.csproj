@@ -26,4 +26,10 @@
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\generic.proto" GrpcServices="client" Access="internal" />
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\storage.proto" GrpcServices="client" Access="internal" />
   </ItemGroup>
+
+  <!-- Also clean obj and bin folders -->
+  <Target Name="PostClean" AfterTargets="Clean">
+    <RemoveDir Directories="$(BaseIntermediateOutputPath)" /><!-- obj -->
+    <RemoveDir Directories="$(BaseOutputPath)" /><!-- bin -->
+  </Target>
 </Project>
