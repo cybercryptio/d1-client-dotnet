@@ -1,0 +1,27 @@
+// Copyright 2020-2022 CYBERCRYPT
+
+syntax = "proto3";
+
+package d1;
+option go_package = "./protobuf";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
+option java_package = "io.cybercrypt.d1.protobuf";
+option java_outer_classname = "VersionProto";
+
+// Service for getting version information.
+service Version {
+  // Returns the versions of the currently running service.
+  rpc Version (VersionRequest) returns (VersionResponse) {}
+}
+
+// Represents a request to get version information.
+message VersionRequest {
+}
+
+// Represents a response to get version information.
+message VersionResponse {
+  // The Git commit of the running service.
+  string commit = 1;
+  // The version of the running service.
+  string tag = 2;
+}

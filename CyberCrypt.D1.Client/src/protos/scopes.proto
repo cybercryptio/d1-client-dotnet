@@ -1,0 +1,25 @@
+// Copyright 2020-2022 CYBERCRYPT
+
+syntax = "proto3";
+
+package d1;
+option go_package = "./protobuf";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
+option java_package = "io.cybercrypt.d1.protobuf";
+option java_outer_classname = "ScopesProto";
+
+// Access scopes.
+enum Scope {
+  // Read and decrypt data.
+  READ = 0;
+  // Store and encrypt data.
+  CREATE = 1;
+  // List permissions to an object.
+  INDEX = 2;
+  // Manage permissions to an object.
+  OBJECTPERMISSIONS = 3;
+  // Modify data.
+  UPDATE = 4;
+  // Delete data.
+  DELETE = 5;
+}

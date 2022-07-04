@@ -10,10 +10,6 @@ on:
 env:
   PACKAGE_SOURCE: github
 
-defaults:
-  run:
-    working-directory: d1-client-dotnet
-
 jobs:
   github-push:
     runs-on: ubuntu-20.04
@@ -21,24 +17,6 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v2
-      with:
-        path: d1-client-dotnet
-
-    - name: Check out repository
-      uses: actions/checkout@v2
-      with:
-        repository: cybercryptio/d1-service-generic
-        path: d1-service-generic
-        ref: v0.1.47-ci.71
-        token: ${{ secrets.CYBOT_TOKEN }}
-
-    - name: Check out repository
-      uses: actions/checkout@v2
-      with:
-        repository: cybercryptio/d1-service-storage
-        path: d1-service-storage
-        ref: v0.1.25-ci.118
-        token: ${{ secrets.CYBOT_TOKEN }}
 
     - name: Setup and cache dependencies
       uses: cybercryptio/build-setup-action@master
@@ -65,24 +43,6 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v2
-      with:
-        path: d1-client-dotnet
-
-    - name: Check out repository
-      uses: actions/checkout@v2
-      with:
-        repository: cybercryptio/d1-service-generic
-        path: d1-service-generic
-        ref: v0.1.25
-        token: ${{ secrets.CYBOT_TOKEN }}
-
-    - name: Check out repository
-      uses: actions/checkout@v2
-      with:
-        repository: cybercryptio/d1-service-storage
-        path: d1-service-storage
-        ref: v0.1.12
-        token: ${{ secrets.CYBOT_TOKEN }}
 
     - name: Setup and cache dependencies
       uses: cybercryptio/build-setup-action@master

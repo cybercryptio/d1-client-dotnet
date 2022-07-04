@@ -13,8 +13,6 @@ library = "$(publishDir)/CyberCrypt.D1.Client.dll"
 apiDocsDir = ../documentation/api
 
 ##### Files #####
-generic_proto_path ?= ../../d1-service-generic/protobuf
-storage_proto_path ?= ../../d1-service-storage/protobuf
 
 # Check that given variables are set and all have non-empty values,
 # die with an error otherwise.
@@ -30,25 +28,15 @@ __check_defined = \
       $(error Undefined $1$(if $2, ($2))))
 
 ##### Build targets #####
-.PHONY: protos
-protos: ## Copy protos to build directory and cleanup files to avoid .NET build warnings
-	mkdir -p ./src/protos
-	cp $(generic_proto_path)/*.proto ./src/protos
-	cp $(storage_proto_path)/*.proto ./src/protos
-	# For some reason the documentation comments doesn't like the comments in the protobuf files
-	# that starts with '///', instead it causes a lot of compilation warnings. Changing comments to '//'
-	# fixes the issue
-	grep -r -l "///" ./src/protos | xargs sed -i 's/\/\/\//\/\//g'
-
 .PHONY: build
-build: protos ## Build
+build: ## Build
 	dotnet build
 
 .PHONY: tests
 tests: docker-generic-tests docker-storage-tests ## Run all tests
 
 .PHONY: docker-generic-tests
-docker-generic-tests: protos docker-generic-tests-up ## Run Generic tests
+docker-generic-tests: docker-generic-tests-up ## Run Generic tests
 	USER_INFO=$$(docker exec d1-service-generic /d1-service-generic create-user | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
@@ -65,7 +53,7 @@ docker-generic-tests-down: ## Stop docker Generic test environment
 	docker-compose --profile generic -f tests/compose.yaml down -v
 
 .PHONY: docker-storage-tests
-docker-storage-tests: protos docker-storage-tests-up ## Run Storage tests
+docker-storage-tests: docker-storage-tests-up ## Run Storage tests
 	USER_INFO=$$(docker exec d1-service-storage /d1-service-storage create-user | tail -n 1) && \
 		export E2E_TEST_UID=$$(echo $$USER_INFO | jq -r ".user_id") && \
 		export E2E_TEST_PASS=$$(echo $$USER_INFO | jq -r ".password") && \
@@ -82,7 +70,7 @@ docker-storage-tests-down: ## Stop docker Storage test environment
 	docker-compose --profile storage -f tests/compose.yaml down -v
 
 .PHONY: nuget-pack
-nuget-pack: protos ## Pack the library
+nuget-pack: ## Pack the library
 	$(call check_defined, VERSION)
 	dotnet pack --output ./artifacts/ --configuration Release /p:Version=${VERSION}
 
@@ -108,4 +96,3 @@ apidocs-verify: publish ## Verify API documentation is up-to-date
 clean: ## Remove build artifacts
 	dotnet clean
 	rm -rf ./artifacts/
-	rm -rf ./src/protos
