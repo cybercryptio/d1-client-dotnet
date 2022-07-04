@@ -409,5 +409,4 @@ FodyWeavers.xsd
 # Built Visual Studio Code Extensions
 *.vsix
 
-CyberCrypt.D1.Client/src/protos
 .vscode

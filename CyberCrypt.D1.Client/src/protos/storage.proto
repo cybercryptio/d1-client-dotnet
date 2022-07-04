@@ -1,0 +1,75 @@
+// Copyright 2020-2022 CYBERCRYPT
+syntax = "proto3";
+
+package d1;
+option go_package = "./protobuf";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
+option java_package = "io.cybercrypt.d1.protobuf";
+option java_outer_classname = "StorageProto";
+
+// Service for managing stored objects.
+service Storage {
+  // Store an object in encrypted form.
+  rpc Store (StoreRequest) returns (StoreResponse) {}
+
+  // Fetches a previously stored object and returns the plaintext content.
+  rpc Retrieve (RetrieveRequest) returns (RetrieveResponse) {}
+
+  // Store an object in encrypted form, replacing the data previously stored.
+  rpc Update (UpdateRequest) returns (UpdateResponse) {}
+
+  // Deletes a previously stored object.
+  rpc Delete (DeleteRequest) returns (DeleteResponse) {}
+}
+
+// Represents a request to store an object.
+message StoreRequest {
+  // Data to encrypt.
+  bytes plaintext = 1;
+  // Associated data.
+  bytes associated_data = 2;
+}
+
+// Represents a response to a store request.
+message StoreResponse {
+  // The object ID to the stored data.
+  string object_id = 1;
+}
+
+// Represents a request to retrieve an object.
+message RetrieveRequest {
+  // The object ID to retrieve.
+  string object_id = 1;
+}
+
+// Represents a response to a retrieve request.
+message RetrieveResponse {
+  // The decrypted data.
+  bytes plaintext = 1;
+  // Associated data.
+  bytes associated_data = 2;
+}
+
+// Represents a request to update an object.
+message UpdateRequest {
+  // The data to encrypt.
+  bytes plaintext = 1;
+  // Associated data.
+  bytes associated_data = 2;
+  // The ID of the object to update.
+  string object_id = 3;
+}
+
+// Represents a response to an update request.
+message UpdateResponse {
+}
+
+// Represents a request to delete an object.
+message DeleteRequest {
+  // The ID of the object to delete.
+  string object_id = 1;
+}
+
+// Represents a response to a delete request.
+message DeleteResponse {
+}

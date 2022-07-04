@@ -1,0 +1,78 @@
+// Copyright 2020-2022 CYBERCRYPT
+
+syntax = "proto3";
+
+package d1;
+option go_package = "./protobuf";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
+option java_package = "io.cybercrypt.d1.protobuf";
+option java_outer_classname = "AuthzProto";
+
+// Service for managing authorization rules.
+service Authz {
+  /**
+   * Returns a list of groups with access to the specified object.
+   * This call can fail if the auth storage cannot be reached, in which case an error is returned.
+   * The calling user has to be authenticated and authorized to access the object in order to get the object permissions.
+   * Requires the scope `OBJECTPERMISSIONS`.
+   */
+  rpc GetPermissions (GetPermissionsRequest) returns (GetPermissionsResponse) {}
+
+  /**
+   * Adds a group to the access list of the specified object.
+   * This call can fail if the caller does not have access to the object, if the target group does not exist, or if the auth storage cannot be reached.
+   * In these cases, an error is returned.
+   * Requires the scope `OBJECTPERMISSIONS`.
+   */
+  rpc AddPermission (AddPermissionRequest) returns (AddPermissionResponse) {}
+
+  /**
+   * Removes a group from the access list of the specified object.
+   * This call can fail if the caller does not have access to the object or if the auth storage cannot reached.
+   * In these cases, an error is returned.
+   * Requires the scope `OBJECTPERMISSIONS`.
+   */
+  rpc RemovePermission (RemovePermissionRequest) returns (RemovePermissionResponse) {}
+}
+
+/**
+ * Represents a request to get the permissions of an object.
+ */
+message GetPermissionsRequest {
+  // The ID of the object to get the permission list for.
+  string object_id = 1;
+}
+
+// Represents the result of a request to get permissions for an object.
+message GetPermissionsResponse {
+  // List of groups with access to the object.
+  repeated string group_ids = 1;
+}
+
+/**
+ * Represents a request to add permission to an object.
+ */
+message AddPermissionRequest {
+  // The ID of the object to add the permission to.
+  string object_id = 1;
+  // The ID of the group to give access.
+  string group_id = 2;
+}
+
+// Represents the result of a request to add permission to an object.
+message AddPermissionResponse {
+}
+
+/**
+ * Represents a request to remove permission to an object.
+ */
+message RemovePermissionRequest {
+  // The ID of the object to remove the permission for.
+  string object_id = 1;
+  // The ID of the group to revoke permission for.
+  string group_id = 2;
+}
+
+// Represents the result of a request to remove permission to an object.
+message RemovePermissionResponse {
+}
