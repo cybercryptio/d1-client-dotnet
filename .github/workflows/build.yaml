@@ -10,10 +10,6 @@ on:
 env:
   PACKAGE_SOURCE: github
 
-defaults:
-  run:
-    working-directory: d1-client-dotnet
-
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -22,24 +18,7 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
       with:
-        path: d1-client-dotnet
         fetch-depth: 0
-
-    - name: Check out repository
-      uses: actions/checkout@v2
-      with:
-        repository: cybercryptio/d1-service-generic
-        path: d1-service-generic
-        ref: v0.1.47-ci.71
-        token: ${{ secrets.CYBOT_TOKEN }}
-
-    - name: Check out repository
-      uses: actions/checkout@v2
-      with:
-        repository: cybercryptio/d1-service-storage
-        path: d1-service-storage
-        ref: v0.1.25-ci.118
-        token: ${{ secrets.CYBOT_TOKEN }}
 
     - name: Setup and cache dependencies
       uses: cybercryptio/build-setup-action@master
@@ -74,7 +53,6 @@ jobs:
       id: gitversion
       uses: gittools/actions/gitversion/execute@v0.9.13
       with:
-        targetPath: d1-client-dotnet
         additionalArguments: '/overrideconfig mode=ContinuousDeployment'
 
     - name: Create tag
