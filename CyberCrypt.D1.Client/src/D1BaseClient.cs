@@ -15,7 +15,7 @@ public interface ID1Base
     /// <summary>
     /// Gets or sets the username used to authenticate with the D1 server.
     /// </summary>
-    string User { get; }
+    string? User { get; }
 
     /// <summary>
     /// Gets the expiration time of the access token.
@@ -130,7 +130,7 @@ public interface ID1Base
 /// </remarks>
 public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 {
-    private string password = string.Empty;
+    private string? password = string.Empty;
     internal string accessToken = string.Empty;
 
     /// <summary>
@@ -144,7 +144,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     protected Metadata requestHeaders = new Metadata();
 
     /// <inheritdoc />
-    public string User { get; private set; }
+    public string? User { get; private set; }
 
     /// <inheritdoc />
     public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
@@ -157,19 +157,17 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
     /// </summary>
     /// <param name="endpoint">The endpoint of the D1 server.</param>
-    /// <param name="username">The username used to authenticate with the D1 server.</param>
-    /// <param name="password">The password used to authenticate with the D1 server.</param>
-    /// <param name="certPath">The optional path to the certificate used to authenticate with the D1 server when mTLS is enabled.</param>
+    /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
-    protected D1BaseClient(string endpoint, string username, string password, string certPath = "")
+    protected D1BaseClient(string endpoint, D1ClientOptions options)
     {
-        if (string.IsNullOrWhiteSpace(certPath))
+        if (string.IsNullOrWhiteSpace(options.CertPath))
         {
             channel = GrpcChannel.ForAddress(endpoint);
         }
         else
         {
-            var cert = new X509Certificate2(File.ReadAllBytes(certPath));
+            var cert = new X509Certificate2(File.ReadAllBytes(options.CertPath));
 
             var handler = new HttpClientHandler();
             handler.ClientCertificates.Add(cert);
@@ -181,8 +179,8 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
         authnClient = new(channel);
         authzClient = new(channel);
 
-        User = username;
-        this.password = password;
+        User = options.Username;
+        this.password = options.Password;
     }
 
     /// <summary>
@@ -275,7 +273,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /////////////////////////////////////////////////////////////////////////
 
     /// <inheritdoc />
-    public async Task LoginAsync(string user, string password)
+    public async Task LoginAsync(string? user, string? password)
     {
         var response = await authnClient.LoginUserAsync(new Protobuf.LoginUserRequest { UserId = user, Password = password }).ConfigureAwait(false);
 
@@ -289,7 +287,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     }
 
     /// <inheritdoc />
-    public void Login(string user, string password)
+    public void Login(string? user, string? password)
     {
         var response = authnClient.LoginUser(new Protobuf.LoginUserRequest { UserId = user, Password = password });
 

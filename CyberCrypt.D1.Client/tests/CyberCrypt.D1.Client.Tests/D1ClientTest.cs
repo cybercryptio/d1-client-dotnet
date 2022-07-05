@@ -11,6 +11,7 @@ public class D1ClientTest {
     private string d1Password;
     private string d1ClientCert;
     private string d1Endpoint;
+    private D1ClientOptions d1ClientOptions;
     private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.Index, Scope.ObjectPermissions,
     Scope.Update, Scope.Delete};
 
@@ -19,11 +20,16 @@ public class D1ClientTest {
         d1Password = Environment.GetEnvironmentVariable("E2E_TEST_PASS") ?? throw new ArgumentNullException("E2E_TEST_PASS must be set");
         d1ClientCert = Environment.GetEnvironmentVariable("E2E_TEST_CERT") ?? "";
         d1Endpoint = Environment.GetEnvironmentVariable("E2E_TEST_URL") ?? "http://127.0.0.1:9000";
+        d1ClientOptions = new D1ClientOptions {
+            Username = d1User,
+            Password = d1Password,
+            CertPath = d1ClientCert
+        };
     }
 
     [Fact]
     public async void TestClientConnectionAsync() {
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         await client.VersionAsync().ConfigureAwait(false);
 
@@ -32,7 +38,7 @@ public class D1ClientTest {
 
     [Fact]
     public async void TestUserManagementAsync() {
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         var createGroupResponse = await client.CreateGroupAsync(allScopes).ConfigureAwait(false);
@@ -51,7 +57,7 @@ public class D1ClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         await client.LoginAsync(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
@@ -73,7 +79,7 @@ public class D1ClientTest {
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
         var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        var client = new D1StorageClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1StorageClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         await client.LoginAsync(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
@@ -102,7 +108,7 @@ public class D1ClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new D1StorageClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1StorageClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
         await client.LoginAsync(createUserResponse.UserId, createUserResponse.Password).ConfigureAwait(false);
@@ -123,7 +129,7 @@ public class D1ClientTest {
 
     [Fact]
     public async void TestClientRefreshTokenAsync() {
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
         
         var initialAccessToken = client.accessToken;
 
@@ -139,7 +145,7 @@ public class D1ClientTest {
 
     [Fact]
     public void TestClientConnection() {
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         client.Version();
 
@@ -148,7 +154,7 @@ public class D1ClientTest {
 
     [Fact]
     public void TestUserManagement() {
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = client.CreateUser(allScopes);
         var createGroupResponse = client.CreateGroup(allScopes);
@@ -167,7 +173,7 @@ public class D1ClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = client.CreateUser(allScopes);
         client.Login(createUserResponse.UserId, createUserResponse.Password);
@@ -188,7 +194,7 @@ public class D1ClientTest {
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
         var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        var client = new D1StorageClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1StorageClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = client.CreateUser(allScopes);
         client.Login(createUserResponse.UserId, createUserResponse.Password);
@@ -216,7 +222,7 @@ public class D1ClientTest {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new D1StorageClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1StorageClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = client.CreateUser(allScopes);
         client.Login(createUserResponse.UserId, createUserResponse.Password);
@@ -236,7 +242,7 @@ public class D1ClientTest {
 
     [Fact]
     public void TestClientRefreshToken() {
-        var client = new D1GenericClient(d1Endpoint, d1User, d1Password, d1ClientCert);
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
         
         var initialAccessToken = client.accessToken;
 
