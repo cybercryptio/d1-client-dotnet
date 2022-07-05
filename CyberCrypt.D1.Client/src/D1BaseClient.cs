@@ -13,27 +13,6 @@ namespace CyberCrypt.D1.Client;
 public interface ID1Base
 {
     /// <summary>
-    /// Gets or sets the username used to authenticate with the D1 server.
-    /// </summary>
-    string? User { get; }
-
-    /// <summary>
-    /// Gets the expiration time of the access token.
-    /// </summary>
-    /// <remarks>
-    /// When no access token is cached, the value is <c>DateTime.MinValue.AddMinutes(1)</c>
-    /// </remarks>
-    DateTime ExpiryTime { get; }
-
-    /// <summary>
-    /// Login to the D1 service.
-    /// </summary>
-    void Login(string user, string password);
-
-    /// <inheritdoc cref="Login"/>
-    Task LoginAsync(string user, string password);
-
-    /// <summary>
     /// Give a group permission to access an object.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
