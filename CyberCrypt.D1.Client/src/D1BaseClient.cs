@@ -99,6 +99,11 @@ public interface ID1Base
 
     /// <inheritdoc cref="Version"/>
     Task<VersionResponse> VersionAsync();
+
+    /// <summary>
+    /// Sets the token used to authenticate with D1.
+    /// </summary>
+    void SetToken(string token);
 }
 
 /// <summary>
@@ -109,8 +114,9 @@ public interface ID1Base
 /// </remarks>
 public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 {
-    private string? password = string.Empty;
-    internal string accessToken = string.Empty;
+    internal string? password;
+    internal string? loginToken;
+    private bool refreshToken;
 
     /// <summary>
     /// Grpc channel used for communication.
@@ -120,7 +126,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <summary>
     /// Request headers.
     /// </summary>
-    protected Metadata requestHeaders = new Metadata();
+    internal protected Metadata requestHeaders = new Metadata();
 
     /// <inheritdoc />
     public string? User { get; private set; }
@@ -140,6 +146,18 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
     protected D1BaseClient(string endpoint, D1ClientOptions options)
     {
+        if (!string.IsNullOrWhiteSpace(options.Username) && !string.IsNullOrWhiteSpace(options.Password)) {
+            User = options.Username;
+            this.password = options.Password;
+            refreshToken = true;
+        } else if (!string.IsNullOrWhiteSpace(options.AccessToken)) {
+            requestHeaders = new Metadata();
+            requestHeaders.Add("Authorization", $"Bearer {options.AccessToken}");
+            refreshToken = false;
+        } else {
+            throw new InvalidOperationException("Either username and password or access token must be provided.");
+        }
+
         if (string.IsNullOrWhiteSpace(options.CertPath))
         {
             channel = GrpcChannel.ForAddress(endpoint);
@@ -157,9 +175,6 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
         versionClient = new(channel);
         authnClient = new(channel);
         authzClient = new(channel);
-
-        User = options.Username;
-        this.password = options.Password;
     }
 
     /// <summary>
@@ -204,9 +219,9 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     }
 
     /// <inheritdoc cref="RefreshToken" />
-    protected async Task RefreshTokenAsync()
+    internal protected async Task RefreshTokenAsync()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (refreshToken && DateTime.Now > ExpiryTime.AddMinutes(-1))
         {
             await LoginAsync(User, password).ConfigureAwait(false);
         }
@@ -215,12 +230,22 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <summary>
     /// Refresh the token.
     /// </summary>
-    protected void RefreshToken()
+    internal protected void RefreshToken()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (refreshToken && DateTime.Now > ExpiryTime.AddMinutes(-1))
         {
             Login(User, password);
         }
+    }
+
+    /// <inheritdoc />
+    public void SetToken(string token) {
+        requestHeaders = new Metadata();
+        requestHeaders.Add("Authorization", $"Bearer {token}");
+        refreshToken = false;
+        User = null;
+        password = null;
+        loginToken = null;
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -258,11 +283,12 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 
         User = user;
         this.password = password;
-        accessToken = response.AccessToken;
+        loginToken = response.AccessToken;
         ExpiryTime = new DateTime(response.ExpiryTime);
+        refreshToken = true;
 
         requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        requestHeaders.Add("Authorization", $"Bearer {loginToken}");
     }
 
     /// <inheritdoc />
@@ -272,11 +298,12 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 
         User = user;
         this.password = password;
-        accessToken = response.AccessToken;
+        loginToken = response.AccessToken;
         ExpiryTime = new DateTime(response.ExpiryTime);
+        refreshToken = true;
 
         requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        requestHeaders.Add("Authorization", $"Bearer {loginToken}");
     }
 
     /// <inheritdoc />

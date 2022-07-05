@@ -18,4 +18,9 @@ public class D1ClientOptions {
     /// The password.
     /// </summary>
     public string? CertPath { get; set; }
+
+    /// <summary>
+    /// The access token to use.
+    /// </summary>
+    public string? AccessToken { get; set; }
 }

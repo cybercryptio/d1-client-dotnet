@@ -130,15 +130,15 @@ public class D1ClientTest {
     [Fact]
     public async void TestClientRefreshTokenAsync() {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
-        
-        var initialAccessToken = client.accessToken;
+
+        var initialAccessToken = client.loginToken;
 
         client.ExpiryTime = DateTime.Now;
 
         await client.VersionAsync().ConfigureAwait(false);
 
-        Assert.NotEqual(client.accessToken, initialAccessToken);
-        Assert.False(string.IsNullOrWhiteSpace(client.accessToken));
+        Assert.NotEqual(client.loginToken, initialAccessToken);
+        Assert.False(string.IsNullOrWhiteSpace(client.loginToken));
 
         await client.DisposeAsync();
     }
@@ -243,16 +243,63 @@ public class D1ClientTest {
     [Fact]
     public void TestClientRefreshToken() {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
-        
-        var initialAccessToken = client.accessToken;
+
+        var initialAccessToken = client.loginToken;
 
         client.ExpiryTime = DateTime.Now;
 
         client.Version();
 
-        Assert.NotEqual(client.accessToken, initialAccessToken);
-        Assert.False(string.IsNullOrWhiteSpace(client.accessToken));
+        Assert.NotEqual(client.loginToken, initialAccessToken);
+        Assert.False(string.IsNullOrWhiteSpace(client.loginToken));
 
         client.Dispose();
+    }
+
+    [Fact]
+    public void CreatingAClientWithoutAuthenticationInformationFails() {
+        Assert.Throws<InvalidOperationException>(() => new D1GenericClient(d1Endpoint, new D1ClientOptions()));
+    }
+
+    [Fact]
+    public void CreatingAClientWithUsernameAndPassword() {
+        new D1GenericClient(d1Endpoint, new D1ClientOptions { Username = "anything", Password = "anything" });
+    }
+
+    [Fact]
+    public void CreatingAClientWithAccessTokenSetsRequestHeader() {
+        const string token = "anything";
+        var client = new D1GenericClient(d1Endpoint, new D1ClientOptions { AccessToken = token });
+        Assert.Equal(client.requestHeaders.Get("Authorization")?.Value, $"Bearer {token}");
+    }
+
+    [Fact]
+    public void ClientWithAccessTokenDoesNotRefresh() {
+        const string token = "anything";
+        using var client = new D1GenericClient(d1Endpoint, new D1ClientOptions { AccessToken = token });
+        client.ExpiryTime = DateTime.Now;
+        client.RefreshToken();
+        Assert.Null(client.loginToken);
+    }
+
+    [Fact]
+    public void LoginOnAClientConfiguredWithAccessTokenChangesTheAuthMethod() {
+        using var client = new D1GenericClient(d1Endpoint, new D1ClientOptions { AccessToken = "anything" });
+        client.Login(d1User, d1Password);
+        Assert.NotNull(client.loginToken);
+        Assert.Equal(d1User, client.User);
+        Assert.Equal(d1Password, client.password);
+        Assert.Equal(client.requestHeaders.Get("Authorization")?.Value, $"Bearer {client.loginToken}");
+    }
+
+    [Fact]
+    public void LoginOnAClientConfiguredWithUsernamePasswordChangesTheAuthMethod() {
+        const string token = "anything";
+        using var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
+        client.SetToken(token);
+        Assert.Null(client.loginToken);
+        Assert.Null(client.User);
+        Assert.Null(client.password);
+        Assert.Equal(client.requestHeaders.Get("Authorization")?.Value, $"Bearer {token}");
     }
 }
