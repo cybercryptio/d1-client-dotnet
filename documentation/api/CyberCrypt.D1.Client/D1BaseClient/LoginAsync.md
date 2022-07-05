@@ -1,7 +1,7 @@
 # D1BaseClient.LoginAsync method
 
 ```csharp
-public Task LoginAsync(string user, string password)
+public Task LoginAsync(string? user, string? password)
 ```
 
 ## See Also

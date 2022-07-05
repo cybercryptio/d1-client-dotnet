@@ -1,7 +1,7 @@
 # D1BaseClient.RefreshTokenAsync method
 
 ```csharp
-protected Task RefreshTokenAsync()
+protected internal Task RefreshTokenAsync()
 ```
 
 ## See Also

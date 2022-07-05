@@ -3,15 +3,13 @@
 Initialize a new instance of the [`D1BaseClient`](../D1BaseClient.md) class.
 
 ```csharp
-protected D1BaseClient(string endpoint, string username, string password, string certPath = "")
+protected D1BaseClient(string endpoint, D1ClientOptions options)
 ```
 
 | parameter | description |
 | --- | --- |
 | endpoint | The endpoint of the D1 server. |
-| username | The username used to authenticate with the D1 server. |
-| password | The password used to authenticate with the D1 server. |
-| certPath | The optional path to the certificate used to authenticate with the D1 server when mTLS is enabled. |
+| options | Client options [`D1ClientOptions`](../D1ClientOptions.md). |
 
 ## Return Value
 
@@ -19,6 +17,7 @@ A new instance of the [`D1BaseClient`](../D1BaseClient.md) class.
 
 ## See Also
 
+* class [D1ClientOptions](../D1ClientOptions.md)
 * class [D1BaseClient](../D1BaseClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 
