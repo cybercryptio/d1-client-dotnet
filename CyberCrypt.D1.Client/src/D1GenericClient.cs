@@ -50,12 +50,10 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     /// Initialize a new instance of the <see cref="D1GenericClient"/> class.
     /// </summary>
     /// <param name="endpoint">The endpoint of the D1 server.</param>
-    /// <param name="username">The username used to authenticate with the D1 server.</param>
-    /// <param name="password">The password used to authenticate with the D1 server.</param>
-    /// <param name="certPath">The optional path to the certificate used to authenticate with the D1 server when mTLS is enabled.</param>
+    /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <returns>A new instance of the <see cref="D1GenericClient"/> class.</returns>
-    public D1GenericClient(string endpoint, string username, string password, string certPath = "")
-        : base(endpoint, username, password, certPath)
+    public D1GenericClient(string endpoint, D1ClientOptions options)
+        : base(endpoint, options)
     {
         genericClient = new(channel);
     }

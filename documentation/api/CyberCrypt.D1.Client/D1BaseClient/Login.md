@@ -1,7 +1,7 @@
 # D1BaseClient.Login method
 
 ```csharp
-public void Login(string user, string password)
+public void Login(string? user, string? password)
 ```
 
 ## See Also

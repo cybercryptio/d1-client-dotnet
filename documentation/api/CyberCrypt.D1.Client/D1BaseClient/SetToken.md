@@ -1,7 +1,7 @@
-# D1BaseClient.User property
+# D1BaseClient.SetToken method
 
 ```csharp
-public string? User { get; }
+public void SetToken(string token)
 ```
 
 ## See Also

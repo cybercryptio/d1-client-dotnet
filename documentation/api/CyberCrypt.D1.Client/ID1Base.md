@@ -10,8 +10,6 @@ public interface ID1Base
 
 | name | description |
 | --- | --- |
-| [ExpiryTime](ID1Base/ExpiryTime.md) { get; } | Gets the expiration time of the access token. |
-| [User](ID1Base/User.md) { get; } | Gets or sets the username used to authenticate with the D1 server. |
 | [AddPermission](ID1Base/AddPermission.md)(…) | Give a group permission to access an object. |
 | [AddPermissionAsync](ID1Base/AddPermissionAsync.md)(…) |  |
 | [AddUserToGroup](ID1Base/AddUserToGroup.md)(…) | Add a user to a group. |
@@ -22,14 +20,13 @@ public interface ID1Base
 | [CreateUserAsync](ID1Base/CreateUserAsync.md)(…) |  |
 | [GetPermissions](ID1Base/GetPermissions.md)(…) | Get the permissions applied to an object. |
 | [GetPermissionsAsync](ID1Base/GetPermissionsAsync.md)(…) |  |
-| [Login](ID1Base/Login.md)(…) | Login to the D1 service. |
-| [LoginAsync](ID1Base/LoginAsync.md)(…) |  |
 | [RemovePermission](ID1Base/RemovePermission.md)(…) | Revoke a groups permission to access an object. |
 | [RemovePermissionAsync](ID1Base/RemovePermissionAsync.md)(…) |  |
 | [RemoveUser](ID1Base/RemoveUser.md)(…) | Delete a user. |
 | [RemoveUserAsync](ID1Base/RemoveUserAsync.md)(…) |  |
 | [RemoveUserFromGroup](ID1Base/RemoveUserFromGroup.md)(…) | Remove a user from a group. |
 | [RemoveUserFromGroupAsync](ID1Base/RemoveUserFromGroupAsync.md)(…) |  |
+| [SetToken](ID1Base/SetToken.md)(…) | Sets the token used to authenticate with D1. |
 | [Version](ID1Base/Version.md)() | Get the version of the D1 server. |
 | [VersionAsync](ID1Base/VersionAsync.md)() |  |
 

@@ -5,6 +5,7 @@
 | public type | description |
 | --- | --- |
 | abstract class [D1BaseClient](./CyberCrypt.D1.Client/D1BaseClient.md) | Client for connection to a D1 server. |
+| class [D1ClientOptions](./CyberCrypt.D1.Client/D1ClientOptions.md) | Options for the [`D1BaseClient`](./CyberCrypt.D1.Client/D1BaseClient.md). |
 | class [D1GenericClient](./CyberCrypt.D1.Client/D1GenericClient.md) | Client for connection to a D1 Generic server. |
 | class [D1StorageClient](./CyberCrypt.D1.Client/D1StorageClient.md) | Client for connection to a D1 Storage server. |
 | interface [ID1Base](./CyberCrypt.D1.Client/ID1Base.md) | Interface for Encryption service client |

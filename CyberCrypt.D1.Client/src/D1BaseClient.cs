@@ -13,27 +13,6 @@ namespace CyberCrypt.D1.Client;
 public interface ID1Base
 {
     /// <summary>
-    /// Gets or sets the username used to authenticate with the D1 server.
-    /// </summary>
-    string User { get; }
-
-    /// <summary>
-    /// Gets the expiration time of the access token.
-    /// </summary>
-    /// <remarks>
-    /// When no access token is cached, the value is <c>DateTime.MinValue.AddMinutes(1)</c>
-    /// </remarks>
-    DateTime ExpiryTime { get; }
-
-    /// <summary>
-    /// Login to the D1 service.
-    /// </summary>
-    void Login(string user, string password);
-
-    /// <inheritdoc cref="Login"/>
-    Task LoginAsync(string user, string password);
-
-    /// <summary>
     /// Give a group permission to access an object.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
@@ -120,6 +99,11 @@ public interface ID1Base
 
     /// <inheritdoc cref="Version"/>
     Task<VersionResponse> VersionAsync();
+
+    /// <summary>
+    /// Sets the token used to authenticate with D1.
+    /// </summary>
+    void SetToken(string token);
 }
 
 /// <summary>
@@ -130,8 +114,9 @@ public interface ID1Base
 /// </remarks>
 public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 {
-    private string password = string.Empty;
-    internal string accessToken = string.Empty;
+    internal string? password;
+    internal string? loginToken;
+    private bool refreshToken;
 
     /// <summary>
     /// Grpc channel used for communication.
@@ -141,10 +126,10 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <summary>
     /// Request headers.
     /// </summary>
-    protected Metadata requestHeaders = new Metadata();
+    internal protected Metadata requestHeaders = new Metadata();
 
     /// <inheritdoc />
-    public string User { get; private set; }
+    public string? User { get; private set; }
 
     /// <inheritdoc />
     public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
@@ -157,19 +142,29 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
     /// </summary>
     /// <param name="endpoint">The endpoint of the D1 server.</param>
-    /// <param name="username">The username used to authenticate with the D1 server.</param>
-    /// <param name="password">The password used to authenticate with the D1 server.</param>
-    /// <param name="certPath">The optional path to the certificate used to authenticate with the D1 server when mTLS is enabled.</param>
+    /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
-    protected D1BaseClient(string endpoint, string username, string password, string certPath = "")
+    protected D1BaseClient(string endpoint, D1ClientOptions options)
     {
-        if (string.IsNullOrWhiteSpace(certPath))
+        if (!string.IsNullOrWhiteSpace(options.Username) && !string.IsNullOrWhiteSpace(options.Password)) {
+            User = options.Username;
+            password = options.Password;
+            refreshToken = true;
+        } else if (!string.IsNullOrWhiteSpace(options.AccessToken)) {
+            requestHeaders = new Metadata();
+            requestHeaders.Add("Authorization", $"Bearer {options.AccessToken}");
+            refreshToken = false;
+        } else {
+            throw new InvalidOperationException("Either username and password or access token must be provided.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.CertPath))
         {
             channel = GrpcChannel.ForAddress(endpoint);
         }
         else
         {
-            var cert = new X509Certificate2(File.ReadAllBytes(certPath));
+            var cert = new X509Certificate2(File.ReadAllBytes(options.CertPath));
 
             var handler = new HttpClientHandler();
             handler.ClientCertificates.Add(cert);
@@ -180,9 +175,6 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
         versionClient = new(channel);
         authnClient = new(channel);
         authzClient = new(channel);
-
-        User = username;
-        this.password = password;
     }
 
     /// <summary>
@@ -227,9 +219,9 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     }
 
     /// <inheritdoc cref="RefreshToken" />
-    protected async Task RefreshTokenAsync()
+    internal protected async Task RefreshTokenAsync()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (refreshToken && DateTime.Now > ExpiryTime.AddMinutes(-1))
         {
             await LoginAsync(User, password).ConfigureAwait(false);
         }
@@ -238,12 +230,22 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <summary>
     /// Refresh the token.
     /// </summary>
-    protected void RefreshToken()
+    internal protected void RefreshToken()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (refreshToken && DateTime.Now > ExpiryTime.AddMinutes(-1))
         {
             Login(User, password);
         }
+    }
+
+    /// <inheritdoc />
+    public void SetToken(string token) {
+        requestHeaders = new Metadata();
+        requestHeaders.Add("Authorization", $"Bearer {token}");
+        refreshToken = false;
+        User = null;
+        password = null;
+        loginToken = null;
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -275,31 +277,33 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /////////////////////////////////////////////////////////////////////////
 
     /// <inheritdoc />
-    public async Task LoginAsync(string user, string password)
+    public async Task LoginAsync(string? user, string? password)
     {
         var response = await authnClient.LoginUserAsync(new Protobuf.LoginUserRequest { UserId = user, Password = password }).ConfigureAwait(false);
 
         User = user;
         this.password = password;
-        accessToken = response.AccessToken;
+        loginToken = response.AccessToken;
         ExpiryTime = new DateTime(response.ExpiryTime);
+        refreshToken = true;
 
         requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        requestHeaders.Add("Authorization", $"Bearer {loginToken}");
     }
 
     /// <inheritdoc />
-    public void Login(string user, string password)
+    public void Login(string? user, string? password)
     {
         var response = authnClient.LoginUser(new Protobuf.LoginUserRequest { UserId = user, Password = password });
 
         User = user;
         this.password = password;
-        accessToken = response.AccessToken;
+        loginToken = response.AccessToken;
         ExpiryTime = new DateTime(response.ExpiryTime);
+        refreshToken = true;
 
         requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {accessToken}");
+        requestHeaders.Add("Authorization", $"Bearer {loginToken}");
     }
 
     /// <inheritdoc />

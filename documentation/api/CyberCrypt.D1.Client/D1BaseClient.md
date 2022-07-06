@@ -32,6 +32,7 @@ public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable
 | [RemoveUserAsync](D1BaseClient/RemoveUserAsync.md)(…) |  |
 | [RemoveUserFromGroup](D1BaseClient/RemoveUserFromGroup.md)(…) |  |
 | [RemoveUserFromGroupAsync](D1BaseClient/RemoveUserFromGroupAsync.md)(…) |  |
+| [SetToken](D1BaseClient/SetToken.md)(…) |  |
 | [Version](D1BaseClient/Version.md)() |  |
 | [VersionAsync](D1BaseClient/VersionAsync.md)() |  |
 

@@ -3,7 +3,7 @@
 Request headers.
 
 ```csharp
-protected Metadata requestHeaders;
+protected internal Metadata requestHeaders;
 ```
 
 ## See Also

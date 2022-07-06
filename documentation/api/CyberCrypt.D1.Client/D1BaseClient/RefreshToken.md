@@ -3,7 +3,7 @@
 Refresh the token.
 
 ```csharp
-protected void RefreshToken()
+protected internal void RefreshToken()
 ```
 
 ## See Also
