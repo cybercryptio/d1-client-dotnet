@@ -6,21 +6,24 @@ using CyberCrypt.D1.Client.Utils;
 
 namespace CyberCrypt.D1.Client.Tests;
 
-public class D1ClientTest {
+public class D1ClientTest
+{
     private string d1User;
     private string d1Password;
     private string d1ClientCert;
     private string d1Endpoint;
     private D1ClientOptions d1ClientOptions;
-    private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.Index, Scope.ObjectPermissions,
+    private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.GetAccess, Scope.ModifyAccess,
     Scope.Update, Scope.Delete};
 
-    public D1ClientTest() {
+    public D1ClientTest()
+    {
         d1User = Environment.GetEnvironmentVariable("E2E_TEST_UID") ?? throw new ArgumentNullException("E2E_TEST_UID must be set");
         d1Password = Environment.GetEnvironmentVariable("E2E_TEST_PASS") ?? throw new ArgumentNullException("E2E_TEST_PASS must be set");
         d1ClientCert = Environment.GetEnvironmentVariable("E2E_TEST_CERT") ?? "";
         d1Endpoint = Environment.GetEnvironmentVariable("E2E_TEST_URL") ?? "http://127.0.0.1:9000";
-        d1ClientOptions = new D1ClientOptions {
+        d1ClientOptions = new D1ClientOptions
+        {
             Username = d1User,
             Password = d1Password,
             CertPath = d1ClientCert
@@ -28,7 +31,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public async void TestClientConnectionAsync() {
+    public async void TestClientConnectionAsync()
+    {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         await client.VersionAsync().ConfigureAwait(false);
@@ -37,7 +41,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public async void TestUserManagementAsync() {
+    public async void TestUserManagementAsync()
+    {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
@@ -53,7 +58,8 @@ public class D1ClientTest {
 
     [Fact]
     [Trait("Category", "Generic")]
-    public async void TestEncryptionAsync() {
+    public async void TestEncryptionAsync()
+    {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
@@ -73,7 +79,8 @@ public class D1ClientTest {
 
     [Fact]
     [Trait("Category", "Storage")]
-    public async void TestStoreAsync() {
+    public async void TestStoreAsync()
+    {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
@@ -95,7 +102,7 @@ public class D1ClientTest {
         Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
 
         await client.DeleteAsync(storeResponse.ObjectId).ConfigureAwait(false);
-        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false))
+        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false))
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
 
@@ -104,7 +111,8 @@ public class D1ClientTest {
 
     [Fact]
     [Trait("Category", "Storage")]
-    public async void TestPermissionsAsync() {
+    public async void TestPermissionsAsync()
+    {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
@@ -120,7 +128,7 @@ public class D1ClientTest {
         Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
         await client.RemovePermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
-        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async() => await client.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false))
+        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false))
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
 
@@ -128,7 +136,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public async void TestClientRefreshTokenAsync() {
+    public async void TestClientRefreshTokenAsync()
+    {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var initialAccessToken = client.loginToken;
@@ -144,7 +153,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public void TestClientConnection() {
+    public void TestClientConnection()
+    {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         client.Version();
@@ -153,7 +163,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public void TestUserManagement() {
+    public void TestUserManagement()
+    {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var createUserResponse = client.CreateUser(allScopes);
@@ -169,7 +180,8 @@ public class D1ClientTest {
 
     [Fact]
     [Trait("Category", "Generic")]
-    public void TestEncryption() {
+    public void TestEncryption()
+    {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
@@ -188,7 +200,8 @@ public class D1ClientTest {
 
     [Fact]
     [Trait("Category", "Storage")]
-    public void TestStore() {
+    public void TestStore()
+    {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
@@ -218,7 +231,8 @@ public class D1ClientTest {
 
     [Fact]
     [Trait("Category", "Storage")]
-    public void TestPermissions() {
+    public void TestPermissions()
+    {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
@@ -241,7 +255,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public void TestClientRefreshToken() {
+    public void TestClientRefreshToken()
+    {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
 
         var initialAccessToken = client.loginToken;
@@ -257,24 +272,28 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public void CreatingAClientWithoutAuthenticationInformationFails() {
+    public void CreatingAClientWithoutAuthenticationInformationFails()
+    {
         Assert.Throws<InvalidOperationException>(() => new D1GenericClient(d1Endpoint, new D1ClientOptions()));
     }
 
     [Fact]
-    public void CreatingAClientWithUsernameAndPassword() {
+    public void CreatingAClientWithUsernameAndPassword()
+    {
         new D1GenericClient(d1Endpoint, new D1ClientOptions { Username = "anything", Password = "anything" });
     }
 
     [Fact]
-    public void CreatingAClientWithAccessTokenSetsRequestHeader() {
+    public void CreatingAClientWithAccessTokenSetsRequestHeader()
+    {
         const string token = "anything";
         var client = new D1GenericClient(d1Endpoint, new D1ClientOptions { AccessToken = token });
         Assert.Equal(client.requestHeaders.Get("Authorization")?.Value, $"Bearer {token}");
     }
 
     [Fact]
-    public void ClientWithAccessTokenDoesNotRefresh() {
+    public void ClientWithAccessTokenDoesNotRefresh()
+    {
         const string token = "anything";
         using var client = new D1GenericClient(d1Endpoint, new D1ClientOptions { AccessToken = token });
         client.ExpiryTime = DateTime.Now;
@@ -283,7 +302,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public void LoginOnAClientConfiguredWithAccessTokenChangesTheAuthMethod() {
+    public void LoginOnAClientConfiguredWithAccessTokenChangesTheAuthMethod()
+    {
         using var client = new D1GenericClient(d1Endpoint, new D1ClientOptions { AccessToken = "anything" });
         client.Login(d1User, d1Password);
         Assert.NotNull(client.loginToken);
@@ -293,7 +313,8 @@ public class D1ClientTest {
     }
 
     [Fact]
-    public void LoginOnAClientConfiguredWithUsernamePasswordChangesTheAuthMethod() {
+    public void LoginOnAClientConfiguredWithUsernamePasswordChangesTheAuthMethod()
+    {
         const string token = "anything";
         using var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
         client.SetToken(token);

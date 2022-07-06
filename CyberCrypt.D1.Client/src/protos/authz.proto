@@ -14,7 +14,7 @@ service Authz {
    * Returns a list of groups with access to the specified object.
    * This call can fail if the auth storage cannot be reached, in which case an error is returned.
    * The calling user has to be authenticated and authorized to access the object in order to get the object permissions.
-   * Requires the scope `OBJECTPERMISSIONS`.
+   * Requires the scope `MODIFYACCESS`.
    */
   rpc GetPermissions (GetPermissionsRequest) returns (GetPermissionsResponse) {}
 
@@ -22,7 +22,7 @@ service Authz {
    * Adds a group to the access list of the specified object.
    * This call can fail if the caller does not have access to the object, if the target group does not exist, or if the auth storage cannot be reached.
    * In these cases, an error is returned.
-   * Requires the scope `OBJECTPERMISSIONS`.
+   * Requires the scope `MODIFYACCESS`.
    */
   rpc AddPermission (AddPermissionRequest) returns (AddPermissionResponse) {}
 
@@ -30,7 +30,7 @@ service Authz {
    * Removes a group from the access list of the specified object.
    * This call can fail if the caller does not have access to the object or if the auth storage cannot reached.
    * In these cases, an error is returned.
-   * Requires the scope `OBJECTPERMISSIONS`.
+   * Requires the scope `MODIFYACCESS`.
    */
   rpc RemovePermission (RemovePermissionRequest) returns (RemovePermissionResponse) {}
 }

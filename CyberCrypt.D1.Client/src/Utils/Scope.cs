@@ -5,7 +5,8 @@ namespace CyberCrypt.D1.Client.Utils;
 /// <summary>
 /// The possible permission scopes.
 /// </summary>
-public enum Scope {
+public enum Scope
+{
     /// <summary>
     /// Scope to read and decrypt objects.
     /// </summary>
@@ -17,11 +18,11 @@ public enum Scope {
     /// <summary>
     /// Scope for getting object permission.
     /// </summary>
-    Index,
+    GetAccess,
     /// <summary>
-    /// Scope to manage object permissions.
+    /// Scope to modify object permissions.
     /// </summary>
-    ObjectPermissions,
+    ModifyAccess,
     /// <summary>
     /// Scope to update objects.
     /// </summary>
@@ -32,17 +33,20 @@ public enum Scope {
     Delete
 }
 
-internal static class ScopeMapper {
-    internal static Protobuf.Scope GetServiceScope(this Scope scope) {
-        switch (scope) {
+internal static class ScopeMapper
+{
+    internal static Protobuf.Scope GetServiceScope(this Scope scope)
+    {
+        switch (scope)
+        {
             case Scope.Read:
                 return Protobuf.Scope.Read;
             case Scope.Create:
                 return Protobuf.Scope.Create;
-            case Scope.Index:
-                return Protobuf.Scope.Index;
-            case Scope.ObjectPermissions:
-                return Protobuf.Scope.Objectpermissions;
+            case Scope.GetAccess:
+                return Protobuf.Scope.GetAccess;
+            case Scope.ModifyAccess:
+                return Protobuf.Scope.ModifyAccess;
             case Scope.Update:
                 return Protobuf.Scope.Update;
             case Scope.Delete:
