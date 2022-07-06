@@ -1,6 +1,6 @@
 # D1ClientOptions.CertPath property
 
-The password.
+The certificate path.
 
 ```csharp
 public string? CertPath { get; set; }

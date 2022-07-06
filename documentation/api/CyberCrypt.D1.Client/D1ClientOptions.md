@@ -12,8 +12,8 @@ public class D1ClientOptions
 | --- | --- |
 | [D1ClientOptions](D1ClientOptions/D1ClientOptions.md)() | The default constructor. |
 | [AccessToken](D1ClientOptions/AccessToken.md) { get; set; } | The access token to use. |
-| [CertPath](D1ClientOptions/CertPath.md) { get; set; } | The password. |
-| [Password](D1ClientOptions/Password.md) { get; set; } | The username. |
+| [CertPath](D1ClientOptions/CertPath.md) { get; set; } | The certificate path. |
+| [Password](D1ClientOptions/Password.md) { get; set; } | The password. |
 | [Username](D1ClientOptions/Username.md) { get; set; } | The username. |
 
 ## See Also

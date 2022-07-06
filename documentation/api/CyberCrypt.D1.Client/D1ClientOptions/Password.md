@@ -1,6 +1,6 @@
 # D1ClientOptions.Password property
 
-The username.
+The password.
 
 ```csharp
 public string? Password { get; set; }
