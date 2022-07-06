@@ -10,12 +10,12 @@ public class D1ClientOptions {
     public string? Username { get; set; }
 
     /// <summary>
-    /// The username.
+    /// The password.
     /// </summary>
     public string? Password { get; set; }
 
     /// <summary>
-    /// The password.
+    /// The certificate path.
     /// </summary>
     public string? CertPath { get; set; }
 

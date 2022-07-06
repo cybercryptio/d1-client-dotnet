@@ -148,7 +148,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     {
         if (!string.IsNullOrWhiteSpace(options.Username) && !string.IsNullOrWhiteSpace(options.Password)) {
             User = options.Username;
-            this.password = options.Password;
+            password = options.Password;
             refreshToken = true;
         } else if (!string.IsNullOrWhiteSpace(options.AccessToken)) {
             requestHeaders = new Metadata();
