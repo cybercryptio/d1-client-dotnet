@@ -19,7 +19,7 @@ service Storage {
   rpc Update (UpdateRequest) returns (UpdateResponse) {}
 
   // Deletes a previously stored object.
-  rpc Delete (DeleteRequest) returns (DeleteResponse) {}
+  rpc Delete (DeleteeRequest) returns (DeleteeResponse) {}
 }
 
 // Represents a request to store an object.
@@ -65,11 +65,11 @@ message UpdateResponse {
 }
 
 // Represents a request to delete an object.
-message DeleteRequest {
+message DeleteeRequest {
   // The ID of the object to delete.
   string object_id = 1;
 }
 
 // Represents a response to a delete request.
-message DeleteResponse {
+message DeleteeResponse {
 }

@@ -22,4 +22,6 @@ enum Scope {
   UPDATE = 4;
   // Delete data.
   DELETE = 5;
+  // Use secure index for searching in data.
+  INDEX = 6;
 }

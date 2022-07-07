@@ -7,9 +7,11 @@
 | abstract class [D1BaseClient](./CyberCrypt.D1.Client/D1BaseClient.md) | Client for connection to a D1 server. |
 | class [D1ClientOptions](./CyberCrypt.D1.Client/D1ClientOptions.md) | Options for the [`D1BaseClient`](./CyberCrypt.D1.Client/D1BaseClient.md). |
 | class [D1GenericClient](./CyberCrypt.D1.Client/D1GenericClient.md) | Client for connection to a D1 Generic server. |
+| class [D1SearchableClient](./CyberCrypt.D1.Client/D1SearchableClient.md) | Client for connection to a D1 Searchable server. |
 | class [D1StorageClient](./CyberCrypt.D1.Client/D1StorageClient.md) | Client for connection to a D1 Storage server. |
 | interface [ID1Base](./CyberCrypt.D1.Client/ID1Base.md) | Interface for Encryption service client |
 | interface [ID1Generic](./CyberCrypt.D1.Client/ID1Generic.md) | Interface for D1 Generic service client |
+| interface [ID1Searchable](./CyberCrypt.D1.Client/ID1Searchable.md) | Interface for Searchable service client |
 | interface [ID1Storage](./CyberCrypt.D1.Client/ID1Storage.md) | Interface for D1 Storage service client |
 
 ## CyberCrypt.D1.Client.Response namespace
@@ -22,6 +24,7 @@
 | class [EncryptResponse](./CyberCrypt.D1.Client.Response/EncryptResponse.md) | Response from [`Encrypt`](./CyberCrypt.D1.Client/ID1Generic/Encrypt.md) or [`EncryptAsync`](./CyberCrypt.D1.Client/ID1Generic/EncryptAsync.md). |
 | class [GetPermissionsResponse](./CyberCrypt.D1.Client.Response/GetPermissionsResponse.md) | Response from [`GetPermissions`](./CyberCrypt.D1.Client/ID1Base/GetPermissions.md) or [`GetPermissionsAsync`](./CyberCrypt.D1.Client/ID1Base/GetPermissionsAsync.md). |
 | class [RetrieveResponse](./CyberCrypt.D1.Client.Response/RetrieveResponse.md) | Response from [`Retrieve`](./CyberCrypt.D1.Client/ID1Storage/Retrieve.md) or [`RetrieveAsync`](./CyberCrypt.D1.Client/ID1Storage/RetrieveAsync.md). |
+| class [SearchResponse](./CyberCrypt.D1.Client.Response/SearchResponse.md) | Response from [`Search`](./CyberCrypt.D1.Client/ID1Searchable/Search.md) or [`SearchAsync`](./CyberCrypt.D1.Client/ID1Searchable/SearchAsync.md). |
 | class [StoreResponse](./CyberCrypt.D1.Client.Response/StoreResponse.md) | Response from [`Store`](./CyberCrypt.D1.Client/ID1Storage/Store.md) or [`StoreAsync`](./CyberCrypt.D1.Client/ID1Storage/StoreAsync.md). |
 | class [VersionResponse](./CyberCrypt.D1.Client.Response/VersionResponse.md) | Response from [`Version`](./CyberCrypt.D1.Client/ID1Base/Version.md) or [`VersionAsync`](./CyberCrypt.D1.Client/ID1Base/VersionAsync.md). |
 

@@ -152,7 +152,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         await RefreshTokenAsync().ConfigureAwait(false);
 
-        await storageClient.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
+        await storageClient.DeleteAsync(new Protobuf.DeleteeRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -160,6 +160,6 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     {
         RefreshToken();
 
-        storageClient.Delete(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders);
+        storageClient.Delete(new Protobuf.DeleteeRequest { ObjectId = objectId }, requestHeaders);
     }
 }

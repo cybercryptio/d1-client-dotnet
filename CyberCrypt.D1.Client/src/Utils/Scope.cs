@@ -30,7 +30,11 @@ public enum Scope
     /// <summary>
     /// Scope to delete objects.
     /// </summary>
-    Delete
+    Delete,
+    /// <summary>
+    /// Scope to use secure index for searching in data.
+    /// </summary>
+    Index
 }
 
 internal static class ScopeMapper
@@ -51,6 +55,8 @@ internal static class ScopeMapper
                 return Protobuf.Scope.Update;
             case Scope.Delete:
                 return Protobuf.Scope.Delete;
+            case Scope.Index:
+                return Protobuf.Scope.Index;
             default:
                 throw new ArgumentException("Unsupported Scope");
         }

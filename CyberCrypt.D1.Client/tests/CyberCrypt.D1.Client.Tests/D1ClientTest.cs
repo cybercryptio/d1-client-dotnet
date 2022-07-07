@@ -14,7 +14,7 @@ public class D1ClientTest
     private string d1Endpoint;
     private D1ClientOptions d1ClientOptions;
     private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.GetAccess, Scope.ModifyAccess,
-    Scope.Update, Scope.Delete};
+    Scope.Update, Scope.Delete, Scope.Index};
 
     public D1ClientTest()
     {
@@ -194,6 +194,45 @@ public class D1ClientTest
         var decryptResponse = client.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
         Assert.Equal(plaintext, decryptResponse.Plaintext);
         Assert.Equal(associatedData, decryptResponse.AssociatedData);
+
+        client.Dispose();
+    }
+
+    [Fact]
+    [Trait("Category", "Generic")]
+    public void TestAddSearch()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        var identifer = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
+
+        var createUserResponse = client.CreateUser(allScopes);
+        client.Login(createUserResponse.UserId, createUserResponse.Password);
+
+        var addResponse = client.Add(keywords, identifer);
+        var searchResponse = client.Search(keywords[0]);
+        Assert.Equal(identifier, searchResponse.Identifiers[0]);
+
+        client.Dispose();
+    }
+
+    [Fact]
+    [Trait("Category", "Generic")]
+    public void TestAddDeleteSearch()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        var identifer = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
+
+        var createUserResponse = client.CreateUser(allScopes);
+        client.Login(createUserResponse.UserId, createUserResponse.Password);
+
+        var addResponse = client.Add(keywords, identifer);
+        var deleteResponse = client.Delete(keywords, identifer);
+        var searchResponse = client.Search(keywords[0]);
+        Assert.Equal(0, searchResponse.Identifiers.Length);
 
         client.Dispose();
     }
