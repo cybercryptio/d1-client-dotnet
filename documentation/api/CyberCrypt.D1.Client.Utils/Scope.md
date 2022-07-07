@@ -12,8 +12,8 @@ public enum Scope
 | --- | --- | --- |
 | Read | `0` | Scope to read and decrypt objects. |
 | Create | `1` | Scope to create new and encrypt objects. |
-| Index | `2` | Scope for getting object permission. |
-| ObjectPermissions | `3` | Scope to manage object permissions. |
+| GetAccess | `2` | Scope for getting object permission. |
+| ModifyAccess | `3` | Scope to modify object permissions. |
 | Update | `4` | Scope to update objects. |
 | Delete | `5` | Scope to delete objects. |
 

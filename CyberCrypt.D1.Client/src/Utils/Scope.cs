@@ -44,9 +44,9 @@ internal static class ScopeMapper
             case Scope.Create:
                 return Protobuf.Scope.Create;
             case Scope.GetAccess:
-                return Protobuf.Scope.GetAccess;
+                return Protobuf.Scope.Getaccess;
             case Scope.ModifyAccess:
-                return Protobuf.Scope.ModifyAccess;
+                return Protobuf.Scope.Modifyaccess;
             case Scope.Update:
                 return Protobuf.Scope.Update;
             case Scope.Delete:
