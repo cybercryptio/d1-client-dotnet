@@ -46,13 +46,13 @@ public class D1ClientTest
     {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
-        var createGroupResponse = await client.CreateGroupAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
+        var createGroupResponse = await client.Authn.CreateGroupAsync(allScopes).ConfigureAwait(false);
 
-        await client.AddUserToGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
-        await client.RemoveUserFromGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
+        await client.Authn.AddUserToGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
+        await client.Authn.RemoveUserFromGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
 
-        await client.RemoveUserAsync(createUserResponse.UserId).ConfigureAwait(false);
+        await client.Authn.RemoveUserAsync(createUserResponse.UserId).ConfigureAwait(false);
 
         await client.DisposeAsync();
     }
@@ -66,11 +66,11 @@ public class D1ClientTest
 
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
         using var client2 = new D1GenericClient(d1Endpoint, d1ClientOptions, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var encryptResponse = await client2.EncryptAsync(plaintext, associatedData).ConfigureAwait(false);
-        var decryptResponse = await client2.DecryptAsync(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData)
+        var encryptResponse = await client2.Encrypt.EncryptAsync(plaintext, associatedData).ConfigureAwait(false);
+        var decryptResponse = await client2.Encrypt.DecryptAsync(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData)
             .ConfigureAwait(false);
         Assert.Equal(plaintext, decryptResponse.Plaintext);
         Assert.Equal(associatedData, decryptResponse.AssociatedData);
@@ -89,21 +89,21 @@ public class D1ClientTest
 
         var client = new D1StorageClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
         using var client2 = new D1StorageClient(d1Endpoint, d1ClientOptions, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var storeResponse = await client2.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
-        var retrieveResponse = await client2.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false);
+        var storeResponse = await client2.Store.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
+        var retrieveResponse = await client2.Store.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false);
         Assert.Equal(plaintext, retrieveResponse.Plaintext);
         Assert.Equal(associatedData, retrieveResponse.AssociatedData);
 
-        await client2.UpdateAsync(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData).ConfigureAwait(false);
-        var retrieveResponseAfterUpdate = await client2.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false);
+        await client2.Store.UpdateAsync(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData).ConfigureAwait(false);
+        var retrieveResponseAfterUpdate = await client2.Store.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false);
         Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
         Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
 
-        await client2.DeleteAsync(storeResponse.ObjectId).ConfigureAwait(false);
-        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false))
+        await client2.Store.DeleteAsync(storeResponse.ObjectId).ConfigureAwait(false);
+        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.Store.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false))
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
 
@@ -119,17 +119,17 @@ public class D1ClientTest
 
         var client = new D1StorageClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = await client.CreateUserAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
         using var client2 = new D1StorageClient(d1Endpoint, d1ClientOptions, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var storeResponse = await client2.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
+        var storeResponse = await client2.Store.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
 
-        await client2.AddPermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
-        var getPermissionsResponse = await client2.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false);
+        await client2.Authz.AddPermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        var getPermissionsResponse = await client2.Authz.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false);
         Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-        await client2.RemovePermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
-        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false))
+        await client2.Authz.RemovePermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.Authz.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false))
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
 
@@ -163,13 +163,13 @@ public class D1ClientTest
     {
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = client.CreateUser(allScopes);
-        var createGroupResponse = client.CreateGroup(allScopes);
+        var createUserResponse = client.Authn.CreateUser(allScopes);
+        var createGroupResponse = client.Authn.CreateGroup(allScopes);
 
-        client.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
-        client.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
+        client.Authn.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
+        client.Authn.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
 
-        client.RemoveUser(createUserResponse.UserId);
+        client.Authn.RemoveUser(createUserResponse.UserId);
 
         client.Dispose();
     }
@@ -183,11 +183,11 @@ public class D1ClientTest
 
         var client = new D1GenericClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = client.CreateUser(allScopes);
+        var createUserResponse = client.Authn.CreateUser(allScopes);
         using var client2 = new D1GenericClient(d1Endpoint, d1ClientOptions, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var encryptResponse = client2.Encrypt(plaintext, associatedData);
-        var decryptResponse = client2.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
+        var encryptResponse = client2.Encrypt.Encrypt(plaintext, associatedData);
+        var decryptResponse = client2.Encrypt.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
         Assert.Equal(plaintext, decryptResponse.Plaintext);
         Assert.Equal(associatedData, decryptResponse.AssociatedData);
 
@@ -205,21 +205,21 @@ public class D1ClientTest
 
         var client = new D1StorageClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = client.CreateUser(allScopes);
+        var createUserResponse = client.Authn.CreateUser(allScopes);
         using var client2 = new D1StorageClient(d1Endpoint, d1ClientOptions, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var storeResponse = client2.Store(plaintext, associatedData);
-        var retrieveResponse = client2.Retrieve(storeResponse.ObjectId);
+        var storeResponse = client2.Store.Store(plaintext, associatedData);
+        var retrieveResponse = client2.Store.Retrieve(storeResponse.ObjectId);
         Assert.Equal(plaintext, retrieveResponse.Plaintext);
         Assert.Equal(associatedData, retrieveResponse.AssociatedData);
 
-        client2.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData);
-        var retrieveResponseAfterUpdate = client2.Retrieve(storeResponse.ObjectId);
+        client2.Store.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData);
+        var retrieveResponseAfterUpdate = client2.Store.Retrieve(storeResponse.ObjectId);
         Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
         Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
 
-        client2.Delete(storeResponse.ObjectId);
-        var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Retrieve(storeResponse.ObjectId));
+        client2.Store.Delete(storeResponse.ObjectId);
+        var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Store.Retrieve(storeResponse.ObjectId));
         Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
     }
 
@@ -232,18 +232,18 @@ public class D1ClientTest
 
         using var client = new D1StorageClient(d1Endpoint, d1ClientOptions, credentials);
 
-        var createUserResponse = client.CreateUser(allScopes);
+        var createUserResponse = client.Authn.CreateUser(allScopes);
 
         using var client2 = new D1StorageClient(d1Endpoint, d1ClientOptions, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var storeResponse = client2.Store(plaintext, associatedData);
+        var storeResponse = client2.Store.Store(plaintext, associatedData);
 
-        client2.AddPermission(storeResponse.ObjectId, createUserResponse.UserId);
-        var getPermissionsResponse = client2.GetPermissions(storeResponse.ObjectId);
+        client2.Authz.AddPermission(storeResponse.ObjectId, createUserResponse.UserId);
+        var getPermissionsResponse = client2.Authz.GetPermissions(storeResponse.ObjectId);
         Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-        client2.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId);
-        var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.GetPermissions(storeResponse.ObjectId));
+        client2.Authz.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId);
+        var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Authz.GetPermissions(storeResponse.ObjectId));
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
     }
 
