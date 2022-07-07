@@ -8,6 +8,10 @@ namespace CyberCrypt.D1.Client;
 /// </summary>
 public interface ID1Storage : ID1Base
 {
+    /// <summary>
+    /// The storage client.
+    /// </summary>
+    ID1StoreClient Storage { get; }
 }
 
 /// <summary>
@@ -20,9 +24,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
 {
     private readonly ICredentials credentials;
 
-    /// <summary>
-    /// The store client.
-    /// </summary>
+    /// <inheritdoc />
     public ID1StoreClient Storage { get; private set; }
 
     /// <summary>

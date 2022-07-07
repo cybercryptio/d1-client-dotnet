@@ -12,6 +12,10 @@ namespace CyberCrypt.D1.Client;
 /// </summary>
 public interface ID1Generic : ID1Base
 {
+    /// <summary>
+    /// The encrypt client.
+    /// </summary>
+    ID1EncryptClient Generic { get; }
 }
 
 /// <summary>
@@ -24,9 +28,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
 {
     private readonly ICredentials credentials;
 
-    /// <summary>
-    /// The encrypt client.
-    /// </summary>
+    /// <inheritdoc />
     public ID1EncryptClient Generic { get; private set; }
 
     /// <summary>
