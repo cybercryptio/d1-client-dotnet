@@ -14,10 +14,10 @@ enum Scope {
   READ = 0;
   // Store and encrypt data.
   CREATE = 1;
-  // List permissions to an object.
-  INDEX = 2;
-  // Manage permissions to an object.
-  OBJECTPERMISSIONS = 3;
+  // Get permissions to an object.
+  GETACCESS = 2;
+  // Modify permissions to an object.
+  MODIFYACCESS = 3;
   // Modify data.
   UPDATE = 4;
   // Delete data.
