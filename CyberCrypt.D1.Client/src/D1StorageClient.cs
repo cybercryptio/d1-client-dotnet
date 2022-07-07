@@ -23,7 +23,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     /// <summary>
     /// The store client.
     /// </summary>
-    public ID1StoreClient Store { get; private set; }
+    public ID1StoreClient Storage { get; private set; }
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StorageClient"/> class.
@@ -35,7 +35,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     public D1StorageClient(string endpoint, D1ClientOptions options, ICredentials credentials)
         : base(endpoint, options, credentials)
     {
-        Store = new D1StoreClient(channel, credentials);
+        Storage = new D1StoreClient(channel, credentials);
         this.credentials = credentials;
     }
 }

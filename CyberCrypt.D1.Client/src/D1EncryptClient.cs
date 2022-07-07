@@ -40,7 +40,7 @@ public interface ID1EncryptClient
 /// </summary>
 public class D1EncryptClient : ID1EncryptClient
 {
-    private readonly Protobuf.Generic.EncryptClient client;
+    private readonly Protobuf.Generic.GenericClient client;
     private readonly ICredentials credentials;
 
     /// <summary>

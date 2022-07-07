@@ -58,7 +58,7 @@ public interface ID1StoreClient
 /// </summary>
 public class D1StoreClient : ID1StoreClient
 {
-    private readonly Protobuf.Storage.StoreClient client;
+    private readonly Protobuf.Storage.StorageClient client;
     private readonly ICredentials credentials;
 
     /// <summary>

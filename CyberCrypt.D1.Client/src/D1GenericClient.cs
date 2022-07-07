@@ -27,7 +27,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     /// <summary>
     /// The encrypt client.
     /// </summary>
-    public ID1EncryptClient Encrypt { get; private set; }
+    public ID1EncryptClient Generic { get; private set; }
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1GenericClient"/> class.
@@ -39,7 +39,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     public D1GenericClient(string endpoint, D1ClientOptions options, ICredentials credentials)
         : base(endpoint, options, credentials)
     {
-        Encrypt = new D1EncryptClient(channel, credentials);
+        Generic = new D1EncryptClient(channel, credentials);
         this.credentials = credentials;
     }
 }

@@ -13,6 +13,20 @@ namespace CyberCrypt.D1.Client;
 /// </summary>
 public interface ID1Base
 {
+    /// <summary>
+    /// The authn client.
+    /// </summary>
+    ID1AuthnClient Authn { get; }
+
+    /// <summary>
+    /// The authz client.
+    /// </summary>
+    ID1AuthzClient Authz { get; }
+
+    /// <summary>
+    /// The version client.
+    /// </summary>
+    ID1VersionClient Version { get; }
 }
 
 /// <summary>
@@ -31,24 +45,15 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public string? User { get; private set; }
 
-    /// <inheritdoc />
-    public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
-
     private readonly ICredentials credentials;
 
-    /// <summary>
-    /// The authn client.
-    /// </summary>
+    /// <inheritdoc />
     public ID1AuthnClient Authn { get; private set; }
 
-    /// <summary>
-    /// The authz client.
-    /// </summary>
+    /// <inheritdoc />
     public ID1AuthzClient Authz { get; private set; }
 
-    /// <summary>
-    /// The version client.
-    /// </summary>
+    /// <inheritdoc />
     public ID1VersionClient Version { get; private set; }
 
     /// <summary>
