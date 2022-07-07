@@ -1,7 +1,5 @@
 # D1BaseClient.Version property
 
-The version client.
-
 ```csharp
 public ID1VersionClient Version { get; }
 ```

@@ -10,10 +10,7 @@ public interface ID1Generic : ID1Base
 
 | name | description |
 | --- | --- |
-| [Decrypt](ID1Generic/Decrypt.md)(…) | Decrypt an encrypted object. |
-| [DecryptAsync](ID1Generic/DecryptAsync.md)(…) |  |
-| [Encrypt](ID1Generic/Encrypt.md)(…) | Encrypt an object with associated data. |
-| [EncryptAsync](ID1Generic/EncryptAsync.md)(…) |  |
+| [Generic](ID1Generic/Generic.md) { get; } | The encrypt client. |
 
 ## See Also
 

@@ -11,10 +11,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
 | name | description |
 | --- | --- |
 | [D1GenericClient](D1GenericClient/D1GenericClient.md)(…) | Initialize a new instance of the [`D1GenericClient`](./D1GenericClient.md) class. |
-| [Decrypt](D1GenericClient/Decrypt.md)(…) |  |
-| [DecryptAsync](D1GenericClient/DecryptAsync.md)(…) |  |
-| [Encrypt](D1GenericClient/Encrypt.md)(…) |  |
-| [EncryptAsync](D1GenericClient/EncryptAsync.md)(…) |  |
+| [Generic](D1GenericClient/Generic.md) { get; } |  |
 
 ## Remarks
 

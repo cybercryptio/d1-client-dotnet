@@ -10,14 +10,7 @@ public interface ID1Storage : ID1Base
 
 | name | description |
 | --- | --- |
-| [Delete](ID1Storage/Delete.md)(…) | Delete data encrypted in the storage attached to D1. |
-| [DeleteAsync](ID1Storage/DeleteAsync.md)(…) |  |
-| [Retrieve](ID1Storage/Retrieve.md)(…) | Retreive some data encrypted in the storage attached to D1. |
-| [RetrieveAsync](ID1Storage/RetrieveAsync.md)(…) |  |
-| [Store](ID1Storage/Store.md)(…) | Store some data encrypted in the storage attached to D1. |
-| [StoreAsync](ID1Storage/StoreAsync.md)(…) |  |
-| [Update](ID1Storage/Update.md)(…) | Update some data stored in the storage attached to D1. |
-| [UpdateAsync](ID1Storage/UpdateAsync.md)(…) |  |
+| [Storage](ID1Storage/Storage.md) { get; } | The storage client. |
 
 ## See Also
 

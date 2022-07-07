@@ -10,27 +10,12 @@ public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable
 
 | name | description |
 | --- | --- |
-| [ExpiryTime](D1BaseClient/ExpiryTime.md) { get; } |  |
+| [Authn](D1BaseClient/Authn.md) { get; } |  |
+| [Authz](D1BaseClient/Authz.md) { get; } |  |
 | [User](D1BaseClient/User.md) { get; } |  |
-| [Version](D1BaseClient/Version.md) { get; } | The version client. |
-| [AddPermission](D1BaseClient/AddPermission.md)(…) |  |
-| [AddPermissionAsync](D1BaseClient/AddPermissionAsync.md)(…) |  |
-| [AddUserToGroup](D1BaseClient/AddUserToGroup.md)(…) |  |
-| [AddUserToGroupAsync](D1BaseClient/AddUserToGroupAsync.md)(…) |  |
-| [CreateGroup](D1BaseClient/CreateGroup.md)(…) |  |
-| [CreateGroupAsync](D1BaseClient/CreateGroupAsync.md)(…) |  |
-| [CreateUser](D1BaseClient/CreateUser.md)(…) |  |
-| [CreateUserAsync](D1BaseClient/CreateUserAsync.md)(…) |  |
+| [Version](D1BaseClient/Version.md) { get; } |  |
 | [Dispose](D1BaseClient/Dispose.md)() | Dispose the client. |
 | [DisposeAsync](D1BaseClient/DisposeAsync.md)() | Asynchronously dispose the client. |
-| [GetPermissions](D1BaseClient/GetPermissions.md)(…) |  |
-| [GetPermissionsAsync](D1BaseClient/GetPermissionsAsync.md)(…) |  |
-| [RemovePermission](D1BaseClient/RemovePermission.md)(…) |  |
-| [RemovePermissionAsync](D1BaseClient/RemovePermissionAsync.md)(…) |  |
-| [RemoveUser](D1BaseClient/RemoveUser.md)(…) |  |
-| [RemoveUserAsync](D1BaseClient/RemoveUserAsync.md)(…) |  |
-| [RemoveUserFromGroup](D1BaseClient/RemoveUserFromGroup.md)(…) |  |
-| [RemoveUserFromGroupAsync](D1BaseClient/RemoveUserFromGroupAsync.md)(…) |  |
 
 ## Protected Members
 
