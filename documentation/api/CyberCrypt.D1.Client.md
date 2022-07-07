@@ -8,9 +8,19 @@
 | class [D1ClientOptions](./CyberCrypt.D1.Client/D1ClientOptions.md) | Options for the [`D1BaseClient`](./CyberCrypt.D1.Client/D1BaseClient.md). |
 | class [D1GenericClient](./CyberCrypt.D1.Client/D1GenericClient.md) | Client for connection to a D1 Generic server. |
 | class [D1StorageClient](./CyberCrypt.D1.Client/D1StorageClient.md) | Client for connection to a D1 Storage server. |
+| class [D1VersionClient](./CyberCrypt.D1.Client/D1VersionClient.md) | Version client for connection to a D1 server. |
 | interface [ID1Base](./CyberCrypt.D1.Client/ID1Base.md) | Interface for Encryption service client |
 | interface [ID1Generic](./CyberCrypt.D1.Client/ID1Generic.md) | Interface for D1 Generic service client |
 | interface [ID1Storage](./CyberCrypt.D1.Client/ID1Storage.md) | Interface for D1 Storage service client |
+| interface [ID1VersionClient](./CyberCrypt.D1.Client/ID1VersionClient.md) | Interface for Version client |
+
+## CyberCrypt.D1.Client.Credentials namespace
+
+| public type | description |
+| --- | --- |
+| interface [ICredentials](./CyberCrypt.D1.Client.Credentials/ICredentials.md) | Interface for credential implementations. |
+| class [TokenCredentials](./CyberCrypt.D1.Client.Credentials/TokenCredentials.md) | Credentials based off a user provide token. |
+| class [UsernamePasswordCredentials](./CyberCrypt.D1.Client.Credentials/UsernamePasswordCredentials.md) | Credentials from username and password. |
 
 ## CyberCrypt.D1.Client.Response namespace
 
@@ -23,7 +33,7 @@
 | class [GetPermissionsResponse](./CyberCrypt.D1.Client.Response/GetPermissionsResponse.md) | Response from [`GetPermissions`](./CyberCrypt.D1.Client/ID1Base/GetPermissions.md) or [`GetPermissionsAsync`](./CyberCrypt.D1.Client/ID1Base/GetPermissionsAsync.md). |
 | class [RetrieveResponse](./CyberCrypt.D1.Client.Response/RetrieveResponse.md) | Response from [`Retrieve`](./CyberCrypt.D1.Client/ID1Storage/Retrieve.md) or [`RetrieveAsync`](./CyberCrypt.D1.Client/ID1Storage/RetrieveAsync.md). |
 | class [StoreResponse](./CyberCrypt.D1.Client.Response/StoreResponse.md) | Response from [`Store`](./CyberCrypt.D1.Client/ID1Storage/Store.md) or [`StoreAsync`](./CyberCrypt.D1.Client/ID1Storage/StoreAsync.md). |
-| class [VersionResponse](./CyberCrypt.D1.Client.Response/VersionResponse.md) | Response from [`Version`](./CyberCrypt.D1.Client/ID1Base/Version.md) or [`VersionAsync`](./CyberCrypt.D1.Client/ID1Base/VersionAsync.md). |
+| class [VersionResponse](./CyberCrypt.D1.Client.Response/VersionResponse.md) | Response from [`Version`](./CyberCrypt.D1.Client/ID1VersionClient/Version.md) or [`VersionAsync`](./CyberCrypt.D1.Client/ID1VersionClient/VersionAsync.md). |
 
 ## CyberCrypt.D1.Client.Utils namespace
 

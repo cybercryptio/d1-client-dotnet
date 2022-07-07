@@ -4,6 +4,7 @@ using Grpc.Net.Client;
 using Grpc.Core;
 using CyberCrypt.D1.Client.Utils;
 using CyberCrypt.D1.Client.Response;
+using CyberCrypt.D1.Client.Credentials;
 
 namespace CyberCrypt.D1.Client;
 
@@ -90,20 +91,6 @@ public interface ID1Base
 
     /// <inheritdoc cref="RemoveUserFromGroup"/>
     Task RemoveUserFromGroupAsync(string userId, string groupId);
-
-    /// <summary>
-    /// Get the version of the D1 server.
-    /// </summary>
-    /// <returns>An instance of <see cref="VersionResponse"/>.</returns>
-    VersionResponse Version();
-
-    /// <inheritdoc cref="Version"/>
-    Task<VersionResponse> VersionAsync();
-
-    /// <summary>
-    /// Sets the token used to authenticate with D1.
-    /// </summary>
-    void SetToken(string token);
 }
 
 /// <summary>
@@ -114,19 +101,10 @@ public interface ID1Base
 /// </remarks>
 public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 {
-    internal string? password;
-    internal string? loginToken;
-    private bool refreshToken;
-
     /// <summary>
     /// Grpc channel used for communication.
     /// </summary>
     protected GrpcChannel channel;
-
-    /// <summary>
-    /// Request headers.
-    /// </summary>
-    internal protected Metadata requestHeaders = new Metadata();
 
     /// <inheritdoc />
     public string? User { get; private set; }
@@ -134,30 +112,24 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
 
-    private Protobuf.Version.VersionClient versionClient;
     private Protobuf.Authn.AuthnClient authnClient;
     private Protobuf.Authz.AuthzClient authzClient;
+    private readonly ICredentials credentials;
+
+    /// <summary>
+    /// The version client.
+    /// </summary>
+    public ID1VersionClient Version { get; private set; }
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
     /// </summary>
     /// <param name="endpoint">The endpoint of the D1 server.</param>
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
+    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
-    protected D1BaseClient(string endpoint, D1ClientOptions options)
+    protected D1BaseClient(string endpoint, D1ClientOptions options, ICredentials credentials)
     {
-        if (!string.IsNullOrWhiteSpace(options.Username) && !string.IsNullOrWhiteSpace(options.Password)) {
-            User = options.Username;
-            password = options.Password;
-            refreshToken = true;
-        } else if (!string.IsNullOrWhiteSpace(options.AccessToken)) {
-            requestHeaders = new Metadata();
-            requestHeaders.Add("Authorization", $"Bearer {options.AccessToken}");
-            refreshToken = false;
-        } else {
-            throw new InvalidOperationException("Either username and password or access token must be provided.");
-        }
-
         if (string.IsNullOrWhiteSpace(options.CertPath))
         {
             channel = GrpcChannel.ForAddress(endpoint);
@@ -165,16 +137,16 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
         else
         {
             var cert = new X509Certificate2(File.ReadAllBytes(options.CertPath));
-
             var handler = new HttpClientHandler();
             handler.ClientCertificates.Add(cert);
 
             channel = GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions { HttpHandler = handler });
         }
 
-        versionClient = new(channel);
+        Version = new D1VersionClient(channel, credentials);
         authnClient = new(channel);
         authzClient = new(channel);
+        this.credentials = credentials;
     }
 
     /// <summary>
@@ -218,98 +190,16 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
         await channel.ShutdownAsync().ConfigureAwait(false);
     }
 
-    /// <inheritdoc cref="RefreshToken" />
-    internal protected async Task RefreshTokenAsync()
-    {
-        if (refreshToken && DateTime.Now > ExpiryTime.AddMinutes(-1))
-        {
-            await LoginAsync(User, password).ConfigureAwait(false);
-        }
-    }
-
-    /// <summary>
-    /// Refresh the token.
-    /// </summary>
-    internal protected void RefreshToken()
-    {
-        if (refreshToken && DateTime.Now > ExpiryTime.AddMinutes(-1))
-        {
-            Login(User, password);
-        }
-    }
-
-    /// <inheritdoc />
-    public void SetToken(string token) {
-        requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {token}");
-        refreshToken = false;
-        User = null;
-        password = null;
-        loginToken = null;
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-    //                               Utility                               //
-    /////////////////////////////////////////////////////////////////////////
-
-    /// <inheritdoc />
-    public async Task<VersionResponse> VersionAsync()
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await versionClient.VersionAsync(new Protobuf.VersionRequest(), requestHeaders).ConfigureAwait(false);
-
-        return new VersionResponse(response.Commit, response.Tag);
-    }
-
-    /// <inheritdoc />
-    public VersionResponse Version()
-    {
-        RefreshToken();
-
-        var response = versionClient.Version(new Protobuf.VersionRequest(), requestHeaders);
-
-        return new VersionResponse(response.Commit, response.Tag);
-    }
-
     /////////////////////////////////////////////////////////////////////////
     //                           User Management                           //
     /////////////////////////////////////////////////////////////////////////
 
     /// <inheritdoc />
-    public async Task LoginAsync(string? user, string? password)
-    {
-        var response = await authnClient.LoginUserAsync(new Protobuf.LoginUserRequest { UserId = user, Password = password }).ConfigureAwait(false);
-
-        User = user;
-        this.password = password;
-        loginToken = response.AccessToken;
-        ExpiryTime = new DateTime(response.ExpiryTime);
-        refreshToken = true;
-
-        requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {loginToken}");
-    }
-
-    /// <inheritdoc />
-    public void Login(string? user, string? password)
-    {
-        var response = authnClient.LoginUser(new Protobuf.LoginUserRequest { UserId = user, Password = password });
-
-        User = user;
-        this.password = password;
-        loginToken = response.AccessToken;
-        ExpiryTime = new DateTime(response.ExpiryTime);
-        refreshToken = true;
-
-        requestHeaders = new Metadata();
-        requestHeaders.Add("Authorization", $"Bearer {loginToken}");
-    }
-
-    /// <inheritdoc />
     public async Task<CreateUserResponse> CreateUserAsync(IList<Scope> scopes)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
 
         var request = new Protobuf.CreateUserRequest();
         foreach (Scope scope in scopes)
@@ -317,7 +207,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = await authnClient.CreateUserAsync(request, requestHeaders).ConfigureAwait(false);
+        var response = await authnClient.CreateUserAsync(request, metadata).ConfigureAwait(false);
 
         return new CreateUserResponse(response.UserId, response.Password);
     }
@@ -325,15 +215,16 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public CreateUserResponse CreateUser(IList<Scope> scopes)
     {
-        RefreshToken();
-
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
         var request = new Protobuf.CreateUserRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = authnClient.CreateUser(request, requestHeaders);
+        var response = authnClient.CreateUser(request, metadata);
 
         return new CreateUserResponse(response.UserId, response.Password);
     }
@@ -341,31 +232,34 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public async Task RemoveUserAsync(string userId)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await authnClient.RemoveUserAsync(new Protobuf.RemoveUserRequest { UserId = userId }, requestHeaders).ConfigureAwait(false);
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        await authnClient.RemoveUserAsync(new Protobuf.RemoveUserRequest { UserId = userId }, metadata).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemoveUser(string userId)
     {
-        RefreshToken();
-
-        authnClient.RemoveUser(new Protobuf.RemoveUserRequest { UserId = userId }, requestHeaders);
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        authnClient.RemoveUser(new Protobuf.RemoveUserRequest { UserId = userId }, metadata);
     }
 
     /// <inheritdoc />
     public async Task<CreateGroupResponse> CreateGroupAsync(IList<Scope> scopes)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
         var request = new Protobuf.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = await authnClient.CreateGroupAsync(request, requestHeaders).ConfigureAwait(false);
+        var response = await authnClient.CreateGroupAsync(request, metadata).ConfigureAwait(false);
 
         return new CreateGroupResponse(response.GroupId);
     }
@@ -373,15 +267,16 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public CreateGroupResponse CreateGroup(IList<Scope> scopes)
     {
-        RefreshToken();
-
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
         var request = new Protobuf.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = authnClient.CreateGroup(request, requestHeaders);
+        var response = authnClient.CreateGroup(request, metadata);
 
         return new CreateGroupResponse(response.GroupId);
     }
@@ -389,36 +284,38 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public async Task AddUserToGroupAsync(string userId, string groupId)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await authnClient.AddUserToGroupAsync(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, requestHeaders)
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        await authnClient.AddUserToGroupAsync(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, metadata)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void AddUserToGroup(string userId, string groupId)
     {
-        RefreshToken();
-
-        authnClient.AddUserToGroup(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, requestHeaders);
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        authnClient.AddUserToGroup(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, metadata);
     }
 
     /// <inheritdoc />
     public async Task RemoveUserFromGroupAsync(string userId, string groupId)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await authnClient.RemoveUserFromGroupAsync(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId },
-            requestHeaders).ConfigureAwait(false);
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        await authnClient.RemoveUserFromGroupAsync(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }, metadata).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemoveUserFromGroup(string userId, string groupId)
     {
-        RefreshToken();
-
-        authnClient.RemoveUserFromGroup(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId },
-            requestHeaders);
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        authnClient.RemoveUserFromGroup(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }, metadata);
     }
 
     /////////////////////////////////////////////////////////////////////////
@@ -428,10 +325,10 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public async Task<GetPermissionsResponse> GetPermissionsAsync(string objectId)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await authzClient.GetPermissionsAsync(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, requestHeaders)
-            .ConfigureAwait(false);
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        var response = await authzClient.GetPermissionsAsync(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, metadata).ConfigureAwait(false);
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
@@ -439,9 +336,10 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public GetPermissionsResponse GetPermissions(string objectId)
     {
-        RefreshToken();
-
-        var response = authzClient.GetPermissions(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, requestHeaders);
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        var response = authzClient.GetPermissions(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, metadata);
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
@@ -449,34 +347,38 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public async Task AddPermissionAsync(string objectId, string groupId)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await authzClient.AddPermissionAsync(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders)
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        await authzClient.AddPermissionAsync(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void AddPermission(string objectId, string groupId)
     {
-        RefreshToken();
-
-        authzClient.AddPermission(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders);
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        authzClient.AddPermission(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
     }
 
     /// <inheritdoc />
     public async Task RemovePermissionAsync(string objectId, string groupId)
     {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await authzClient.RemovePermissionAsync(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders)
+        var token = await credentials.GetTokenAsync();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        await authzClient.RemovePermissionAsync(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemovePermission(string objectId, string groupId)
     {
-        RefreshToken();
-
-        authzClient.RemovePermission(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, requestHeaders);
+        var token = credentials.GetToken();
+        var metadata = new Metadata();
+        metadata.Add("Authorization", $"Bearer {token}");
+        authzClient.RemovePermission(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
     }
 }

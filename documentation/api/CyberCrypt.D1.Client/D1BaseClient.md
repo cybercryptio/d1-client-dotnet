@@ -12,6 +12,7 @@ public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable
 | --- | --- |
 | [ExpiryTime](D1BaseClient/ExpiryTime.md) { get; } |  |
 | [User](D1BaseClient/User.md) { get; } |  |
+| [Version](D1BaseClient/Version.md) { get; } | The version client. |
 | [AddPermission](D1BaseClient/AddPermission.md)(…) |  |
 | [AddPermissionAsync](D1BaseClient/AddPermissionAsync.md)(…) |  |
 | [AddUserToGroup](D1BaseClient/AddUserToGroup.md)(…) |  |
@@ -24,17 +25,12 @@ public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable
 | [DisposeAsync](D1BaseClient/DisposeAsync.md)() | Asynchronously dispose the client. |
 | [GetPermissions](D1BaseClient/GetPermissions.md)(…) |  |
 | [GetPermissionsAsync](D1BaseClient/GetPermissionsAsync.md)(…) |  |
-| [Login](D1BaseClient/Login.md)(…) |  |
-| [LoginAsync](D1BaseClient/LoginAsync.md)(…) |  |
 | [RemovePermission](D1BaseClient/RemovePermission.md)(…) |  |
 | [RemovePermissionAsync](D1BaseClient/RemovePermissionAsync.md)(…) |  |
 | [RemoveUser](D1BaseClient/RemoveUser.md)(…) |  |
 | [RemoveUserAsync](D1BaseClient/RemoveUserAsync.md)(…) |  |
 | [RemoveUserFromGroup](D1BaseClient/RemoveUserFromGroup.md)(…) |  |
 | [RemoveUserFromGroupAsync](D1BaseClient/RemoveUserFromGroupAsync.md)(…) |  |
-| [SetToken](D1BaseClient/SetToken.md)(…) |  |
-| [Version](D1BaseClient/Version.md)() |  |
-| [VersionAsync](D1BaseClient/VersionAsync.md)() |  |
 
 ## Protected Members
 
@@ -42,11 +38,8 @@ public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable
 | --- | --- |
 | [D1BaseClient](D1BaseClient/D1BaseClient.md)(…) | Initialize a new instance of the [`D1BaseClient`](./D1BaseClient.md) class. |
 | [channel](D1BaseClient/channel.md) | Grpc channel used for communication. |
-| [requestHeaders](D1BaseClient/requestHeaders.md) | Request headers. |
 | virtual [Dispose](D1BaseClient/Dispose.md)(…) | Dispose the client. |
 | virtual [DisposeAsyncCore](D1BaseClient/DisposeAsyncCore.md)() | Asynchronously dispose the client. |
-| [RefreshToken](D1BaseClient/RefreshToken.md)() | Refresh the token. |
-| [RefreshTokenAsync](D1BaseClient/RefreshTokenAsync.md)() |  |
 
 ## Remarks
 

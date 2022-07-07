@@ -3,13 +3,14 @@
 Initialize a new instance of the [`D1StorageClient`](../D1StorageClient.md) class.
 
 ```csharp
-public D1StorageClient(string endpoint, D1ClientOptions options)
+public D1StorageClient(string endpoint, D1ClientOptions options, ICredentials credentials)
 ```
 
 | parameter | description |
 | --- | --- |
 | endpoint | The endpoint of the D1 server. |
 | options | Client options [`D1ClientOptions`](../D1ClientOptions.md). |
+| credentials | Credentials used to authenticate with D1. |
 
 ## Return Value
 
@@ -18,6 +19,7 @@ A new instance of the [`D1StorageClient`](../D1StorageClient.md) class.
 ## See Also
 
 * class [D1ClientOptions](../D1ClientOptions.md)
+* interface [ICredentials](../../CyberCrypt.D1.Client.Credentials/ICredentials.md)
 * class [D1StorageClient](../D1StorageClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

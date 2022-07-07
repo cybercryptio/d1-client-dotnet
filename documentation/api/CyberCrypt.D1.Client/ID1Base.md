@@ -26,9 +26,6 @@ public interface ID1Base
 | [RemoveUserAsync](ID1Base/RemoveUserAsync.md)(…) |  |
 | [RemoveUserFromGroup](ID1Base/RemoveUserFromGroup.md)(…) | Remove a user from a group. |
 | [RemoveUserFromGroupAsync](ID1Base/RemoveUserFromGroupAsync.md)(…) |  |
-| [SetToken](ID1Base/SetToken.md)(…) | Sets the token used to authenticate with D1. |
-| [Version](ID1Base/Version.md)() | Get the version of the D1 server. |
-| [VersionAsync](ID1Base/VersionAsync.md)() |  |
 
 ## See Also
 
