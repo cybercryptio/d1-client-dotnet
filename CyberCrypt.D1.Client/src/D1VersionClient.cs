@@ -26,7 +26,7 @@ public interface ID1VersionClient
 public class D1VersionClient : ID1VersionClient
 {
     private readonly Protobuf.Version.VersionClient client;
-    private readonly ICredentials credentials;
+    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
@@ -34,7 +34,7 @@ public class D1VersionClient : ID1VersionClient
     /// <param name="channel">gRPC channel.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1VersionClient"/> class.</returns>
-    public D1VersionClient(GrpcChannel channel, ICredentials credentials)
+    public D1VersionClient(GrpcChannel channel, ID1Credentials credentials)
     {
         client = new(channel);
         this.credentials = credentials;

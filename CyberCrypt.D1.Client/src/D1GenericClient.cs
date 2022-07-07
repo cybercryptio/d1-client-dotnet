@@ -26,7 +26,7 @@ public interface ID1Generic : ID1Base
 /// </remarks>
 public class D1GenericClient : D1BaseClient, ID1Generic
 {
-    private readonly ICredentials credentials;
+    private readonly ID1Credentials credentials;
 
     /// <inheritdoc />
     public ID1EncryptClient Generic { get; private set; }
@@ -38,7 +38,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1GenericClient"/> class.</returns>
-    public D1GenericClient(string endpoint, D1ClientOptions options, ICredentials credentials)
+    public D1GenericClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
         : base(endpoint, options, credentials)
     {
         Generic = new D1EncryptClient(channel, credentials);

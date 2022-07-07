@@ -6,7 +6,7 @@ namespace CyberCrypt.D1.Client.Credentials;
 /// <summary>
 /// Credentials from username and password.
 /// </summary>
-public class UsernamePasswordCredentials : ICredentials
+public class UsernamePasswordCredentials : ID1Credentials
 {
     private readonly Protobuf.Authn.AuthnClient client;
     private readonly string username;

@@ -3,7 +3,7 @@ namespace CyberCrypt.D1.Client.Credentials;
 /// <summary>
 /// Credentials based off a user provide token.
 /// </summary>
-public class TokenCredentials : ICredentials
+public class TokenCredentials : ID1Credentials
 {
     private readonly string? token;
 

@@ -48,7 +48,7 @@ public interface ID1AuthzClient
 public class D1AuthzClient : ID1AuthzClient
 {
     private readonly Protobuf.Authz.AuthzClient client;
-    private readonly ICredentials credentials;
+    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1AuthzClient"/> class.
@@ -56,7 +56,7 @@ public class D1AuthzClient : ID1AuthzClient
     /// <param name="channel">gRPC channel.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1AuthzClient"/> class.</returns>
-    public D1AuthzClient(GrpcChannel channel, ICredentials credentials)
+    public D1AuthzClient(GrpcChannel channel, ID1Credentials credentials)
     {
         client = new(channel);
         this.credentials = credentials;

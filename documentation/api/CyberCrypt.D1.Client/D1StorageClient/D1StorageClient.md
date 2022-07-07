@@ -3,7 +3,7 @@
 Initialize a new instance of the [`D1StorageClient`](../D1StorageClient.md) class.
 
 ```csharp
-public D1StorageClient(string endpoint, D1ClientOptions options, ICredentials credentials)
+public D1StorageClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
 ```
 
 | parameter | description |
@@ -19,7 +19,7 @@ A new instance of the [`D1StorageClient`](../D1StorageClient.md) class.
 ## See Also
 
 * class [D1ClientOptions](../D1ClientOptions.md)
-* interface [ICredentials](../../CyberCrypt.D1.Client.Credentials/ICredentials.md)
+* interface [ID1Credentials](../../CyberCrypt.D1.Client.Credentials/ID1Credentials.md)
 * class [D1StorageClient](../D1StorageClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

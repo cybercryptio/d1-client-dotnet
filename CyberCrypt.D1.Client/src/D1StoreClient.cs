@@ -59,7 +59,7 @@ public interface ID1StoreClient
 public class D1StoreClient : ID1StoreClient
 {
     private readonly Protobuf.Storage.StorageClient client;
-    private readonly ICredentials credentials;
+    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StoreClient"/> class.
@@ -67,7 +67,7 @@ public class D1StoreClient : ID1StoreClient
     /// <param name="channel">gRPC channel.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1StoreClient"/> class.</returns>
-    public D1StoreClient(GrpcChannel channel, ICredentials credentials)
+    public D1StoreClient(GrpcChannel channel, ID1Credentials credentials)
     {
         client = new(channel);
         this.credentials = credentials;

@@ -22,7 +22,7 @@ public interface ID1Storage : ID1Base
 /// </remarks>
 public class D1StorageClient : D1BaseClient, ID1Storage
 {
-    private readonly ICredentials credentials;
+    private readonly ID1Credentials credentials;
 
     /// <inheritdoc />
     public ID1StoreClient Storage { get; private set; }
@@ -34,7 +34,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1StorageClient"/> class.</returns>
-    public D1StorageClient(string endpoint, D1ClientOptions options, ICredentials credentials)
+    public D1StorageClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
         : base(endpoint, options, credentials)
     {
         Storage = new D1StoreClient(channel, credentials);

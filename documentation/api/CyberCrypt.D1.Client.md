@@ -26,7 +26,7 @@
 
 | public type | description |
 | --- | --- |
-| interface [ICredentials](./CyberCrypt.D1.Client.Credentials/ICredentials.md) | Interface for credential implementations. |
+| interface [ID1Credentials](./CyberCrypt.D1.Client.Credentials/ID1Credentials.md) | Interface for credential implementations. |
 | class [TokenCredentials](./CyberCrypt.D1.Client.Credentials/TokenCredentials.md) | Credentials based off a user provide token. |
 | class [UsernamePasswordCredentials](./CyberCrypt.D1.Client.Credentials/UsernamePasswordCredentials.md) | Credentials from username and password. |
 

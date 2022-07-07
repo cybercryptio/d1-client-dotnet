@@ -41,7 +41,7 @@ public interface ID1EncryptClient
 public class D1EncryptClient : ID1EncryptClient
 {
     private readonly Protobuf.Generic.GenericClient client;
-    private readonly ICredentials credentials;
+    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1EncryptClient"/> class.
@@ -49,7 +49,7 @@ public class D1EncryptClient : ID1EncryptClient
     /// <param name="channel">gRPC channel.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1EncryptClient"/> class.</returns>
-    public D1EncryptClient(GrpcChannel channel, ICredentials credentials)
+    public D1EncryptClient(GrpcChannel channel, ID1Credentials credentials)
     {
         client = new(channel);
         this.credentials = credentials;

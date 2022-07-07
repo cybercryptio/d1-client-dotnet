@@ -45,7 +45,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public string? User { get; private set; }
 
-    private readonly ICredentials credentials;
+    private readonly ID1Credentials credentials;
 
     /// <inheritdoc />
     public ID1AuthnClient Authn { get; private set; }
@@ -63,7 +63,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
-    protected D1BaseClient(string endpoint, D1ClientOptions options, ICredentials credentials)
+    protected D1BaseClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
     {
         if (string.IsNullOrWhiteSpace(options.CertPath))
         {

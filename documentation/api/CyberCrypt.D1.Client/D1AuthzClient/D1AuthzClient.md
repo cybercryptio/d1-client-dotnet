@@ -3,7 +3,7 @@
 Initialize a new instance of the [`D1AuthzClient`](../D1AuthzClient.md) class.
 
 ```csharp
-public D1AuthzClient(GrpcChannel channel, ICredentials credentials)
+public D1AuthzClient(GrpcChannel channel, ID1Credentials credentials)
 ```
 
 | parameter | description |
@@ -17,7 +17,7 @@ A new instance of the [`D1AuthzClient`](../D1AuthzClient.md) class.
 
 ## See Also
 
-* interface [ICredentials](../../CyberCrypt.D1.Client.Credentials/ICredentials.md)
+* interface [ID1Credentials](../../CyberCrypt.D1.Client.Credentials/ID1Credentials.md)
 * class [D1AuthzClient](../D1AuthzClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 
