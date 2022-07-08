@@ -8,7 +8,7 @@ namespace CyberCrypt.D1.Client;
 /// <summary>
 /// Interface for Version client
 /// </summary>
-public interface ID1VersionClient
+public interface ID1Version
 {
     /// <summary>
     /// Get the version of the D1 server.
@@ -23,9 +23,9 @@ public interface ID1VersionClient
 /// <summary>
 /// Version client for connection to a D1 server.
 /// </summary>
-public class D1VersionClient : ID1VersionClient
+public class D1VersionClient : ID1Version
 {
-    private readonly Protobuf.Version.VersionClient client;
+    private readonly Protobuf.Version.Version.VersionClient client;
     private readonly ID1Credentials credentials;
 
     /// <summary>
@@ -46,7 +46,7 @@ public class D1VersionClient : ID1VersionClient
         var token = await credentials.GetTokenAsync();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = await client.VersionAsync(new Protobuf.VersionRequest(), metadata).ConfigureAwait(false);
+        var response = await client.VersionAsync(new Protobuf.Version.VersionRequest(), metadata).ConfigureAwait(false);
 
         return new VersionResponse(response.Commit, response.Tag);
     }
@@ -57,7 +57,7 @@ public class D1VersionClient : ID1VersionClient
         var token = credentials.GetToken();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = client.Version(new Protobuf.VersionRequest(), metadata);
+        var response = client.Version(new Protobuf.Version.VersionRequest(), metadata);
 
         return new VersionResponse(response.Commit, response.Tag);
     }

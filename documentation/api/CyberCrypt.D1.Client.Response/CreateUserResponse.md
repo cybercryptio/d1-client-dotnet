@@ -1,6 +1,6 @@
 # CreateUserResponse class
 
-Response from [`CreateUser`](../CyberCrypt.D1.Client/ID1AuthnClient/CreateUser.md) or [`CreateUserAsync`](../CyberCrypt.D1.Client/ID1AuthnClient/CreateUserAsync.md).
+Response from !:ID1AuthnClient.CreateUser or !:ID1AuthnClient.CreateUserAsync.
 
 ```csharp
 public class CreateUserResponse

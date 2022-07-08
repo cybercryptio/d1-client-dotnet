@@ -2,13 +2,13 @@
 
 syntax = "proto3";
 
-package d1;
-option go_package = "./protobuf";
-option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
-option java_package = "io.cybercrypt.d1.protobuf";
+package d1.generic;
+option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/generic";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Generic";
+option java_package = "io.cybercrypt.d1.protobuf.generic";
 option java_outer_classname = "GenericProto";
 
-// Service for encryption and decryption of data.
+/// Service for encryption and decryption of data.
 service Generic {
   // Encrypts data and returns the ciphertext without storing it.
   rpc Encrypt (EncryptRequest) returns (EncryptResponse) {}
@@ -17,38 +17,38 @@ service Generic {
   rpc Decrypt (DecryptRequest) returns (DecryptResponse) {}
 }
 
-// Represents a request to encrypt data.
+/// Represents a request to encrypt data.
 message EncryptRequest {
-  // Data to encrypt.
+  /// Data to encrypt.
   bytes plaintext = 1;
-  // Associated data.
+  /// Associated data.
   bytes associated_data = 2;
 }
 
-// Represents a response to an encryption request.
+/// Represents a response to an encryption request.
 message EncryptResponse {
-  // Ciphertext of the provided plaintext.
+  /// Ciphertext of the provided plaintext.
   bytes ciphertext = 1;
-  // Associated data.
+  /// Associated data.
   bytes associated_data = 2;
-  // The object ID of the encrypted data.
+  /// The object ID of the encrypted data.
   string object_id = 3;
 }
 
-// Represents a request to decrypt data.
+/// Represents a request to decrypt data.
 message DecryptRequest {
-  // Data to decrypt.
+  /// Data to decrypt.
   bytes ciphertext = 1;
-  // Associated data.
+  /// Associated data.
   bytes associated_data = 2;
-  // The object ID of the data.
+  /// The object ID of the data.
   string object_id = 3;
 }
 
-// Represents a response to a decryption request.
+/// Represents a response to a decryption request.
 message DecryptResponse {
-  // Decrypted data.
+  /// Decrypted data.
   bytes plaintext = 1;
-  // Associated data.
+  /// Associated data.
   bytes associated_data = 2;
 }

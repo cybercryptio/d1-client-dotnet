@@ -8,7 +8,7 @@ namespace CyberCrypt.D1.Client.Credentials;
 /// </summary>
 public class UsernamePasswordCredentials : ID1Credentials
 {
-    private readonly Protobuf.Authn.AuthnClient client;
+    private readonly Protobuf.Authn.Authn.AuthnClient client;
     private readonly string username;
     private readonly string password;
     private string? accessToken;
@@ -29,10 +29,13 @@ public class UsernamePasswordCredentials : ID1Credentials
     /// <returns>A new instance of the <see cref="UsernamePasswordCredentials"/> class.</returns>
     public UsernamePasswordCredentials(string endpoint, string username, string password, string? certPath = null)
     {
-        if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password)) {
+        if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
+        {
             this.username = username;
             this.password = password;
-        } else {
+        }
+        else
+        {
             throw new ArgumentNullException("username and password must be provided");
         }
 
@@ -57,8 +60,9 @@ public class UsernamePasswordCredentials : ID1Credentials
     /// <inheritdoc />
     public string? GetToken()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1)) {
-            var req = client.LoginUser(new Protobuf.LoginUserRequest { UserId = username, Password = password });
+        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        {
+            var req = client.LoginUser(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password });
             accessToken = req.AccessToken;
         }
 
@@ -68,8 +72,9 @@ public class UsernamePasswordCredentials : ID1Credentials
     /// <inheritdoc />
     public async Task<string?> GetTokenAsync()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1)) {
-            var req = await client.LoginUserAsync(new Protobuf.LoginUserRequest { UserId = username, Password = password }).ConfigureAwait(false);
+        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        {
+            var req = await client.LoginUserAsync(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password }).ConfigureAwait(false);
             accessToken = req.AccessToken;
         }
 

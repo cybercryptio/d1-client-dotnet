@@ -9,7 +9,7 @@ namespace CyberCrypt.D1.Client;
 /// <summary>
 /// Interface for Encrypt client
 /// </summary>
-public interface ID1EncryptClient
+public interface ID1Encrypt
 {
     /// <summary>
     /// Decrypt an encrypted object.
@@ -38,9 +38,9 @@ public interface ID1EncryptClient
 /// <summary>
 /// Encrypt client for connection to a D1 server.
 /// </summary>
-public class D1EncryptClient : ID1EncryptClient
+public class D1EncryptClient : ID1Encrypt
 {
-    private readonly Protobuf.Generic.GenericClient client;
+    private readonly Protobuf.Generic.Generic.GenericClient client;
     private readonly ID1Credentials credentials;
 
     /// <summary>
@@ -61,7 +61,7 @@ public class D1EncryptClient : ID1EncryptClient
         var token = await credentials.GetTokenAsync();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = await client.EncryptAsync(new Protobuf.EncryptRequest
+        var response = await client.EncryptAsync(new Protobuf.Generic.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -76,7 +76,7 @@ public class D1EncryptClient : ID1EncryptClient
         var token = credentials.GetToken();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = client.Encrypt(new Protobuf.EncryptRequest
+        var response = client.Encrypt(new Protobuf.Generic.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -91,7 +91,7 @@ public class D1EncryptClient : ID1EncryptClient
         var token = await credentials.GetTokenAsync();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = await client.DecryptAsync(new Protobuf.DecryptRequest
+        var response = await client.DecryptAsync(new Protobuf.Generic.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
@@ -107,7 +107,7 @@ public class D1EncryptClient : ID1EncryptClient
         var token = credentials.GetToken();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = client.Decrypt(new Protobuf.DecryptRequest
+        var response = client.Decrypt(new Protobuf.Generic.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),

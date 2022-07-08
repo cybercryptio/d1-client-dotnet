@@ -1,75 +1,75 @@
 // Copyright 2020-2022 CYBERCRYPT
 syntax = "proto3";
 
-package d1;
-option go_package = "./protobuf";
-option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
-option java_package = "io.cybercrypt.d1.protobuf";
+package d1.storage;
+option go_package = "github.com/cybercryptio/d1-service-storage/protobuf/storage";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Storage";
+option java_package = "io.cybercrypt.d1.protobuf.storage";
 option java_outer_classname = "StorageProto";
 
-// Service for managing stored objects.
+/// Service for managing stored objects.
 service Storage {
-  // Store an object in encrypted form.
+  /// Store an object in encrypted form.
   rpc Store (StoreRequest) returns (StoreResponse) {}
 
-  // Fetches a previously stored object and returns the plaintext content.
+  /// Fetches a previously stored object and returns the plaintext content.
   rpc Retrieve (RetrieveRequest) returns (RetrieveResponse) {}
 
-  // Store an object in encrypted form, replacing the data previously stored.
+  /// Store an object in encrypted form, replacing the data previously stored.
   rpc Update (UpdateRequest) returns (UpdateResponse) {}
 
-  // Deletes a previously stored object.
-  rpc Delete (DeleteeRequest) returns (DeleteeResponse) {}
+  /// Deletes a previously stored object.
+  rpc Delete (DeleteRequest) returns (DeleteResponse) {}
 }
 
-// Represents a request to store an object.
+/// Represents a request to store an object.
 message StoreRequest {
-  // Data to encrypt.
+  /// Data to encrypt.
   bytes plaintext = 1;
-  // Associated data.
+  /// Associated data.
   bytes associated_data = 2;
 }
 
-// Represents a response to a store request.
+/// Represents a response to a store request.
 message StoreResponse {
-  // The object ID to the stored data.
+  /// The object ID to the stored data.
   string object_id = 1;
 }
 
-// Represents a request to retrieve an object.
+/// Represents a request to retrieve an object.
 message RetrieveRequest {
-  // The object ID to retrieve.
+  /// The object ID to retrieve.
   string object_id = 1;
 }
 
-// Represents a response to a retrieve request.
+/// Represents a response to a retrieve request.
 message RetrieveResponse {
-  // The decrypted data.
+  /// The decrypted data.
   bytes plaintext = 1;
-  // Associated data.
+  /// Associated data.
   bytes associated_data = 2;
 }
 
-// Represents a request to update an object.
+/// Represents a request to update an object.
 message UpdateRequest {
-  // The data to encrypt.
+  /// The data to encrypt.
   bytes plaintext = 1;
-  // Associated data.
+  /// Associated data.
   bytes associated_data = 2;
-  // The ID of the object to update.
+  /// The ID of the object to update.
   string object_id = 3;
 }
 
-// Represents a response to an update request.
+/// Represents a response to an update request.
 message UpdateResponse {
 }
 
-// Represents a request to delete an object.
-message DeleteeRequest {
-  // The ID of the object to delete.
+/// Represents a request to delete an object.
+message DeleteRequest {
+  /// The ID of the object to delete.
   string object_id = 1;
 }
 
-// Represents a response to a delete request.
-message DeleteeResponse {
+/// Represents a response to a delete request.
+message DeleteResponse {
 }

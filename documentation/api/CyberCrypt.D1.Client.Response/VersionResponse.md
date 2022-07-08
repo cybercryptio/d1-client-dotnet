@@ -1,6 +1,6 @@
 # VersionResponse class
 
-Response from [`Version`](../CyberCrypt.D1.Client/ID1VersionClient/Version.md) or [`VersionAsync`](../CyberCrypt.D1.Client/ID1VersionClient/VersionAsync.md).
+Response from !:ID1VersionClient.Version or !:ID1VersionClient.VersionAsync.
 
 ```csharp
 public class VersionResponse

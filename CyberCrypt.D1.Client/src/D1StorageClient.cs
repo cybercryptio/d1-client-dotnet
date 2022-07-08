@@ -11,7 +11,7 @@ public interface ID1Storage : ID1Base
     /// <summary>
     /// The storage client.
     /// </summary>
-    ID1StoreClient Storage { get; }
+    ID1Store Storage { get; }
 }
 
 /// <summary>
@@ -25,7 +25,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     private readonly ID1Credentials credentials;
 
     /// <inheritdoc />
-    public ID1StoreClient Storage { get; private set; }
+    public ID1Store Storage { get; private set; }
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StorageClient"/> class.

@@ -15,7 +15,7 @@ public interface ID1Generic : ID1Base
     /// <summary>
     /// The encrypt client.
     /// </summary>
-    ID1EncryptClient Generic { get; }
+    ID1Encrypt Generic { get; }
 }
 
 /// <summary>
@@ -29,7 +29,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     private readonly ID1Credentials credentials;
 
     /// <inheritdoc />
-    public ID1EncryptClient Generic { get; private set; }
+    public ID1Encrypt Generic { get; private set; }
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1GenericClient"/> class.

@@ -72,6 +72,55 @@ public class D1ClientTest
     }
 
     [Fact]
+    [Trait("Category", "Generic")]
+    public async void TestAddSearchAsync()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        List<string> keywordsRange = new List<string>(keywords);
+        var identifier = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, credentials);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
+        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+
+        await client.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
+
+        for (int i = 0; i < keywordsRange.Count; i++)
+        {
+            var searchResponse = await client.Searchable.SearchAsync(keywords[i]).ConfigureAwait(false);
+            Assert.Equal(identifier, searchResponse.Identifiers[0]);
+        }
+
+        await client.DisposeAsync();
+    }
+
+    [Fact]
+    [Trait("Category", "Generic")]
+    public async void TestAddDeleteSearchAsync()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        List<string> keywordsRange = new List<string>(keywords);
+        var identifier = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, credentials);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
+        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+
+        await client.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
+        await client.Searchable.DeleteAsync(keywordsRange, identifier).ConfigureAwait(false);
+
+        for (int i = 0; i < keywordsRange.Count; i++)
+        {
+            var searchResponse = await client.Searchable.SearchAsync(keywords[i]).ConfigureAwait(false);
+            Assert.Equal(0, searchResponse.Identifiers.Count);
+        }
+
+        await client.DisposeAsync();
+    }
+
+    [Fact]
     [Trait("Category", "Storage")]
     public async void TestStoreAsync()
     {
@@ -192,16 +241,21 @@ public class D1ClientTest
     public void TestAddSearch()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
-        var identifer = "id1";
+        List<string> keywordsRange = new List<string>(keywords);
+        var identifier = "id1";
 
-        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
+        var client = new D1GenericClient(d1Endpoint, credentials);
 
-        var createUserResponse = client.CreateUser(allScopes);
-        client.Login(createUserResponse.UserId, createUserResponse.Password);
+        var createUserResponse = client.Authn.CreateUser(allScopes);
+        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var addResponse = client.Add(keywords, identifer);
-        var searchResponse = client.Search(keywords[0]);
-        Assert.Equal(identifier, searchResponse.Identifiers[0]);
+        client.Searchable.Add(keywordsRange, identifier);
+
+        for (int i = 0; i < keywordsRange.Count; i++)
+        {
+            var searchResponse = client.Searchable.Search(keywords[i]);
+            Assert.Equal(identifier, searchResponse.Identifiers[0]);
+        }
 
         client.Dispose();
     }
@@ -211,17 +265,22 @@ public class D1ClientTest
     public void TestAddDeleteSearch()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
-        var identifer = "id1";
+        List<string> keywordsRange = new List<string>(keywords);
+        string identifer = "id1";
 
-        var client = new D1GenericClient(d1Endpoint, d1ClientOptions);
+        var client = new D1GenericClient(d1Endpoint, credentials);
 
-        var createUserResponse = client.CreateUser(allScopes);
-        client.Login(createUserResponse.UserId, createUserResponse.Password);
+        var createUserResponse = client.Authn.CreateUser(allScopes);
+        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        var addResponse = client.Add(keywords, identifer);
-        var deleteResponse = client.Delete(keywords, identifer);
-        var searchResponse = client.Search(keywords[0]);
-        Assert.Equal(0, searchResponse.Identifiers.Length);
+        client.Searchable.Add(keywordsRange, identifer);
+        client.Searchable.Delete(keywordsRange, identifer);
+
+        for (int i = 0; i < keywordsRange.Count; i++)
+        {
+            var searchResponse = client.Searchable.Search(keywords[i]);
+            Assert.Equal(0, searchResponse.Identifiers.Count);
+        }
 
         client.Dispose();
     }

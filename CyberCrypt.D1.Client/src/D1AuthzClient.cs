@@ -9,7 +9,7 @@ namespace CyberCrypt.D1.Client;
 /// <summary>
 /// Interface for Authz client
 /// </summary>
-public interface ID1AuthzClient
+public interface ID1Authz
 {
     /// <summary>
     /// Give a group permission to access an object.
@@ -45,9 +45,9 @@ public interface ID1AuthzClient
 /// <summary>
 /// Authz client for connection to a D1 server.
 /// </summary>
-public class D1AuthzClient : ID1AuthzClient
+public class D1AuthzClient : ID1Authz
 {
-    private readonly Protobuf.Authz.AuthzClient client;
+    private readonly Protobuf.Authz.Authz.AuthzClient client;
     private readonly ID1Credentials credentials;
 
     /// <summary>
@@ -68,7 +68,7 @@ public class D1AuthzClient : ID1AuthzClient
         var token = await credentials.GetTokenAsync();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = await client.GetPermissionsAsync(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, metadata).ConfigureAwait(false);
+        var response = await client.GetPermissionsAsync(new Protobuf.Authz.GetPermissionsRequest { ObjectId = objectId }, metadata).ConfigureAwait(false);
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
@@ -79,7 +79,7 @@ public class D1AuthzClient : ID1AuthzClient
         var token = credentials.GetToken();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        var response = client.GetPermissions(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, metadata);
+        var response = client.GetPermissions(new Protobuf.Authz.GetPermissionsRequest { ObjectId = objectId }, metadata);
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
@@ -90,7 +90,7 @@ public class D1AuthzClient : ID1AuthzClient
         var token = await credentials.GetTokenAsync();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        await client.AddPermissionAsync(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
+        await client.AddPermissionAsync(new Protobuf.Authz.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
             .ConfigureAwait(false);
     }
 
@@ -100,7 +100,7 @@ public class D1AuthzClient : ID1AuthzClient
         var token = credentials.GetToken();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        client.AddPermission(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
+        client.AddPermission(new Protobuf.Authz.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
     }
 
     /// <inheritdoc />
@@ -109,7 +109,7 @@ public class D1AuthzClient : ID1AuthzClient
         var token = await credentials.GetTokenAsync();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        await client.RemovePermissionAsync(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
+        await client.RemovePermissionAsync(new Protobuf.Authz.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
             .ConfigureAwait(false);
     }
 
@@ -119,6 +119,6 @@ public class D1AuthzClient : ID1AuthzClient
         var token = credentials.GetToken();
         var metadata = new Metadata();
         metadata.Add("Authorization", $"Bearer {token}");
-        client.RemovePermission(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
+        client.RemovePermission(new Protobuf.Authz.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
     }
 }

@@ -1,12 +1,12 @@
 # D1BaseClient.Version property
 
 ```csharp
-public ID1VersionClient Version { get; }
+public ID1Version Version { get; }
 ```
 
 ## See Also
 
-* interface [ID1VersionClient](../ID1VersionClient.md)
+* interface [ID1Version](../ID1Version.md)
 * class [D1BaseClient](../D1BaseClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

@@ -3,12 +3,12 @@
 The storage client.
 
 ```csharp
-public ID1StoreClient Storage { get; }
+public ID1Store Storage { get; }
 ```
 
 ## See Also
 
-* interface [ID1StoreClient](../ID1StoreClient.md)
+* interface [ID1Store](../ID1Store.md)
 * interface [ID1Storage](../ID1Storage.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

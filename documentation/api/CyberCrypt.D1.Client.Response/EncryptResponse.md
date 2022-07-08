@@ -1,6 +1,6 @@
 # EncryptResponse class
 
-Response from [`Encrypt`](../CyberCrypt.D1.Client/ID1EncryptClient/Encrypt.md) or [`EncryptAsync`](../CyberCrypt.D1.Client/ID1EncryptClient/EncryptAsync.md).
+Response from !:ID1EncryptClient.Encrypt or !:ID1EncryptClient.EncryptAsync.
 
 ```csharp
 public class EncryptResponse

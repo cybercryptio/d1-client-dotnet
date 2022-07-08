@@ -1,6 +1,6 @@
 # DecryptResponse class
 
-Response from [`Decrypt`](../CyberCrypt.D1.Client/ID1EncryptClient/Decrypt.md) or [`DecryptAsync`](../CyberCrypt.D1.Client/ID1EncryptClient/DecryptAsync.md).
+Response from !:ID1EncryptClient.Decrypt or !:ID1EncryptClient.DecryptAsync.
 
 ```csharp
 public class DecryptResponse

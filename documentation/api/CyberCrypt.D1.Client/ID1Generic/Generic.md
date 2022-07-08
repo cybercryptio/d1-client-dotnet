@@ -3,12 +3,12 @@
 The encrypt client.
 
 ```csharp
-public ID1EncryptClient Generic { get; }
+public ID1Encrypt Generic { get; }
 ```
 
 ## See Also
 
-* interface [ID1EncryptClient](../ID1EncryptClient.md)
+* interface [ID1Encrypt](../ID1Encrypt.md)
 * interface [ID1Generic](../ID1Generic.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

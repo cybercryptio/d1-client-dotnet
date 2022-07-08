@@ -3,12 +3,12 @@
 The authn client.
 
 ```csharp
-public ID1AuthnClient Authn { get; }
+public ID1Authn Authn { get; }
 ```
 
 ## See Also
 
-* interface [ID1AuthnClient](../ID1AuthnClient.md)
+* interface [ID1Authn](../ID1Authn.md)
 * interface [ID1Base](../ID1Base.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 
