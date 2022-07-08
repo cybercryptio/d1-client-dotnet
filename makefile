@@ -7,10 +7,6 @@ help:  ## Display this help
 ##### Config #####
 SHELL := /bin/bash
 
-##### Files #####
-export generic_proto_path ?= ../../d1-service-generic/protobuf
-export storage_proto_path ?= ../../d1-service-storage/protobuf
-
 ##### Build targets #####
 .PHONY: build
 build: # Build all clients
