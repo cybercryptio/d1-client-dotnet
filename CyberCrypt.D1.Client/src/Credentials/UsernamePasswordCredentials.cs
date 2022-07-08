@@ -20,7 +20,7 @@ public class UsernamePasswordCredentials : ID1Credentials
 
 
     /// <summary>
-    /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
+    /// Initialize a new instance of the <see cref="UsernamePasswordCredentials"/> class.
     /// </summary>
     /// <param name="endpoint">The endpoint of the D1 server.</param>
     /// <param name="username">The username.</param>
