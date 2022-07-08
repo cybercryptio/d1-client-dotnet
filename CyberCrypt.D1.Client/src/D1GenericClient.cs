@@ -1,7 +1,7 @@
 // Copyright 2020-2022 CYBERCRYPT
 using System.Runtime.CompilerServices;
 using CyberCrypt.D1.Client.Credentials;
-
+using CyberCrypt.D1.Client.ServiceClients;
 
 [assembly: InternalsVisibleTo("CyberCrypt.D1.Client.Tests")]
 

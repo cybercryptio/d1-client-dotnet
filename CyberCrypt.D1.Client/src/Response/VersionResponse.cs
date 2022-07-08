@@ -2,7 +2,7 @@
 namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="ID1VersionClient.Version"/> or <see cref="ID1VersionClient.VersionAsync"/>.
+/// Response from <see cref="ServiceClients.ID1VersionClient.Version"/> or <see cref="ServiceClients.ID1VersionClient.VersionAsync"/>.
 /// </summary>
 public class VersionResponse {
     /// <summary>

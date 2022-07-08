@@ -2,9 +2,8 @@
 using System.Security.Cryptography.X509Certificates;
 using Grpc.Net.Client;
 using Grpc.Core;
-using CyberCrypt.D1.Client.Utils;
-using CyberCrypt.D1.Client.Response;
 using CyberCrypt.D1.Client.Credentials;
+using CyberCrypt.D1.Client.ServiceClients;
 
 namespace CyberCrypt.D1.Client;
 

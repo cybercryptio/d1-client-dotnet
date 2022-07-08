@@ -1,5 +1,6 @@
 // Copyright 2020-2022 CYBERCRYPT
 using CyberCrypt.D1.Client.Credentials;
+using CyberCrypt.D1.Client.ServiceClients;
 
 namespace CyberCrypt.D1.Client;
 

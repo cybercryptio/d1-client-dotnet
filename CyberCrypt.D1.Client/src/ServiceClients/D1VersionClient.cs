@@ -1,9 +1,7 @@
-using CyberCrypt.D1.Client.Credentials;
 using CyberCrypt.D1.Client.Response;
-using Grpc.Core;
 using Grpc.Net.Client;
 
-namespace CyberCrypt.D1.Client;
+namespace CyberCrypt.D1.Client.ServiceClients;
 
 /// <summary>
 /// Interface for Version client
