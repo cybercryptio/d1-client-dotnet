@@ -3,7 +3,7 @@
 Initialize a new instance of the [`D1GenericClient`](../D1GenericClient.md) class.
 
 ```csharp
-public D1GenericClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
+public D1GenericClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
 ```
 
 | parameter | description |
@@ -18,8 +18,8 @@ A new instance of the [`D1GenericClient`](../D1GenericClient.md) class.
 
 ## See Also
 
-* class [D1ClientOptions](../D1ClientOptions.md)
 * interface [ID1Credentials](../../CyberCrypt.D1.Client.Credentials/ID1Credentials.md)
+* class [D1ClientOptions](../D1ClientOptions.md)
 * class [D1GenericClient](../D1GenericClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

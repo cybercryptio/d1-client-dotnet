@@ -38,8 +38,8 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1GenericClient"/> class.</returns>
-    public D1GenericClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
-        : base(endpoint, options, credentials)
+    public D1GenericClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
+        : base(endpoint, credentials, options)
     {
         Generic = new D1EncryptClient(channel, credentials);
         this.credentials = credentials;

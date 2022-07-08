@@ -34,8 +34,8 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1StorageClient"/> class.</returns>
-    public D1StorageClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
-        : base(endpoint, options, credentials)
+    public D1StorageClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
+        : base(endpoint, credentials, options)
     {
         Storage = new D1StoreClient(channel, credentials);
         this.credentials = credentials;

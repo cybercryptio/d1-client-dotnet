@@ -63,8 +63,14 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
     /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
-    protected D1BaseClient(string endpoint, D1ClientOptions options, ID1Credentials credentials)
+    protected D1BaseClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
     {
+        this.credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
+        if (options == null)
+        {
+            options = new D1ClientOptions();
+        }
+
         if (string.IsNullOrWhiteSpace(options.CertPath))
         {
             channel = GrpcChannel.ForAddress(endpoint);
@@ -81,7 +87,6 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
         Authn = new D1AuthnClient(channel, credentials);
         Authz = new D1AuthzClient(channel, credentials);
         Version = new D1VersionClient(channel, credentials);
-        this.credentials = credentials;
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 # UsernamePasswordCredentials constructor
 
-Initialize a new instance of the [`D1BaseClient`](../../CyberCrypt.D1.Client/D1BaseClient.md) class.
+Initialize a new instance of the [`UsernamePasswordCredentials`](../UsernamePasswordCredentials.md) class.
 
 ```csharp
 public UsernamePasswordCredentials(string endpoint, string username, string password, 
@@ -16,7 +16,7 @@ public UsernamePasswordCredentials(string endpoint, string username, string pass
 
 ## Return Value
 
-A new instance of the [`D1BaseClient`](../../CyberCrypt.D1.Client/D1BaseClient.md) class.
+A new instance of the [`UsernamePasswordCredentials`](../UsernamePasswordCredentials.md) class.
 
 ## See Also
 

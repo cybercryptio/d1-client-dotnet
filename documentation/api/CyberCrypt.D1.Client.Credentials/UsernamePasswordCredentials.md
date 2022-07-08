@@ -10,7 +10,7 @@ public class UsernamePasswordCredentials : ID1Credentials
 
 | name | description |
 | --- | --- |
-| [UsernamePasswordCredentials](UsernamePasswordCredentials/UsernamePasswordCredentials.md)(…) | Initialize a new instance of the [`D1BaseClient`](../CyberCrypt.D1.Client/D1BaseClient.md) class. |
+| [UsernamePasswordCredentials](UsernamePasswordCredentials/UsernamePasswordCredentials.md)(…) | Initialize a new instance of the [`UsernamePasswordCredentials`](./UsernamePasswordCredentials.md) class. |
 | [ExpiryTime](UsernamePasswordCredentials/ExpiryTime.md) { get; } | The token expiration time. |
 | [GetToken](UsernamePasswordCredentials/GetToken.md)() |  |
 | [GetTokenAsync](UsernamePasswordCredentials/GetTokenAsync.md)() |  |
