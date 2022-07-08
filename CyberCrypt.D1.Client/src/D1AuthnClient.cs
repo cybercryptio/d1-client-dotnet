@@ -67,34 +67,27 @@ public interface ID1AuthnClient
 public class D1AuthnClient : ID1AuthnClient
 {
     private readonly Protobuf.Authn.AuthnClient client;
-    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1AuthnClient"/> class.
     /// </summary>
     /// <param name="channel">gRPC channel.</param>
-    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1AuthnClient"/> class.</returns>
-    public D1AuthnClient(GrpcChannel channel, ID1Credentials credentials)
+    public D1AuthnClient(GrpcChannel channel)
     {
         client = new(channel);
-        this.credentials = credentials;
     }
 
     /// <inheritdoc />
     public async Task<CreateUserResponse> CreateUserAsync(IList<Scope> scopes)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-
         var request = new Protobuf.CreateUserRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = await client.CreateUserAsync(request, metadata).ConfigureAwait(false);
+        var response = await client.CreateUserAsync(request).ConfigureAwait(false);
 
         return new CreateUserResponse(response.UserId, response.Password);
     }
@@ -102,16 +95,13 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public CreateUserResponse CreateUser(IList<Scope> scopes)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var request = new Protobuf.CreateUserRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = client.CreateUser(request, metadata);
+        var response = client.CreateUser(request);
 
         return new CreateUserResponse(response.UserId, response.Password);
     }
@@ -119,34 +109,25 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public async Task RemoveUserAsync(string userId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        await client.RemoveUserAsync(new Protobuf.RemoveUserRequest { UserId = userId }, metadata).ConfigureAwait(false);
+        await client.RemoveUserAsync(new Protobuf.RemoveUserRequest { UserId = userId }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemoveUser(string userId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        client.RemoveUser(new Protobuf.RemoveUserRequest { UserId = userId }, metadata);
+        client.RemoveUser(new Protobuf.RemoveUserRequest { UserId = userId });
     }
 
     /// <inheritdoc />
     public async Task<CreateGroupResponse> CreateGroupAsync(IList<Scope> scopes)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var request = new Protobuf.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = await client.CreateGroupAsync(request, metadata).ConfigureAwait(false);
+        var response = await client.CreateGroupAsync(request).ConfigureAwait(false);
 
         return new CreateGroupResponse(response.GroupId);
     }
@@ -154,16 +135,13 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public CreateGroupResponse CreateGroup(IList<Scope> scopes)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var request = new Protobuf.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
         }
 
-        var response = client.CreateGroup(request, metadata);
+        var response = client.CreateGroup(request);
 
         return new CreateGroupResponse(response.GroupId);
     }
@@ -171,37 +149,25 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public async Task AddUserToGroupAsync(string userId, string groupId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        await client.AddUserToGroupAsync(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, metadata)
+        await client.AddUserToGroupAsync(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId })
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void AddUserToGroup(string userId, string groupId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        client.AddUserToGroup(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId }, metadata);
+        client.AddUserToGroup(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId });
     }
 
     /// <inheritdoc />
     public async Task RemoveUserFromGroupAsync(string userId, string groupId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        await client.RemoveUserFromGroupAsync(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }, metadata).ConfigureAwait(false);
+        await client.RemoveUserFromGroupAsync(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemoveUserFromGroup(string userId, string groupId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        client.RemoveUserFromGroup(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }, metadata);
+        client.RemoveUserFromGroup(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId });
     }
 }
