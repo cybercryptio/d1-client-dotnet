@@ -11,14 +11,7 @@ public class D1StorageClient : D1BaseClient, ID1Storage
 | name | description |
 | --- | --- |
 | [D1StorageClient](D1StorageClient/D1StorageClient.md)(…) | Initialize a new instance of the [`D1StorageClient`](./D1StorageClient.md) class. |
-| [Delete](D1StorageClient/Delete.md)(…) |  |
-| [DeleteAsync](D1StorageClient/DeleteAsync.md)(…) |  |
-| [Retrieve](D1StorageClient/Retrieve.md)(…) |  |
-| [RetrieveAsync](D1StorageClient/RetrieveAsync.md)(…) |  |
-| [Store](D1StorageClient/Store.md)(…) |  |
-| [StoreAsync](D1StorageClient/StoreAsync.md)(…) |  |
-| [Update](D1StorageClient/Update.md)(…) |  |
-| [UpdateAsync](D1StorageClient/UpdateAsync.md)(…) |  |
+| [Storage](D1StorageClient/Storage.md) { get; } |  |
 
 ## Remarks
 

@@ -1,6 +1,5 @@
 // Copyright 2020-2022 CYBERCRYPT
-using Google.Protobuf;
-using CyberCrypt.D1.Client.Response;
+using CyberCrypt.D1.Client.Credentials;
 
 namespace CyberCrypt.D1.Client;
 
@@ -10,45 +9,9 @@ namespace CyberCrypt.D1.Client;
 public interface ID1Storage : ID1Base
 {
     /// <summary>
-    /// Delete data encrypted in the storage attached to D1.
+    /// The storage client.
     /// </summary>
-    /// <param name="objectId">The ID of the object.</param>
-    void Delete(string objectId);
-
-    /// <inheritdoc cref="Delete"/>
-    Task DeleteAsync(string objectId);
-
-    /// <summary>
-    /// Retreive some data encrypted in the storage attached to D1.
-    /// </summary>
-    /// <param name="objectId">The ID of the object.</param>
-    /// <returns>An instance of <see cref="RetrieveResponse" />.</returns>
-    RetrieveResponse Retrieve(string objectId);
-
-    /// <inheritdoc cref="Retrieve"/>
-    Task<RetrieveResponse> RetrieveAsync(string objectId);
-
-    /// <summary>
-    /// Store some data encrypted in the storage attached to D1.
-    /// </summary>
-    /// <param name="plaintext">The plaintext to store.</param>
-    /// <param name="associatedData">The attached associated data.</param>
-    /// <returns>An instance of <see cref="StoreResponse" />.</returns>
-    StoreResponse Store(byte[] plaintext, byte[] associatedData);
-
-    /// <inheritdoc cref="Store"/>
-    Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData);
-
-    /// <summary>
-    /// Update some data stored in the storage attached to D1.
-    /// </summary>
-    /// <param name="objectId">The ID of the object.</param>
-    /// <param name="plaintext">The plaintext to store.</param>
-    /// <param name="associatedData">The attached associated data.</param>
-    void Update(string objectId, byte[] plaintext, byte[] associatedData);
-
-    /// <inheritdoc cref="Update"/>
-    Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData);
+    ID1StoreClient Storage { get; }
 }
 
 /// <summary>
@@ -59,107 +22,22 @@ public interface ID1Storage : ID1Base
 /// </remarks>
 public class D1StorageClient : D1BaseClient, ID1Storage
 {
-    private Protobuf.Storage.StorageClient storageClient;
+    private readonly ID1Credentials credentials;
+
+    /// <inheritdoc />
+    public ID1StoreClient Storage { get; private set; }
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StorageClient"/> class.
     /// </summary>
     /// <param name="endpoint">The endpoint of the D1 server.</param>
     /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
+    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1StorageClient"/> class.</returns>
-    public D1StorageClient(string endpoint, D1ClientOptions options)
-        : base(endpoint, options)
+    public D1StorageClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
+        : base(endpoint, credentials, options)
     {
-        storageClient = new(channel);
-    }
-
-    /// <inheritdoc />
-    public async Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await storageClient.StoreAsync(new Protobuf.StoreRequest
-        {
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders).ConfigureAwait(false);
-
-        return new StoreResponse(response.ObjectId);
-    }
-
-    /// <inheritdoc />
-    public StoreResponse Store(byte[] plaintext, byte[] associatedData)
-    {
-        RefreshToken();
-
-        var response = storageClient.Store(new Protobuf.StoreRequest
-        {
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders);
-
-        return new StoreResponse(response.ObjectId);
-    }
-
-    /// <inheritdoc />
-    public async Task<RetrieveResponse> RetrieveAsync(string objectId)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        var response = await storageClient.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
-
-        return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /// <inheritdoc />
-    public RetrieveResponse Retrieve(string objectId)
-    {
-        RefreshToken();
-
-        var response = storageClient.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId }, requestHeaders);
-
-        return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
-    }
-
-    /// <inheritdoc />
-    public async Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await storageClient.UpdateAsync(new Protobuf.UpdateRequest
-        {
-            ObjectId = objectId,
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public void Update(string objectId, byte[] plaintext, byte[] associatedData)
-    {
-        RefreshToken();
-
-        storageClient.Update(new Protobuf.UpdateRequest
-        {
-            ObjectId = objectId,
-            Plaintext = ByteString.CopyFrom(plaintext),
-            AssociatedData = ByteString.CopyFrom(associatedData)
-        }, requestHeaders);
-    }
-
-    /// <inheritdoc />
-    public async Task DeleteAsync(string objectId)
-    {
-        await RefreshTokenAsync().ConfigureAwait(false);
-
-        await storageClient.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public void Delete(string objectId)
-    {
-        RefreshToken();
-
-        storageClient.Delete(new Protobuf.DeleteRequest { ObjectId = objectId }, requestHeaders);
+        Storage = new D1StoreClient(channel, credentials);
+        this.credentials = credentials;
     }
 }

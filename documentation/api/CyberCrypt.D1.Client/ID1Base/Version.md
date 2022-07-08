@@ -1,18 +1,14 @@
-# ID1Base.Version method
+# ID1Base.Version property
 
-Get the version of the D1 server.
+The version client.
 
 ```csharp
-public VersionResponse Version()
+public ID1VersionClient Version { get; }
 ```
-
-## Return Value
-
-An instance of [`VersionResponse`](../../CyberCrypt.D1.Client.Response/VersionResponse.md).
 
 ## See Also
 
-* class [VersionResponse](../../CyberCrypt.D1.Client.Response/VersionResponse.md)
+* interface [ID1VersionClient](../ID1VersionClient.md)
 * interface [ID1Base](../ID1Base.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 
