@@ -3,13 +3,14 @@
 Initialize a new instance of the [`D1BaseClient`](../D1BaseClient.md) class.
 
 ```csharp
-protected D1BaseClient(string endpoint, D1ClientOptions options)
+protected D1BaseClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
 ```
 
 | parameter | description |
 | --- | --- |
 | endpoint | The endpoint of the D1 server. |
 | options | Client options [`D1ClientOptions`](../D1ClientOptions.md). |
+| credentials | Credentials used to authenticate with D1. |
 
 ## Return Value
 
@@ -17,6 +18,7 @@ A new instance of the [`D1BaseClient`](../D1BaseClient.md) class.
 
 ## See Also
 
+* interface [ID1Credentials](../../CyberCrypt.D1.Client.Credentials/ID1Credentials.md)
 * class [D1ClientOptions](../D1ClientOptions.md)
 * class [D1BaseClient](../D1BaseClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)

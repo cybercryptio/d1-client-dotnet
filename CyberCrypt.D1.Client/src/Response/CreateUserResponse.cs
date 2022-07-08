@@ -2,7 +2,7 @@
 namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="ID1Base.CreateUser"/> or <see cref="ID1Base.CreateUserAsync"/>.
+/// Response from <see cref="ID1AuthnClient.CreateUser"/> or <see cref="ID1AuthnClient.CreateUserAsync"/>.
 /// </summary>
 public class CreateUserResponse {
     /// <summary>

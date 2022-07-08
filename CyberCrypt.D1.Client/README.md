@@ -32,9 +32,9 @@ using CyberCrypt.D1.Client;
 var d1Url = "https://localhost:9000";
 var d1Username = "bd778920-f130-4a5c-b577-79d71bedae67";
 var d1Password = "Iy7ZH89rUj4H8dqagKUSqmkVOFULxghtgJR-rSreeVk";
-var client = new D1GenericClient(d1Url, d1Username, d1Password);
+var client = new D1GenericClient(d1Url, new UsernamePasswordCredentials(d1Username, d1Password));
 // OR
-var client = new D1StorageClient(d1Url, d1Username, d1Password);
+var client = new D1StorageClient(d1Url, new UsernamePasswordCredentials(d1Username, d1Password));
 ```
 
 Afterwards the client is ready to be used, and the different methods can be called. See the [API reference](#api-reference) for a description of all the available methods.

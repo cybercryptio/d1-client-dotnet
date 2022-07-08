@@ -2,7 +2,7 @@
 namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="ID1Storage.Store"/> or <see cref="ID1Storage.StoreAsync"/>.
+/// Response from <see cref="ID1StoreClient.Store"/> or <see cref="ID1StoreClient.StoreAsync"/>.
 /// </summary>
 public class StoreResponse {
     /// <summary>
