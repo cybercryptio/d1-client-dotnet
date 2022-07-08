@@ -1,6 +1,6 @@
 # CreateGroupResponse class
 
-Response from [`CreateGroup`](../CyberCrypt.D1.Client/ID1AuthnClient/CreateGroup.md) or [`CreateGroupAsync`](../CyberCrypt.D1.Client/ID1AuthnClient/CreateGroupAsync.md).
+Response from [`CreateGroup`](../CyberCrypt.D1.Client.ServiceClients/ID1AuthnClient/CreateGroup.md) or [`CreateGroupAsync`](../CyberCrypt.D1.Client.ServiceClients/ID1AuthnClient/CreateGroupAsync.md).
 
 ```csharp
 public class CreateGroupResponse

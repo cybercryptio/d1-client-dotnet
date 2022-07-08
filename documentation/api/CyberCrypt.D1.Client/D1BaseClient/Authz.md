@@ -6,7 +6,7 @@ public ID1AuthzClient Authz { get; }
 
 ## See Also
 
-* interface [ID1AuthzClient](../ID1AuthzClient.md)
+* interface [ID1AuthzClient](../../CyberCrypt.D1.Client.ServiceClients/ID1AuthzClient.md)
 * class [D1BaseClient](../D1BaseClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 
