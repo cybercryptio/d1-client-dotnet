@@ -72,7 +72,6 @@ public class D1ClientTest
     }
 
     [Fact]
-    [Trait("Category", "Generic")]
     public async void TestAddSearchAsync()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
@@ -86,9 +85,9 @@ public class D1ClientTest
 
         await client.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
 
-        for (int i = 0; i < keywordsRange.Count; i++)
+        foreach (var keyword in keywordsRange)
         {
-            var searchResponse = await client.Searchable.SearchAsync(keywords[i]).ConfigureAwait(false);
+            var searchResponse = await client.Searchable.SearchAsync(keyword).ConfigureAwait(false);
             Assert.Equal(identifier, searchResponse.Identifiers[0]);
         }
 
@@ -111,9 +110,9 @@ public class D1ClientTest
         await client.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
         await client.Searchable.DeleteAsync(keywordsRange, identifier).ConfigureAwait(false);
 
-        for (int i = 0; i < keywordsRange.Count; i++)
+        foreach (var keyword in keywordsRange)
         {
-            var searchResponse = await client.Searchable.SearchAsync(keywords[i]).ConfigureAwait(false);
+            var searchResponse = await client.Searchable.SearchAsync(keyword).ConfigureAwait(false);
             Assert.Equal(0, searchResponse.Identifiers.Count);
         }
 
@@ -237,7 +236,6 @@ public class D1ClientTest
     }
 
     [Fact]
-    [Trait("Category", "Generic")]
     public void TestAddSearch()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
@@ -251,9 +249,9 @@ public class D1ClientTest
 
         client.Searchable.Add(keywordsRange, identifier);
 
-        for (int i = 0; i < keywordsRange.Count; i++)
+        foreach (var keyword in keywordsRange)
         {
-            var searchResponse = client.Searchable.Search(keywords[i]);
+            var searchResponse = client.Searchable.Search(keyword);
             Assert.Equal(identifier, searchResponse.Identifiers[0]);
         }
 
@@ -261,7 +259,6 @@ public class D1ClientTest
     }
 
     [Fact]
-    [Trait("Category", "Generic")]
     public void TestAddDeleteSearch()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
@@ -276,9 +273,9 @@ public class D1ClientTest
         client.Searchable.Add(keywordsRange, identifer);
         client.Searchable.Delete(keywordsRange, identifer);
 
-        for (int i = 0; i < keywordsRange.Count; i++)
+        foreach (var keyword in keywordsRange)
         {
-            var searchResponse = client.Searchable.Search(keywords[i]);
+            var searchResponse = client.Searchable.Search(keyword);
             Assert.Equal(0, searchResponse.Identifiers.Count);
         }
 
