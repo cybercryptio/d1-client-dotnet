@@ -30,6 +30,10 @@ __check_defined = \
 ##### Build targets #####
 .PHONY: build
 build: ## Build
+	# For some reason the documentation comments doesn't like the comments in the protobuf files
+	# that starts with '///', instead it causes a lot of compilation warnings. Changing comments to '//'
+	# fixes the issue
+	grep -r -l "///" ./src/protos | xargs sed -i 's/\/\/\//\/\//g' || true
 	dotnet build
 
 .PHONY: tests
