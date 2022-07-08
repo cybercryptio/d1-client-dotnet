@@ -26,7 +26,7 @@ public class UsernamePasswordCredentials : ID1Credentials
     /// <param name="username">The username.</param>
     /// <param name="password">The password.</param>
     /// <param name="certPath">The certificate path.</param>
-    /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
+    /// <returns>A new instance of the <see cref="UsernamePasswordCredentials"/> class.</returns>
     public UsernamePasswordCredentials(string endpoint, string username, string password, string? certPath = null)
     {
         if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password)) {
