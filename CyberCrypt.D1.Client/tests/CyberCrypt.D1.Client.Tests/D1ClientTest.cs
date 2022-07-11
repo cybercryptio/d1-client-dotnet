@@ -137,7 +137,7 @@ public class D1ClientTest
         var client = new D1GenericClient(d1Endpoint, credentials);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         await client2.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
 
@@ -160,7 +160,7 @@ public class D1ClientTest
         var client = new D1GenericClient(d1Endpoint, credentials);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         await client2.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
         await client2.Searchable.DeleteAsync(keywordsRange, identifier).ConfigureAwait(false);
@@ -295,7 +295,7 @@ public class D1ClientTest
         var client = new D1GenericClient(d1Endpoint, credentials);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         client2.Searchable.Add(keywordsRange, identifier);
 
@@ -318,7 +318,7 @@ public class D1ClientTest
         var client = new D1GenericClient(d1Endpoint, credentials);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         client2.Searchable.Add(keywordsRange, identifer);
         client2.Searchable.Delete(keywordsRange, identifer);
