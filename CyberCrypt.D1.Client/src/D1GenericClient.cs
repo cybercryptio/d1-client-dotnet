@@ -1,7 +1,7 @@
 // Copyright 2020-2022 CYBERCRYPT
 using System.Runtime.CompilerServices;
 using CyberCrypt.D1.Client.Credentials;
-
+using CyberCrypt.D1.Client.ServiceClients;
 
 [assembly: InternalsVisibleTo("CyberCrypt.D1.Client.Tests")]
 
@@ -26,7 +26,6 @@ public interface ID1Generic : ID1Base
 /// </remarks>
 public class D1GenericClient : D1BaseClient, ID1Generic
 {
-    private readonly ID1Credentials credentials;
 
     /// <inheritdoc />
     public ID1EncryptClient Generic { get; private set; }
@@ -41,7 +40,6 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     public D1GenericClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
         : base(endpoint, credentials, options)
     {
-        Generic = new D1EncryptClient(channel, credentials);
-        this.credentials = credentials;
+        Generic = new D1EncryptClient(channel);
     }
 }

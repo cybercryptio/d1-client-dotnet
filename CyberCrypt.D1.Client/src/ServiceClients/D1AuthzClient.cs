@@ -1,10 +1,7 @@
-using CyberCrypt.D1.Client.Credentials;
 using CyberCrypt.D1.Client.Response;
-using CyberCrypt.D1.Client.Utils;
-using Grpc.Core;
 using Grpc.Net.Client;
 
-namespace CyberCrypt.D1.Client;
+namespace CyberCrypt.D1.Client.ServiceClients;
 
 /// <summary>
 /// Interface for Authz client
@@ -48,27 +45,22 @@ public interface ID1AuthzClient
 public class D1AuthzClient : ID1AuthzClient
 {
     private readonly Protobuf.Authz.AuthzClient client;
-    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1AuthzClient"/> class.
     /// </summary>
     /// <param name="channel">gRPC channel.</param>
-    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1AuthzClient"/> class.</returns>
-    public D1AuthzClient(GrpcChannel channel, ID1Credentials credentials)
+    public D1AuthzClient(GrpcChannel channel)
     {
         client = new(channel);
-        this.credentials = credentials;
     }
 
     /// <inheritdoc />
     public async Task<GetPermissionsResponse> GetPermissionsAsync(string objectId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        var response = await client.GetPermissionsAsync(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, metadata).ConfigureAwait(false);
+        var response = await client.GetPermissionsAsync(new Protobuf.GetPermissionsRequest { ObjectId = objectId })
+            .ConfigureAwait(false);
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
@@ -76,10 +68,7 @@ public class D1AuthzClient : ID1AuthzClient
     /// <inheritdoc />
     public GetPermissionsResponse GetPermissions(string objectId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        var response = client.GetPermissions(new Protobuf.GetPermissionsRequest { ObjectId = objectId }, metadata);
+        var response = client.GetPermissions(new Protobuf.GetPermissionsRequest { ObjectId = objectId });
 
         return new GetPermissionsResponse(new List<string>(response.GroupIds));
     }
@@ -87,38 +76,26 @@ public class D1AuthzClient : ID1AuthzClient
     /// <inheritdoc />
     public async Task AddPermissionAsync(string objectId, string groupId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        await client.AddPermissionAsync(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
+        await client.AddPermissionAsync(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId })
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void AddPermission(string objectId, string groupId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        client.AddPermission(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
+        client.AddPermission(new Protobuf.AddPermissionRequest { ObjectId = objectId, GroupId = groupId });
     }
 
     /// <inheritdoc />
     public async Task RemovePermissionAsync(string objectId, string groupId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        await client.RemovePermissionAsync(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata)
+        await client.RemovePermissionAsync(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId })
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemovePermission(string objectId, string groupId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        client.RemovePermission(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId }, metadata);
+        client.RemovePermission(new Protobuf.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId });
     }
 }

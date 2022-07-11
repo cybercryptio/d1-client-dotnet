@@ -2,9 +2,8 @@
 using System.Security.Cryptography.X509Certificates;
 using Grpc.Net.Client;
 using Grpc.Core;
-using CyberCrypt.D1.Client.Utils;
-using CyberCrypt.D1.Client.Response;
 using CyberCrypt.D1.Client.Credentials;
+using CyberCrypt.D1.Client.ServiceClients;
 
 namespace CyberCrypt.D1.Client;
 
@@ -45,8 +44,6 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <inheritdoc />
     public string? User { get; private set; }
 
-    private readonly ID1Credentials credentials;
-
     /// <inheritdoc />
     public ID1AuthnClient Authn { get; private set; }
 
@@ -65,15 +62,30 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     /// <returns>A new instance of the <see cref="D1BaseClient"/> class.</returns>
     protected D1BaseClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
     {
-        this.credentials = credentials ?? throw new ArgumentNullException(nameof(credentials));
+        if (credentials is null)
+        {
+            throw new ArgumentNullException(nameof(credentials));
+        }
+
         if (options == null)
         {
             options = new D1ClientOptions();
         }
 
+        var callCredentials = CallCredentials.FromInterceptor(async (context, metadata) =>
+        {
+            var token = await credentials.GetTokenAsync();
+            metadata.Add("Authorization", $"Bearer {token}");
+        });
+
         if (string.IsNullOrWhiteSpace(options.CertPath))
         {
-            channel = GrpcChannel.ForAddress(endpoint);
+            var grpcCredentials = new D1CompositeCredentials(ChannelCredentials.Insecure, callCredentials);
+            channel = GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions
+            {
+                Credentials = grpcCredentials,
+                UnsafeUseInsecureChannelCallCredentials = true
+            });
         }
         else
         {
@@ -81,12 +93,13 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
             var handler = new HttpClientHandler();
             handler.ClientCertificates.Add(cert);
 
-            channel = GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions { HttpHandler = handler });
+            var grpcCredentials = new D1CompositeCredentials(ChannelCredentials.SecureSsl, callCredentials);
+            channel = GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions { HttpHandler = handler, Credentials = grpcCredentials });
         }
 
-        Authn = new D1AuthnClient(channel, credentials);
-        Authz = new D1AuthzClient(channel, credentials);
-        Version = new D1VersionClient(channel, credentials);
+        Authn = new D1AuthnClient(channel);
+        Authz = new D1AuthzClient(channel);
+        Version = new D1VersionClient(channel);
     }
 
     /// <summary>

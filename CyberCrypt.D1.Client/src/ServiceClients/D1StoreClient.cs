@@ -1,10 +1,8 @@
-using CyberCrypt.D1.Client.Credentials;
 using CyberCrypt.D1.Client.Response;
-using Grpc.Core;
 using Google.Protobuf;
 using Grpc.Net.Client;
 
-namespace CyberCrypt.D1.Client;
+namespace CyberCrypt.D1.Client.ServiceClients;
 
 /// <summary>
 /// Interface for Store client
@@ -59,31 +57,25 @@ public interface ID1StoreClient
 public class D1StoreClient : ID1StoreClient
 {
     private readonly Protobuf.Storage.StorageClient client;
-    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StoreClient"/> class.
     /// </summary>
     /// <param name="channel">gRPC channel.</param>
-    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1StoreClient"/> class.</returns>
-    public D1StoreClient(GrpcChannel channel, ID1Credentials credentials)
+    public D1StoreClient(GrpcChannel channel)
     {
         client = new(channel);
-        this.credentials = credentials;
     }
 
     /// <inheritdoc />
     public async Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = await client.StoreAsync(new Protobuf.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata).ConfigureAwait(false);
+        }).ConfigureAwait(false);
 
         return new StoreResponse(response.ObjectId);
     }
@@ -91,14 +83,11 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public StoreResponse Store(byte[] plaintext, byte[] associatedData)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = client.Store(new Protobuf.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata);
+        });
 
         return new StoreResponse(response.ObjectId);
     }
@@ -106,10 +95,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public async Task<RetrieveResponse> RetrieveAsync(string objectId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        var response = await client.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }, metadata).ConfigureAwait(false);
+        var response = await client.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }).ConfigureAwait(false);
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -117,10 +103,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public RetrieveResponse Retrieve(string objectId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        var response = client.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId }, metadata);
+        var response = client.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId });
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -128,46 +111,34 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public async Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         await client.UpdateAsync(new Protobuf.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata).ConfigureAwait(false);
+        }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void Update(string objectId, byte[] plaintext, byte[] associatedData)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         client.Update(new Protobuf.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata);
+        });
     }
 
     /// <inheritdoc />
     public async Task DeleteAsync(string objectId)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        await client.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }, metadata).ConfigureAwait(false);
+        await client.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void Delete(string objectId)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        client.Delete(new Protobuf.DeleteRequest { ObjectId = objectId }, metadata);
+        client.Delete(new Protobuf.DeleteRequest { ObjectId = objectId });
     }
 }

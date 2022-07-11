@@ -8,7 +8,7 @@ public ID1VersionClient Version { get; }
 
 ## See Also
 
-* interface [ID1VersionClient](../ID1VersionClient.md)
+* interface [ID1VersionClient](../../CyberCrypt.D1.Client.ServiceClients/ID1VersionClient.md)
 * interface [ID1Base](../ID1Base.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

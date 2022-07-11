@@ -1,6 +1,6 @@
 # StoreResponse class
 
-Response from [`Store`](../CyberCrypt.D1.Client/ID1StoreClient/Store.md) or [`StoreAsync`](../CyberCrypt.D1.Client/ID1StoreClient/StoreAsync.md).
+Response from [`Store`](../CyberCrypt.D1.Client.ServiceClients/ID1StoreClient/Store.md) or [`StoreAsync`](../CyberCrypt.D1.Client.ServiceClients/ID1StoreClient/StoreAsync.md).
 
 ```csharp
 public class StoreResponse

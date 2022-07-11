@@ -1,10 +1,8 @@
-using CyberCrypt.D1.Client.Credentials;
 using CyberCrypt.D1.Client.Response;
-using Grpc.Core;
 using Google.Protobuf;
 using Grpc.Net.Client;
 
-namespace CyberCrypt.D1.Client;
+namespace CyberCrypt.D1.Client.ServiceClients;
 
 /// <summary>
 /// Interface for Encrypt client
@@ -41,31 +39,25 @@ public interface ID1EncryptClient
 public class D1EncryptClient : ID1EncryptClient
 {
     private readonly Protobuf.Generic.GenericClient client;
-    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1EncryptClient"/> class.
     /// </summary>
     /// <param name="channel">gRPC channel.</param>
-    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1EncryptClient"/> class.</returns>
-    public D1EncryptClient(GrpcChannel channel, ID1Credentials credentials)
+    public D1EncryptClient(GrpcChannel channel)
     {
         client = new(channel);
-        this.credentials = credentials;
     }
 
     /// <inheritdoc />
     public async Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = await client.EncryptAsync(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata).ConfigureAwait(false);
+        }).ConfigureAwait(false);
 
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -73,14 +65,11 @@ public class D1EncryptClient : ID1EncryptClient
     /// <inheritdoc />
     public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = client.Encrypt(new Protobuf.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata);
+        });
 
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -88,15 +77,12 @@ public class D1EncryptClient : ID1EncryptClient
     /// <inheritdoc />
     public async Task<DecryptResponse> DecryptAsync(string objectId, byte[] ciphertext, byte[] associatedData)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = await client.DecryptAsync(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata).ConfigureAwait(false);
+        }).ConfigureAwait(false);
 
         return new DecryptResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -104,15 +90,12 @@ public class D1EncryptClient : ID1EncryptClient
     /// <inheritdoc />
     public DecryptResponse Decrypt(string objectId, byte[] ciphertext, byte[] associatedData)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = client.Decrypt(new Protobuf.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }, metadata);
+        });
 
         return new DecryptResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }

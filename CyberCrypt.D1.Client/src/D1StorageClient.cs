@@ -1,5 +1,6 @@
 // Copyright 2020-2022 CYBERCRYPT
 using CyberCrypt.D1.Client.Credentials;
+using CyberCrypt.D1.Client.ServiceClients;
 
 namespace CyberCrypt.D1.Client;
 
@@ -22,8 +23,6 @@ public interface ID1Storage : ID1Base
 /// </remarks>
 public class D1StorageClient : D1BaseClient, ID1Storage
 {
-    private readonly ID1Credentials credentials;
-
     /// <inheritdoc />
     public ID1StoreClient Storage { get; private set; }
 
@@ -37,7 +36,6 @@ public class D1StorageClient : D1BaseClient, ID1Storage
     public D1StorageClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
         : base(endpoint, credentials, options)
     {
-        Storage = new D1StoreClient(channel, credentials);
-        this.credentials = credentials;
+        Storage = new D1StoreClient(channel);
     }
 }
