@@ -16,6 +16,11 @@ public interface ID1Generic : ID1Base
     /// The encrypt client.
     /// </summary>
     ID1Encrypt Generic { get; }
+
+    /// <summary>
+    /// The searchable client.
+    /// </summary>
+    ID1Searchable Searchable { get; }
 }
 
 /// <summary>
@@ -30,6 +35,9 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     /// <inheritdoc />
     public ID1Encrypt Generic { get; private set; }
 
+    /// <inheritdoc />
+    public ID1Searchable Searchable { get; private set; }
+
     /// <summary>
     /// Initialize a new instance of the <see cref="D1GenericClient"/> class.
     /// </summary>
@@ -41,5 +49,6 @@ public class D1GenericClient : D1BaseClient, ID1Generic
         : base(endpoint, credentials, options)
     {
         Generic = new D1EncryptClient(channel);
+        Searchable = new D1SearchableClient(channel);
     }
 }

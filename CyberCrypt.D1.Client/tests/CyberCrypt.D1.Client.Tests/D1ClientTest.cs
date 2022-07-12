@@ -128,6 +128,7 @@ public class D1ClientTest
     }
 
     [Fact]
+    [Trait("Category", "Generic")]
     public async void TestAddSearchAsync()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
@@ -151,6 +152,7 @@ public class D1ClientTest
     }
 
     [Fact]
+    [Trait("Category", "Generic")]
     public async void TestAddDeleteSearchAsync()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
@@ -286,6 +288,7 @@ public class D1ClientTest
     }
 
     [Fact]
+    [Trait("Category", "Generic")]
     public void TestAddSearch()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
@@ -309,6 +312,7 @@ public class D1ClientTest
     }
 
     [Fact]
+    [Trait("Category", "Generic")]
     public void TestAddDeleteSearch()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
