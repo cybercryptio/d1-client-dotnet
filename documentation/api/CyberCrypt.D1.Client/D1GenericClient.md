@@ -12,6 +12,7 @@ public class D1GenericClient : D1BaseClient, ID1Generic
 | --- | --- |
 | [D1GenericClient](D1GenericClient/D1GenericClient.md)(…) | Initialize a new instance of the [`D1GenericClient`](./D1GenericClient.md) class. |
 | [Generic](D1GenericClient/Generic.md) { get; } |  |
+| [Searchable](D1GenericClient/Searchable.md) { get; } |  |
 
 ## Remarks
 
