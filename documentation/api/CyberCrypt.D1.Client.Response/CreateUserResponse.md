@@ -1,6 +1,6 @@
 # CreateUserResponse class
 
-Response from !:ID1AuthnClient.CreateUser or !:ID1AuthnClient.CreateUserAsync.
+Response from !:ServiceClients.ID1AuthnClient.CreateUser or !:ServiceClients.ID1AuthnClient.CreateUserAsync.
 
 ```csharp
 public class CreateUserResponse

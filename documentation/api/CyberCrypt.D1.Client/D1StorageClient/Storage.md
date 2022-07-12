@@ -6,7 +6,7 @@ public ID1Store Storage { get; }
 
 ## See Also
 
-* interface [ID1Store](../ID1Store.md)
+* interface [ID1Store](../../CyberCrypt.D1.Client.ServiceClients/ID1Store.md)
 * class [D1StorageClient](../D1StorageClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

@@ -4,25 +4,13 @@
 
 | public type | description |
 | --- | --- |
-| class [D1AuthnClient](./CyberCrypt.D1.Client/D1AuthnClient.md) | Authn client for connection to a D1 server. |
-| class [D1AuthzClient](./CyberCrypt.D1.Client/D1AuthzClient.md) | Authz client for connection to a D1 server. |
 | abstract class [D1BaseClient](./CyberCrypt.D1.Client/D1BaseClient.md) | Client for connection to a D1 server. |
 | class [D1ClientOptions](./CyberCrypt.D1.Client/D1ClientOptions.md) | Options for the [`D1BaseClient`](./CyberCrypt.D1.Client/D1BaseClient.md). |
-| class [D1EncryptClient](./CyberCrypt.D1.Client/D1EncryptClient.md) | Encrypt client for connection to a D1 server. |
 | class [D1GenericClient](./CyberCrypt.D1.Client/D1GenericClient.md) | Client for connection to a D1 Generic server. |
-| class [D1SearchableClient](./CyberCrypt.D1.Client/D1SearchableClient.md) | Searchable client for connection to a D1 server. |
 | class [D1StorageClient](./CyberCrypt.D1.Client/D1StorageClient.md) | Client for connection to a D1 Storage server. |
-| class [D1StoreClient](./CyberCrypt.D1.Client/D1StoreClient.md) | Store client for connection to a D1 server. |
-| class [D1VersionClient](./CyberCrypt.D1.Client/D1VersionClient.md) | Version client for connection to a D1 server. |
-| interface [ID1Authn](./CyberCrypt.D1.Client/ID1Authn.md) | Interface for Authn client |
-| interface [ID1Authz](./CyberCrypt.D1.Client/ID1Authz.md) | Interface for Authz client |
 | interface [ID1Base](./CyberCrypt.D1.Client/ID1Base.md) | Interface for Encryption service client |
-| interface [ID1Encrypt](./CyberCrypt.D1.Client/ID1Encrypt.md) | Interface for Encrypt client |
 | interface [ID1Generic](./CyberCrypt.D1.Client/ID1Generic.md) | Interface for D1 Generic service client |
-| interface [ID1Searchable](./CyberCrypt.D1.Client/ID1Searchable.md) | Interface for Searchable client |
 | interface [ID1Storage](./CyberCrypt.D1.Client/ID1Storage.md) | Interface for D1 Storage service client |
-| interface [ID1Store](./CyberCrypt.D1.Client/ID1Store.md) | Interface for Store client |
-| interface [ID1Version](./CyberCrypt.D1.Client/ID1Version.md) | Interface for Version client |
 
 ## CyberCrypt.D1.Client.Credentials namespace
 
@@ -36,15 +24,32 @@
 
 | public type | description |
 | --- | --- |
-| class [CreateGroupResponse](./CyberCrypt.D1.Client.Response/CreateGroupResponse.md) | Response from !:ID1AuthnClient.CreateGroup or !:ID1AuthnClient.CreateGroupAsync. |
-| class [CreateUserResponse](./CyberCrypt.D1.Client.Response/CreateUserResponse.md) | Response from !:ID1AuthnClient.CreateUser or !:ID1AuthnClient.CreateUserAsync. |
-| class [DecryptResponse](./CyberCrypt.D1.Client.Response/DecryptResponse.md) | Response from !:ID1EncryptClient.Decrypt or !:ID1EncryptClient.DecryptAsync. |
-| class [EncryptResponse](./CyberCrypt.D1.Client.Response/EncryptResponse.md) | Response from !:ID1EncryptClient.Encrypt or !:ID1EncryptClient.EncryptAsync. |
-| class [GetPermissionsResponse](./CyberCrypt.D1.Client.Response/GetPermissionsResponse.md) | Response from !:ID1AuthzClient.GetPermissions or !:ID1AuthzClient.GetPermissionsAsync. |
-| class [RetrieveResponse](./CyberCrypt.D1.Client.Response/RetrieveResponse.md) | Response from !:ID1StoreClient.Retrieve or !:ID1StoreClient.RetrieveAsync. |
+| class [CreateGroupResponse](./CyberCrypt.D1.Client.Response/CreateGroupResponse.md) | Response from !:ServiceClients.ID1AuthnClient.CreateGroup or !:ServiceClients.ID1AuthnClient.CreateGroupAsync. |
+| class [CreateUserResponse](./CyberCrypt.D1.Client.Response/CreateUserResponse.md) | Response from !:ServiceClients.ID1AuthnClient.CreateUser or !:ServiceClients.ID1AuthnClient.CreateUserAsync. |
+| class [DecryptResponse](./CyberCrypt.D1.Client.Response/DecryptResponse.md) | Response from !:ServiceClients.ID1EncryptClient.Decrypt or !:ServiceClients.ID1EncryptClient.DecryptAsync. |
+| class [EncryptResponse](./CyberCrypt.D1.Client.Response/EncryptResponse.md) | Response from !:ServiceClients.ID1EncryptClient.Encrypt or !:ServiceClients.ID1EncryptClient.EncryptAsync. |
+| class [GetPermissionsResponse](./CyberCrypt.D1.Client.Response/GetPermissionsResponse.md) | Response from !:ServiceClients.ID1AuthzClient.GetPermissions or !:ServiceClients.ID1AuthzClient.GetPermissionsAsync. |
+| class [RetrieveResponse](./CyberCrypt.D1.Client.Response/RetrieveResponse.md) | Response from !:ServiceClients.ID1StoreClient.Retrieve or !:ServiceClients.ID1StoreClient.RetrieveAsync. |
 | class [SearchResponse](./CyberCrypt.D1.Client.Response/SearchResponse.md) | Response from !:ID1SearchableClient.Search or !:ID1SearchableClient.SearchAsync. |
-| class [StoreResponse](./CyberCrypt.D1.Client.Response/StoreResponse.md) | Response from !:ID1StoreClient.Store or !:ID1StoreClient.StoreAsync. |
-| class [VersionResponse](./CyberCrypt.D1.Client.Response/VersionResponse.md) | Response from !:ID1VersionClient.Version or !:ID1VersionClient.VersionAsync. |
+| class [StoreResponse](./CyberCrypt.D1.Client.Response/StoreResponse.md) | Response from !:ServiceClients.ID1StoreClient.Store or !:ServiceClients.ID1StoreClient.StoreAsync. |
+| class [VersionResponse](./CyberCrypt.D1.Client.Response/VersionResponse.md) | Response from !:ServiceClients.ID1VersionClient.Version or !:ServiceClients.ID1VersionClient.VersionAsync. |
+
+## CyberCrypt.D1.Client.ServiceClients namespace
+
+| public type | description |
+| --- | --- |
+| class [D1AuthnClient](./CyberCrypt.D1.Client.ServiceClients/D1AuthnClient.md) | Authn client for connection to a D1 server. |
+| class [D1AuthzClient](./CyberCrypt.D1.Client.ServiceClients/D1AuthzClient.md) | Authz client for connection to a D1 server. |
+| class [D1EncryptClient](./CyberCrypt.D1.Client.ServiceClients/D1EncryptClient.md) | Encrypt client for connection to a D1 server. |
+| class [D1SearchableClient](./CyberCrypt.D1.Client.ServiceClients/D1SearchableClient.md) | Searchable client for connection to a D1 server. |
+| class [D1StoreClient](./CyberCrypt.D1.Client.ServiceClients/D1StoreClient.md) | Store client for connection to a D1 server. |
+| class [D1VersionClient](./CyberCrypt.D1.Client.ServiceClients/D1VersionClient.md) | Version client for connection to a D1 server. |
+| interface [ID1Authn](./CyberCrypt.D1.Client.ServiceClients/ID1Authn.md) | Interface for Authn client |
+| interface [ID1Authz](./CyberCrypt.D1.Client.ServiceClients/ID1Authz.md) | Interface for Authz client |
+| interface [ID1Encrypt](./CyberCrypt.D1.Client.ServiceClients/ID1Encrypt.md) | Interface for Encrypt client |
+| interface [ID1Searchable](./CyberCrypt.D1.Client.ServiceClients/ID1Searchable.md) | Interface for Searchable client |
+| interface [ID1Store](./CyberCrypt.D1.Client.ServiceClients/ID1Store.md) | Interface for Store client |
+| interface [ID1Version](./CyberCrypt.D1.Client.ServiceClients/ID1Version.md) | Interface for Version client |
 
 ## CyberCrypt.D1.Client.Utils namespace
 

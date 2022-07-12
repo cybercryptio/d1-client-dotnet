@@ -4,7 +4,7 @@ using CyberCrypt.D1.Client.Utils;
 using Grpc.Core;
 using Grpc.Net.Client;
 
-namespace CyberCrypt.D1.Client;
+namespace CyberCrypt.D1.Client.ServiceClients;
 
 /// <summary>
 /// Interface for Searchable client
@@ -48,54 +48,40 @@ public interface ID1Searchable
 public class D1SearchableClient : ID1Searchable
 {
     private readonly Protobuf.Searchable.Searchable.SearchableClient client;
-    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1SearchableClient"/> class.
     /// </summary>
     /// <param name="channel">gRPC channel.</param>
-    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1SearchableClient"/> class.</returns>
-    public D1SearchableClient(GrpcChannel channel, ID1Credentials credentials)
+    public D1SearchableClient(GrpcChannel channel)
     {
         client = new(channel);
-        this.credentials = credentials;
     }
 
     /// <inheritdoc />
     public async Task AddAsync(List<string> keywords, string identifier)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-
         var response = new Protobuf.Searchable.AddRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
-        await client.AddAsync(response, metadata).ConfigureAwait(false);
+        await client.AddAsync(response).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void Add(List<string> keywords, string identifier)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-
         var response = new Protobuf.Searchable.AddRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
-        client.Add(response, metadata);
+        client.Add(response);
     }
 
     /// <inheritdoc />
     public async Task<SearchResponse> SearchAsync(string keyword)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = await client.SearchAsync(new Protobuf.Searchable.SearchRequest
         {
             Keyword = keyword
-        }, metadata).ConfigureAwait(false);
+        }).ConfigureAwait(false);
 
         return new SearchResponse(new List<string>(response.Identifiers));
     }
@@ -103,13 +89,10 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public SearchResponse Search(string keyword)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
         var response = client.Search(new Protobuf.Searchable.SearchRequest
         {
             Keyword = keyword
-        }, metadata);
+        });
 
         return new SearchResponse(new List<string>(response.Identifiers));
     }
@@ -117,24 +100,16 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public async Task DeleteAsync(List<string> keywords, string identifier)
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-
         var response = new Protobuf.Searchable.DeleteRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
-        await client.DeleteAsync(response, metadata).ConfigureAwait(false);
+        await client.DeleteAsync(response).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void Delete(List<string> keywords, string identifier)
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-
         var response = new Protobuf.Searchable.DeleteRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
-        client.Delete(response, metadata);
+        client.Delete(response);
     }
 }

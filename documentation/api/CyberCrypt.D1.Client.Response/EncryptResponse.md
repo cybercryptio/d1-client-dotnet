@@ -1,6 +1,6 @@
 # EncryptResponse class
 
-Response from !:ID1EncryptClient.Encrypt or !:ID1EncryptClient.EncryptAsync.
+Response from !:ServiceClients.ID1EncryptClient.Encrypt or !:ServiceClients.ID1EncryptClient.EncryptAsync.
 
 ```csharp
 public class EncryptResponse

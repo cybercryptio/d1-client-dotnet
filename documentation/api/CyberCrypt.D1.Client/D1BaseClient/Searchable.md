@@ -6,7 +6,7 @@ public ID1Searchable Searchable { get; }
 
 ## See Also
 
-* interface [ID1Searchable](../ID1Searchable.md)
+* interface [ID1Searchable](../../CyberCrypt.D1.Client.ServiceClients/ID1Searchable.md)
 * class [D1BaseClient](../D1BaseClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

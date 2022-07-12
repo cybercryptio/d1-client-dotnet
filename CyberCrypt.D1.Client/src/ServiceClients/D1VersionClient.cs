@@ -1,9 +1,7 @@
-using CyberCrypt.D1.Client.Credentials;
 using CyberCrypt.D1.Client.Response;
-using Grpc.Core;
 using Grpc.Net.Client;
 
-namespace CyberCrypt.D1.Client;
+namespace CyberCrypt.D1.Client.ServiceClients;
 
 /// <summary>
 /// Interface for Version client
@@ -26,27 +24,21 @@ public interface ID1Version
 public class D1VersionClient : ID1Version
 {
     private readonly Protobuf.Version.Version.VersionClient client;
-    private readonly ID1Credentials credentials;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
     /// </summary>
     /// <param name="channel">gRPC channel.</param>
-    /// <param name="credentials">Credentials used to authenticate with D1.</param>
     /// <returns>A new instance of the <see cref="D1VersionClient"/> class.</returns>
-    public D1VersionClient(GrpcChannel channel, ID1Credentials credentials)
+    public D1VersionClient(GrpcChannel channel)
     {
         client = new(channel);
-        this.credentials = credentials;
     }
 
     /// <inheritdoc />
     public async Task<VersionResponse> VersionAsync()
     {
-        var token = await credentials.GetTokenAsync();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        var response = await client.VersionAsync(new Protobuf.Version.VersionRequest(), metadata).ConfigureAwait(false);
+        var response = await client.VersionAsync(new Protobuf.Version.VersionRequest()).ConfigureAwait(false);
 
         return new VersionResponse(response.Commit, response.Tag);
     }
@@ -54,10 +46,7 @@ public class D1VersionClient : ID1Version
     /// <inheritdoc />
     public VersionResponse Version()
     {
-        var token = credentials.GetToken();
-        var metadata = new Metadata();
-        metadata.Add("Authorization", $"Bearer {token}");
-        var response = client.Version(new Protobuf.Version.VersionRequest(), metadata);
+        var response = client.Version(new Protobuf.Version.VersionRequest());
 
         return new VersionResponse(response.Commit, response.Tag);
     }

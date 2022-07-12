@@ -8,7 +8,7 @@ public ID1Authz Authz { get; }
 
 ## See Also
 
-* interface [ID1Authz](../ID1Authz.md)
+* interface [ID1Authz](../../CyberCrypt.D1.Client.ServiceClients/ID1Authz.md)
 * interface [ID1Base](../ID1Base.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

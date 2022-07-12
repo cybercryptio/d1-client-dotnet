@@ -8,7 +8,7 @@ public ID1Encrypt Generic { get; }
 
 ## See Also
 
-* interface [ID1Encrypt](../ID1Encrypt.md)
+* interface [ID1Encrypt](../../CyberCrypt.D1.Client.ServiceClients/ID1Encrypt.md)
 * interface [ID1Generic](../ID1Generic.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

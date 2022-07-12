@@ -1,6 +1,6 @@
 # CreateGroupResponse class
 
-Response from !:ID1AuthnClient.CreateGroup or !:ID1AuthnClient.CreateGroupAsync.
+Response from !:ServiceClients.ID1AuthnClient.CreateGroup or !:ServiceClients.ID1AuthnClient.CreateGroupAsync.
 
 ```csharp
 public class CreateGroupResponse

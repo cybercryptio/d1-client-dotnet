@@ -1,6 +1,6 @@
 # VersionResponse class
 
-Response from !:ID1VersionClient.Version or !:ID1VersionClient.VersionAsync.
+Response from !:ServiceClients.ID1VersionClient.Version or !:ServiceClients.ID1VersionClient.VersionAsync.
 
 ```csharp
 public class VersionResponse

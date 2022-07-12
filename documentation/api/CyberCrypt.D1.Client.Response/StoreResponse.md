@@ -1,6 +1,6 @@
 # StoreResponse class
 
-Response from !:ID1StoreClient.Store or !:ID1StoreClient.StoreAsync.
+Response from !:ServiceClients.ID1StoreClient.Store or !:ServiceClients.ID1StoreClient.StoreAsync.
 
 ```csharp
 public class StoreResponse

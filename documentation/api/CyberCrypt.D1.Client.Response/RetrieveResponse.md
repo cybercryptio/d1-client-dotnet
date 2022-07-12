@@ -1,6 +1,6 @@
 # RetrieveResponse class
 
-Response from !:ID1StoreClient.Retrieve or !:ID1StoreClient.RetrieveAsync.
+Response from !:ServiceClients.ID1StoreClient.Retrieve or !:ServiceClients.ID1StoreClient.RetrieveAsync.
 
 ```csharp
 public class RetrieveResponse
