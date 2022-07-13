@@ -2,7 +2,7 @@
 namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="ID1SearchableClient.Search"/> or <see cref="ID1SearchableClient.SearchAsync"/>.
+/// Response from <see cref="ServiceClients.ID1Searchable.Search"/> or <see cref="ServiceClients.ID1Searchable.SearchAsync"/>.
 /// </summary>
 public class SearchResponse
 {

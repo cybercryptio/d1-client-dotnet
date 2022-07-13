@@ -2,7 +2,7 @@
 namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="ServiceClients.ID1EncryptClient.Encrypt"/> or <see cref="ServiceClients.ID1EncryptClient.EncryptAsync"/>.
+/// Response from <see cref="ServiceClients.ID1Encrypt.Encrypt"/> or <see cref="ServiceClients.ID1Encrypt.EncryptAsync"/>.
 /// </summary>
 public class EncryptResponse {
     /// <summary>
