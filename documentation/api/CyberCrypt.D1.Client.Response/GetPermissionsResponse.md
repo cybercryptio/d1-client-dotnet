@@ -1,6 +1,6 @@
 # GetPermissionsResponse class
 
-Response from !:ServiceClients.ID1AuthzClient.GetPermissions or !:ServiceClients.ID1AuthzClient.GetPermissionsAsync.
+Response from [`GetPermissions`](../CyberCrypt.D1.Client.ServiceClients/ID1Authz/GetPermissions.md) or [`GetPermissionsAsync`](../CyberCrypt.D1.Client.ServiceClients/ID1Authz/GetPermissionsAsync.md).
 
 ```csharp
 public class GetPermissionsResponse

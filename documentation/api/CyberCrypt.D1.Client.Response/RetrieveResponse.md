@@ -1,6 +1,6 @@
 # RetrieveResponse class
 
-Response from !:ServiceClients.ID1StoreClient.Retrieve or !:ServiceClients.ID1StoreClient.RetrieveAsync.
+Response from [`Retrieve`](../CyberCrypt.D1.Client.ServiceClients/ID1Store/Retrieve.md) or [`RetrieveAsync`](../CyberCrypt.D1.Client.ServiceClients/ID1Store/RetrieveAsync.md).
 
 ```csharp
 public class RetrieveResponse

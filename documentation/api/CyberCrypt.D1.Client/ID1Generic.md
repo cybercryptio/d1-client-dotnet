@@ -11,7 +11,6 @@ public interface ID1Generic : ID1Base
 | name | description |
 | --- | --- |
 | [Generic](ID1Generic/Generic.md) { get; } | The encrypt client. |
-| [Searchable](ID1Generic/Searchable.md) { get; } | The searchable client. |
 
 ## See Also
 

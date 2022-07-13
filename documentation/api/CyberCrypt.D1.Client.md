@@ -24,15 +24,15 @@
 
 | public type | description |
 | --- | --- |
-| class [CreateGroupResponse](./CyberCrypt.D1.Client.Response/CreateGroupResponse.md) | Response from !:ServiceClients.ID1AuthnClient.CreateGroup or !:ServiceClients.ID1AuthnClient.CreateGroupAsync. |
-| class [CreateUserResponse](./CyberCrypt.D1.Client.Response/CreateUserResponse.md) | Response from !:ServiceClients.ID1AuthnClient.CreateUser or !:ServiceClients.ID1AuthnClient.CreateUserAsync. |
-| class [DecryptResponse](./CyberCrypt.D1.Client.Response/DecryptResponse.md) | Response from !:ServiceClients.ID1EncryptClient.Decrypt or !:ServiceClients.ID1EncryptClient.DecryptAsync. |
-| class [EncryptResponse](./CyberCrypt.D1.Client.Response/EncryptResponse.md) | Response from !:ServiceClients.ID1EncryptClient.Encrypt or !:ServiceClients.ID1EncryptClient.EncryptAsync. |
-| class [GetPermissionsResponse](./CyberCrypt.D1.Client.Response/GetPermissionsResponse.md) | Response from !:ServiceClients.ID1AuthzClient.GetPermissions or !:ServiceClients.ID1AuthzClient.GetPermissionsAsync. |
-| class [RetrieveResponse](./CyberCrypt.D1.Client.Response/RetrieveResponse.md) | Response from !:ServiceClients.ID1StoreClient.Retrieve or !:ServiceClients.ID1StoreClient.RetrieveAsync. |
-| class [SearchResponse](./CyberCrypt.D1.Client.Response/SearchResponse.md) | Response from !:ID1SearchableClient.Search or !:ID1SearchableClient.SearchAsync. |
-| class [StoreResponse](./CyberCrypt.D1.Client.Response/StoreResponse.md) | Response from !:ServiceClients.ID1StoreClient.Store or !:ServiceClients.ID1StoreClient.StoreAsync. |
-| class [VersionResponse](./CyberCrypt.D1.Client.Response/VersionResponse.md) | Response from !:ServiceClients.ID1VersionClient.Version or !:ServiceClients.ID1VersionClient.VersionAsync. |
+| class [CreateGroupResponse](./CyberCrypt.D1.Client.Response/CreateGroupResponse.md) | Response from [`CreateGroup`](./CyberCrypt.D1.Client.ServiceClients/ID1Authn/CreateGroup.md) or [`CreateGroupAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Authn/CreateGroupAsync.md). |
+| class [CreateUserResponse](./CyberCrypt.D1.Client.Response/CreateUserResponse.md) | Response from [`CreateUser`](./CyberCrypt.D1.Client.ServiceClients/ID1Authn/CreateUser.md) or [`CreateUserAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Authn/CreateUserAsync.md). |
+| class [DecryptResponse](./CyberCrypt.D1.Client.Response/DecryptResponse.md) | Response from [`Decrypt`](./CyberCrypt.D1.Client.ServiceClients/ID1Encrypt/Decrypt.md) or [`DecryptAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Encrypt/DecryptAsync.md). |
+| class [EncryptResponse](./CyberCrypt.D1.Client.Response/EncryptResponse.md) | Response from [`Encrypt`](./CyberCrypt.D1.Client.ServiceClients/ID1Encrypt/Encrypt.md) or [`EncryptAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Encrypt/EncryptAsync.md). |
+| class [GetPermissionsResponse](./CyberCrypt.D1.Client.Response/GetPermissionsResponse.md) | Response from [`GetPermissions`](./CyberCrypt.D1.Client.ServiceClients/ID1Authz/GetPermissions.md) or [`GetPermissionsAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Authz/GetPermissionsAsync.md). |
+| class [RetrieveResponse](./CyberCrypt.D1.Client.Response/RetrieveResponse.md) | Response from [`Retrieve`](./CyberCrypt.D1.Client.ServiceClients/ID1Store/Retrieve.md) or [`RetrieveAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Store/RetrieveAsync.md). |
+| class [SearchResponse](./CyberCrypt.D1.Client.Response/SearchResponse.md) | Response from [`Search`](./CyberCrypt.D1.Client.ServiceClients/ID1Searchable/Search.md) or [`SearchAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Searchable/SearchAsync.md). |
+| class [StoreResponse](./CyberCrypt.D1.Client.Response/StoreResponse.md) | Response from [`Store`](./CyberCrypt.D1.Client.ServiceClients/ID1Store/Store.md) or [`StoreAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Store/StoreAsync.md). |
+| class [VersionResponse](./CyberCrypt.D1.Client.Response/VersionResponse.md) | Response from [`Version`](./CyberCrypt.D1.Client.ServiceClients/ID1Version/Version.md) or [`VersionAsync`](./CyberCrypt.D1.Client.ServiceClients/ID1Version/VersionAsync.md). |
 
 ## CyberCrypt.D1.Client.ServiceClients namespace
 

@@ -13,7 +13,7 @@ option java_outer_classname = "AuthnProto";
 
 import "scopes.proto";
 
-/// Service for user management.
+// Service for user management.
 // > NOTE: This API is only exposed when the D1 service is configured to use the standalone ID provider.
 service Authn {
   /**
@@ -58,89 +58,89 @@ service Authn {
   rpc RemoveUserFromGroup (RemoveUserFromGroupRequest) returns (RemoveUserFromGroupResponse) {}
 }
 
-/// Represents creation of a new user.
+// Represents creation of a new user.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message CreateUserRequest {
-  /// The scopes the user should be assigned.
+  // The scopes the user should be assigned.
   repeated d1.scopes.Scope scopes = 1;
 }
 
-/// Represents the result of a user creation.
+// Represents the result of a user creation.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message CreateUserResponse {
-  /// ID of the new user.
+  // ID of the new user.
   string user_id = 1;
-  /// The users password.
+  // The users password.
   string password = 2;
 }
 
-/// Represents the user login.
+// Represents the user login.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message LoginUserRequest {
-  /// ID of the user.
+  // ID of the user.
   string user_id = 1;
-  /// The users password.
+  // The users password.
   string password = 2;
 }
 
-/// Represents the result of a user login.
+// Represents the result of a user login.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message LoginUserResponse {
-  /// Access token to be used in subsequent requests.
+  // Access token to be used in subsequent requests.
   string access_token = 1;
-  /// The expiration time of the access token.
+  // The expiration time of the access token.
   int64 expiry_time = 2;
 }
 
-/// Represents the removal of a user.
+// Represents the removal of a user.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message RemoveUserRequest {
-  /// ID of the user to remove.
+  // ID of the user to remove.
   string user_id = 1;
 }
 
-/// Represents the result of a user removal.
+// Represents the result of a user removal.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message RemoveUserResponse {}
 
-/// Represents creation of a new group.
+// Represents creation of a new group.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message CreateGroupRequest {
-  /// The scopes the group should be assigned.
+  // The scopes the group should be assigned.
   repeated d1.scopes.Scope scopes = 1;
 }
 
-/// Represents the result of a group creation.
+// Represents the result of a group creation.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message CreateGroupResponse {
-  /// ID of the new group.
+  // ID of the new group.
   string group_id = 1;
 }
 
-/// Represents the addition of a user to a group.
+// Represents the addition of a user to a group.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message AddUserToGroupRequest {
-  /// ID of the user to add.
+  // ID of the user to add.
   string user_id = 1;
-  /// ID of the group the user should be added to.
+  // ID of the group the user should be added to.
   string group_id = 2;
 }
 
-/// Represents the result of a user addition to a group.
+// Represents the result of a user addition to a group.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message AddUserToGroupResponse {
 }
 
-/// Represents the removal of a user from a group.
+// Represents the removal of a user from a group.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message RemoveUserFromGroupRequest {
-  /// ID of the user to remove.
+  // ID of the user to remove.
   string user_id = 1;
-  /// ID of the group the user should be removed from.
+  // ID of the group the user should be removed from.
   string group_id = 2;
 }
 
-/// Represents the result of a user removal from a group.
+// Represents the result of a user removal from a group.
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message RemoveUserFromGroupResponse {
 }
