@@ -2,7 +2,7 @@
 namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="ServiceClients.ID1AuthzClient.GetPermissions"/> or <see cref="ServiceClients.ID1AuthzClient.GetPermissionsAsync"/>.
+/// Response from <see cref="ServiceClients.ID1Authz.GetPermissions"/> or <see cref="ServiceClients.ID1Authz.GetPermissionsAsync"/>.
 /// </summary>
 public class GetPermissionsResponse {
     /// <summary>

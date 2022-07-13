@@ -2,7 +2,7 @@
 namespace CyberCrypt.D1.Client.Response;
 
 /// <summary>
-/// Response from <see cref="ServiceClients.ID1AuthnClient.CreateGroup"/> or <see cref="ServiceClients.ID1AuthnClient.CreateGroupAsync"/>.
+/// Response from <see cref="ServiceClients.ID1Authn.CreateGroup"/> or <see cref="ServiceClients.ID1Authn.CreateGroupAsync"/>.
 /// </summary>
 public class CreateGroupResponse {
     /// <summary>

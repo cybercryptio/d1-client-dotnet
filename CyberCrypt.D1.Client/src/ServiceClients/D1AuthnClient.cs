@@ -7,7 +7,7 @@ namespace CyberCrypt.D1.Client.ServiceClients;
 /// <summary>
 /// Interface for Authn client
 /// </summary>
-public interface ID1AuthnClient
+public interface ID1Authn
 {
     /// <summary>
     /// Add a user to a group.
@@ -62,9 +62,9 @@ public interface ID1AuthnClient
 /// <summary>
 /// Authn client for connection to a D1 server.
 /// </summary>
-public class D1AuthnClient : ID1AuthnClient
+public class D1AuthnClient : ID1Authn
 {
-    private readonly Protobuf.Authn.AuthnClient client;
+    private readonly Protobuf.Authn.Authn.AuthnClient client;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1AuthnClient"/> class.
@@ -79,7 +79,7 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public async Task<CreateUserResponse> CreateUserAsync(IList<Scope> scopes)
     {
-        var request = new Protobuf.CreateUserRequest();
+        var request = new Protobuf.Authn.CreateUserRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -93,7 +93,7 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public CreateUserResponse CreateUser(IList<Scope> scopes)
     {
-        var request = new Protobuf.CreateUserRequest();
+        var request = new Protobuf.Authn.CreateUserRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -107,19 +107,19 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public async Task RemoveUserAsync(string userId)
     {
-        await client.RemoveUserAsync(new Protobuf.RemoveUserRequest { UserId = userId }).ConfigureAwait(false);
+        await client.RemoveUserAsync(new Protobuf.Authn.RemoveUserRequest { UserId = userId }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemoveUser(string userId)
     {
-        client.RemoveUser(new Protobuf.RemoveUserRequest { UserId = userId });
+        client.RemoveUser(new Protobuf.Authn.RemoveUserRequest { UserId = userId });
     }
 
     /// <inheritdoc />
     public async Task<CreateGroupResponse> CreateGroupAsync(IList<Scope> scopes)
     {
-        var request = new Protobuf.CreateGroupRequest();
+        var request = new Protobuf.Authn.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -133,7 +133,7 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public CreateGroupResponse CreateGroup(IList<Scope> scopes)
     {
-        var request = new Protobuf.CreateGroupRequest();
+        var request = new Protobuf.Authn.CreateGroupRequest();
         foreach (Scope scope in scopes)
         {
             request.Scopes.Add(scope.GetServiceScope());
@@ -147,25 +147,25 @@ public class D1AuthnClient : ID1AuthnClient
     /// <inheritdoc />
     public async Task AddUserToGroupAsync(string userId, string groupId)
     {
-        await client.AddUserToGroupAsync(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId })
+        await client.AddUserToGroupAsync(new Protobuf.Authn.AddUserToGroupRequest { UserId = userId, GroupId = groupId })
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void AddUserToGroup(string userId, string groupId)
     {
-        client.AddUserToGroup(new Protobuf.AddUserToGroupRequest { UserId = userId, GroupId = groupId });
+        client.AddUserToGroup(new Protobuf.Authn.AddUserToGroupRequest { UserId = userId, GroupId = groupId });
     }
 
     /// <inheritdoc />
     public async Task RemoveUserFromGroupAsync(string userId, string groupId)
     {
-        await client.RemoveUserFromGroupAsync(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }).ConfigureAwait(false);
+        await client.RemoveUserFromGroupAsync(new Protobuf.Authn.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void RemoveUserFromGroup(string userId, string groupId)
     {
-        client.RemoveUserFromGroup(new Protobuf.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId });
+        client.RemoveUserFromGroup(new Protobuf.Authn.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId });
     }
 }

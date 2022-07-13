@@ -2,10 +2,10 @@
 
 syntax = "proto3";
 
-package d1;
-option go_package = "./protobuf";
-option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
-option java_package = "io.cybercrypt.d1.protobuf";
+package d1.version;
+option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/version";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Version";
+option java_package = "io.cybercrypt.d1.protobuf.version";
 option java_outer_classname = "VersionProto";
 
 // Service for getting version information.

@@ -5,10 +5,10 @@
  */
 syntax = "proto3";
 
-package d1;
-option go_package = "./protobuf";
-option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
-option java_package = "io.cybercrypt.d1.protobuf";
+package d1.authn;
+option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/authn";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Authn";
+option java_package = "io.cybercrypt.d1.protobuf.authn";
 option java_outer_classname = "AuthnProto";
 
 import "scopes.proto";
@@ -62,7 +62,7 @@ service Authn {
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message CreateUserRequest {
   // The scopes the user should be assigned.
-  repeated Scope scopes = 1;
+  repeated d1.scopes.Scope scopes = 1;
 }
 
 // Represents the result of a user creation.
@@ -107,7 +107,7 @@ message RemoveUserResponse {}
 // > NOTE: This is only exposed when the D1 service is configured to use the standalone ID provider.
 message CreateGroupRequest {
   // The scopes the group should be assigned.
-  repeated Scope scopes = 1;
+  repeated d1.scopes.Scope scopes = 1;
 }
 
 // Represents the result of a group creation.

@@ -15,17 +15,22 @@ public interface ID1Base
     /// <summary>
     /// The authn client.
     /// </summary>
-    ID1AuthnClient Authn { get; }
+    ID1Authn Authn { get; }
 
     /// <summary>
     /// The authz client.
     /// </summary>
-    ID1AuthzClient Authz { get; }
+    ID1Authz Authz { get; }
+
+    /// <summary>
+    /// The searchable client.
+    /// </summary>
+    ID1Searchable Searchable { get; }
 
     /// <summary>
     /// The version client.
     /// </summary>
-    ID1VersionClient Version { get; }
+    ID1Version Version { get; }
 }
 
 /// <summary>
@@ -45,13 +50,16 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
     public string? User { get; private set; }
 
     /// <inheritdoc />
-    public ID1AuthnClient Authn { get; private set; }
+    public ID1Authn Authn { get; private set; }
 
     /// <inheritdoc />
-    public ID1AuthzClient Authz { get; private set; }
+    public ID1Authz Authz { get; private set; }
 
     /// <inheritdoc />
-    public ID1VersionClient Version { get; private set; }
+    public ID1Searchable Searchable { get; private set; }
+
+    /// <inheritdoc />
+    public ID1Version Version { get; private set; }
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
@@ -99,6 +107,7 @@ public abstract class D1BaseClient : IDisposable, IAsyncDisposable, ID1Base
 
         Authn = new D1AuthnClient(channel);
         Authz = new D1AuthzClient(channel);
+        Searchable = new D1SearchableClient(channel);
         Version = new D1VersionClient(channel);
     }
 

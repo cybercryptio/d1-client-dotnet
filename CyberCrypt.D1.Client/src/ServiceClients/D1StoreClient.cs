@@ -7,7 +7,7 @@ namespace CyberCrypt.D1.Client.ServiceClients;
 /// <summary>
 /// Interface for Store client
 /// </summary>
-public interface ID1StoreClient
+public interface ID1Store
 {
     /// <summary>
     /// Delete data encrypted in the storage attached to D1.
@@ -54,9 +54,9 @@ public interface ID1StoreClient
 /// <summary>
 /// Store client for connection to a D1 server.
 /// </summary>
-public class D1StoreClient : ID1StoreClient
+public class D1StoreClient : ID1Store
 {
-    private readonly Protobuf.Storage.StorageClient client;
+    private readonly Protobuf.Storage.Storage.StorageClient client;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1StoreClient"/> class.
@@ -71,7 +71,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public async Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData)
     {
-        var response = await client.StoreAsync(new Protobuf.StoreRequest
+        var response = await client.StoreAsync(new Protobuf.Storage.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -83,7 +83,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public StoreResponse Store(byte[] plaintext, byte[] associatedData)
     {
-        var response = client.Store(new Protobuf.StoreRequest
+        var response = client.Store(new Protobuf.Storage.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -95,7 +95,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public async Task<RetrieveResponse> RetrieveAsync(string objectId)
     {
-        var response = await client.RetrieveAsync(new Protobuf.RetrieveRequest { ObjectId = objectId }).ConfigureAwait(false);
+        var response = await client.RetrieveAsync(new Protobuf.Storage.RetrieveRequest { ObjectId = objectId }).ConfigureAwait(false);
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -103,7 +103,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public RetrieveResponse Retrieve(string objectId)
     {
-        var response = client.Retrieve(new Protobuf.RetrieveRequest { ObjectId = objectId });
+        var response = client.Retrieve(new Protobuf.Storage.RetrieveRequest { ObjectId = objectId });
 
         return new RetrieveResponse(response.Plaintext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
@@ -111,7 +111,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public async Task UpdateAsync(string objectId, byte[] plaintext, byte[] associatedData)
     {
-        await client.UpdateAsync(new Protobuf.UpdateRequest
+        await client.UpdateAsync(new Protobuf.Storage.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
@@ -122,7 +122,7 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public void Update(string objectId, byte[] plaintext, byte[] associatedData)
     {
-        client.Update(new Protobuf.UpdateRequest
+        client.Update(new Protobuf.Storage.UpdateRequest
         {
             ObjectId = objectId,
             Plaintext = ByteString.CopyFrom(plaintext),
@@ -133,12 +133,12 @@ public class D1StoreClient : ID1StoreClient
     /// <inheritdoc />
     public async Task DeleteAsync(string objectId)
     {
-        await client.DeleteAsync(new Protobuf.DeleteRequest { ObjectId = objectId }).ConfigureAwait(false);
+        await client.DeleteAsync(new Protobuf.Storage.DeleteRequest { ObjectId = objectId }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public void Delete(string objectId)
     {
-        client.Delete(new Protobuf.DeleteRequest { ObjectId = objectId });
+        client.Delete(new Protobuf.Storage.DeleteRequest { ObjectId = objectId });
     }
 }

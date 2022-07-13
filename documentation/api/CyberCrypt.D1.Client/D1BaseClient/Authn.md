@@ -1,12 +1,12 @@
 # D1BaseClient.Authn property
 
 ```csharp
-public ID1AuthnClient Authn { get; }
+public ID1Authn Authn { get; }
 ```
 
 ## See Also
 
-* interface [ID1AuthnClient](../../CyberCrypt.D1.Client.ServiceClients/ID1AuthnClient.md)
+* interface [ID1Authn](../../CyberCrypt.D1.Client.ServiceClients/ID1Authn.md)
 * class [D1BaseClient](../D1BaseClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

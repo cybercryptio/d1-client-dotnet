@@ -1,0 +1,57 @@
+// Copyright 2020-2022 CYBERCRYPT
+
+syntax = "proto3";
+
+package d1.searchable;
+option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/searchable";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Searchable";
+option java_package = "io.cybercrypt.d1.protobuf.searchable";
+option java_outer_classname = "SearchableProto";
+
+// Service for searchable encryption.
+service Searchable {
+  // Adds keywords/identifier pairs to secure index.
+  rpc Add (AddRequest) returns (AddResponse) {}
+
+  // Searches in secure index.
+  rpc Search (SearchRequest) returns (SearchResponse) {}
+
+  // Deletes keywords/identifier pairs from secure index.
+  rpc Delete (DeleteRequest) returns (DeleteResponse) {}
+}
+
+// Represents a request to add keywords/identifier pairs.
+message AddRequest {
+  // Keywords to be associated with identifier in secure index.
+  repeated string keywords = 1;
+  // Identifier, e.g. a document ID, to be stored in secure index.
+  string identifier = 2; 
+}
+
+// Represents a response to an add request.
+message AddResponse {
+}
+
+// Represents a request to search for a keyword in secure index.
+message SearchRequest {
+  // Keyword to search for in secure index.
+  string keyword = 1;
+}
+
+// Represents a response to a search request.
+message SearchResponse {
+  // Identifiers that contain the keyword in secure index.
+  repeated string identifiers = 2;
+}
+
+ // Represents a request to delete keywords/identifier pairs from secure index.
+message DeleteRequest {
+  // Keywords that are associated with identifier in secure index.
+  repeated string keywords = 1;
+  // Identifier stored in secure index.
+  string identifier = 2;
+}
+
+// Represents a response to a delete request.
+message DeleteResponse {
+}

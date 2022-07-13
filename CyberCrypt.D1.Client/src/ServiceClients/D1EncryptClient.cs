@@ -7,7 +7,7 @@ namespace CyberCrypt.D1.Client.ServiceClients;
 /// <summary>
 /// Interface for Encrypt client
 /// </summary>
-public interface ID1EncryptClient
+public interface ID1Encrypt
 {
     /// <summary>
     /// Decrypt an encrypted object.
@@ -36,9 +36,9 @@ public interface ID1EncryptClient
 /// <summary>
 /// Encrypt client for connection to a D1 server.
 /// </summary>
-public class D1EncryptClient : ID1EncryptClient
+public class D1EncryptClient : ID1Encrypt
 {
-    private readonly Protobuf.Generic.GenericClient client;
+    private readonly Protobuf.Generic.Generic.GenericClient client;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1EncryptClient"/> class.
@@ -53,7 +53,7 @@ public class D1EncryptClient : ID1EncryptClient
     /// <inheritdoc />
     public async Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData)
     {
-        var response = await client.EncryptAsync(new Protobuf.EncryptRequest
+        var response = await client.EncryptAsync(new Protobuf.Generic.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -65,7 +65,7 @@ public class D1EncryptClient : ID1EncryptClient
     /// <inheritdoc />
     public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData)
     {
-        var response = client.Encrypt(new Protobuf.EncryptRequest
+        var response = client.Encrypt(new Protobuf.Generic.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
@@ -77,7 +77,7 @@ public class D1EncryptClient : ID1EncryptClient
     /// <inheritdoc />
     public async Task<DecryptResponse> DecryptAsync(string objectId, byte[] ciphertext, byte[] associatedData)
     {
-        var response = await client.DecryptAsync(new Protobuf.DecryptRequest
+        var response = await client.DecryptAsync(new Protobuf.Generic.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),
@@ -90,7 +90,7 @@ public class D1EncryptClient : ID1EncryptClient
     /// <inheritdoc />
     public DecryptResponse Decrypt(string objectId, byte[] ciphertext, byte[] associatedData)
     {
-        var response = client.Decrypt(new Protobuf.DecryptRequest
+        var response = client.Decrypt(new Protobuf.Generic.DecryptRequest
         {
             ObjectId = objectId,
             Ciphertext = ByteString.CopyFrom(ciphertext),

@@ -2,10 +2,10 @@
 
 syntax = "proto3";
 
-package d1;
-option go_package = "./protobuf";
-option csharp_namespace = "CyberCrypt.D1.Client.Protobuf";
-option java_package = "io.cybercrypt.d1.protobuf";
+package d1.scopes;
+option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/scopes";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Scopes";
+option java_package = "io.cybercrypt.d1.protobuf.scopes";
 option java_outer_classname = "ScopesProto";
 
 // Access scopes.
@@ -22,4 +22,6 @@ enum Scope {
   UPDATE = 4;
   // Delete data.
   DELETE = 5;
+  // Use secure index for searching in data.
+  INDEX = 6;
 }

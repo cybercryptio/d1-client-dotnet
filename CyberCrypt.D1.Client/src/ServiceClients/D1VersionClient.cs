@@ -6,7 +6,7 @@ namespace CyberCrypt.D1.Client.ServiceClients;
 /// <summary>
 /// Interface for Version client
 /// </summary>
-public interface ID1VersionClient
+public interface ID1Version
 {
     /// <summary>
     /// Get the version of the D1 server.
@@ -21,9 +21,9 @@ public interface ID1VersionClient
 /// <summary>
 /// Version client for connection to a D1 server.
 /// </summary>
-public class D1VersionClient : ID1VersionClient
+public class D1VersionClient : ID1Version
 {
-    private readonly Protobuf.Version.VersionClient client;
+    private readonly Protobuf.Version.Version.VersionClient client;
 
     /// <summary>
     /// Initialize a new instance of the <see cref="D1BaseClient"/> class.
@@ -38,7 +38,7 @@ public class D1VersionClient : ID1VersionClient
     /// <inheritdoc />
     public async Task<VersionResponse> VersionAsync()
     {
-        var response = await client.VersionAsync(new Protobuf.VersionRequest()).ConfigureAwait(false);
+        var response = await client.VersionAsync(new Protobuf.Version.VersionRequest()).ConfigureAwait(false);
 
         return new VersionResponse(response.Commit, response.Tag);
     }
@@ -46,7 +46,7 @@ public class D1VersionClient : ID1VersionClient
     /// <inheritdoc />
     public VersionResponse Version()
     {
-        var response = client.Version(new Protobuf.VersionRequest());
+        var response = client.Version(new Protobuf.Version.VersionRequest());
 
         return new VersionResponse(response.Commit, response.Tag);
     }

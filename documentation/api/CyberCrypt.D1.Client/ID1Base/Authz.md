@@ -3,12 +3,12 @@
 The authz client.
 
 ```csharp
-public ID1AuthzClient Authz { get; }
+public ID1Authz Authz { get; }
 ```
 
 ## See Also
 
-* interface [ID1AuthzClient](../../CyberCrypt.D1.Client.ServiceClients/ID1AuthzClient.md)
+* interface [ID1Authz](../../CyberCrypt.D1.Client.ServiceClients/ID1Authz.md)
 * interface [ID1Base](../ID1Base.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

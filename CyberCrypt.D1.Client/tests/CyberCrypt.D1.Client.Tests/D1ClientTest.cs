@@ -13,8 +13,6 @@ public class D1ClientTest
     private string d1Password;
     private string d1Endpoint;
     private readonly UsernamePasswordCredentials credentials;
-    private List<Scope> allScopes = new List<Scope>{Scope.Read, Scope.Create, Scope.GetAccess, Scope.ModifyAccess,
-    Scope.Update, Scope.Delete};
 
     public D1ClientTest()
     {
@@ -39,8 +37,8 @@ public class D1ClientTest
     {
         var client = new D1GenericClient(d1Endpoint, credentials);
 
-        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
-        var createGroupResponse = await client.Authn.CreateGroupAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { }).ConfigureAwait(false);
+        var createGroupResponse = await client.Authn.CreateGroupAsync(new List<Scope> { }).ConfigureAwait(false);
 
         await client.Authn.AddUserToGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
         await client.Authn.RemoveUserFromGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
@@ -59,7 +57,7 @@ public class D1ClientTest
 
         var client = new D1GenericClient(d1Endpoint, credentials);
 
-        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create }).ConfigureAwait(false);
         using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         var encryptResponse = await client2.Generic.EncryptAsync(plaintext, associatedData).ConfigureAwait(false);
@@ -82,7 +80,7 @@ public class D1ClientTest
 
         var client = new D1StorageClient(d1Endpoint, credentials);
 
-        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete }).ConfigureAwait(false);
         using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
@@ -112,7 +110,7 @@ public class D1ClientTest
 
         var client = new D1StorageClient(d1Endpoint, credentials);
 
-        var createUserResponse = await client.Authn.CreateUserAsync(allScopes).ConfigureAwait(false);
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Create, Scope.GetAccess, Scope.ModifyAccess }).ConfigureAwait(false);
         using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
@@ -125,6 +123,53 @@ public class D1ClientTest
         var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.Authz.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false))
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
+
+        await client.DisposeAsync();
+    }
+
+    [Fact]
+    public async void TestAddSearchAsync()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        List<string> keywordsRange = new List<string>(keywords);
+        var identifier = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, credentials);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+
+        await client2.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
+
+        foreach (var keyword in keywordsRange)
+        {
+            var searchResponse = await client2.Searchable.SearchAsync(keyword).ConfigureAwait(false);
+            Assert.Equal(identifier, searchResponse.Identifiers[0]);
+        }
+
+        await client.DisposeAsync();
+    }
+
+    [Fact]
+    public async void TestAddDeleteSearchAsync()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        List<string> keywordsRange = new List<string>(keywords);
+        var identifier = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, credentials);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+
+        await client2.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
+        await client2.Searchable.DeleteAsync(keywordsRange, identifier).ConfigureAwait(false);
+
+        foreach (var keyword in keywordsRange)
+        {
+            var searchResponse = await client2.Searchable.SearchAsync(keyword).ConfigureAwait(false);
+            Assert.Equal(0, searchResponse.Identifiers.Count);
+        }
 
         await client.DisposeAsync();
     }
@@ -156,8 +201,8 @@ public class D1ClientTest
     {
         var client = new D1GenericClient(d1Endpoint, credentials);
 
-        var createUserResponse = client.Authn.CreateUser(allScopes);
-        var createGroupResponse = client.Authn.CreateGroup(allScopes);
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { });
+        var createGroupResponse = client.Authn.CreateGroup(new List<Scope> { });
 
         client.Authn.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
         client.Authn.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
@@ -176,7 +221,7 @@ public class D1ClientTest
 
         var client = new D1GenericClient(d1Endpoint, credentials);
 
-        var createUserResponse = client.Authn.CreateUser(allScopes);
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create });
         using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         var encryptResponse = client2.Generic.Encrypt(plaintext, associatedData);
@@ -198,7 +243,7 @@ public class D1ClientTest
 
         var client = new D1StorageClient(d1Endpoint, credentials);
 
-        var createUserResponse = client.Authn.CreateUser(allScopes);
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete });
         using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
         var storeResponse = client2.Storage.Store(plaintext, associatedData);
@@ -225,7 +270,7 @@ public class D1ClientTest
 
         using var client = new D1StorageClient(d1Endpoint, credentials);
 
-        var createUserResponse = client.Authn.CreateUser(allScopes);
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Create, Scope.GetAccess, Scope.ModifyAccess });
 
         using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
@@ -238,6 +283,53 @@ public class D1ClientTest
         client2.Authz.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId);
         var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Authz.GetPermissions(storeResponse.ObjectId));
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
+    }
+
+    [Fact]
+    public void TestAddSearch()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        List<string> keywordsRange = new List<string>(keywords);
+        var identifier = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, credentials);
+
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+
+        client2.Searchable.Add(keywordsRange, identifier);
+
+        foreach (var keyword in keywordsRange)
+        {
+            var searchResponse = client2.Searchable.Search(keyword);
+            Assert.Equal(identifier, searchResponse.Identifiers[0]);
+        }
+
+        client.Dispose();
+    }
+
+    [Fact]
+    public void TestAddDeleteSearch()
+    {
+        string[] keywords = { "keyword1", "keyword2", "keyword3" };
+        List<string> keywordsRange = new List<string>(keywords);
+        string identifer = "id1";
+
+        var client = new D1GenericClient(d1Endpoint, credentials);
+
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
+        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+
+        client2.Searchable.Add(keywordsRange, identifer);
+        client2.Searchable.Delete(keywordsRange, identifer);
+
+        foreach (var keyword in keywordsRange)
+        {
+            var searchResponse = client2.Searchable.Search(keyword);
+            Assert.Equal(0, searchResponse.Identifiers.Count);
+        }
+
+        client.Dispose();
     }
 
     [Fact]

@@ -16,6 +16,7 @@ public enum Scope
 | ModifyAccess | `3` | Scope to modify object permissions. |
 | Update | `4` | Scope to update objects. |
 | Delete | `5` | Scope to delete objects. |
+| Index | `6` | Scope to use secure index for searching in data. |
 
 ## See Also
 
