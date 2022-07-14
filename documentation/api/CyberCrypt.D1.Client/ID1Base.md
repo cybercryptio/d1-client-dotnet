@@ -12,7 +12,7 @@ public interface ID1Base
 | --- | --- |
 | [Authn](ID1Base/Authn.md) { get; } | The authn client. |
 | [Authz](ID1Base/Authz.md) { get; } | The authz client. |
-| [Searchable](ID1Base/Searchable.md) { get; } | The searchable client. |
+| [Index](ID1Base/Index.md) { get; } | The index client. |
 | [Version](ID1Base/Version.md) { get; } | The version client. |
 
 ## See Also

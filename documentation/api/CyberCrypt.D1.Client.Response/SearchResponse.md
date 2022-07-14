@@ -1,6 +1,6 @@
 # SearchResponse class
 
-Response from [`Search`](../CyberCrypt.D1.Client.ServiceClients/ID1Searchable/Search.md) or [`SearchAsync`](../CyberCrypt.D1.Client.ServiceClients/ID1Searchable/SearchAsync.md).
+Response from [`Search`](../CyberCrypt.D1.Client.ServiceClients/ID1Index/Search.md) or [`SearchAsync`](../CyberCrypt.D1.Client.ServiceClients/ID1Index/SearchAsync.md).
 
 ```csharp
 public class SearchResponse
