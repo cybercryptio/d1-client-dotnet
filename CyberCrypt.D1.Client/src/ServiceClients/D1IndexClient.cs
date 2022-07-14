@@ -4,9 +4,9 @@ using Grpc.Net.Client;
 namespace CyberCrypt.D1.Client.ServiceClients;
 
 /// <summary>
-/// Interface for Searchable client
+/// Interface for Index client
 /// </summary>
-public interface ID1Searchable
+public interface ID1Index
 {
     /// <summary>
     /// Add keywords/identifier pairs to secure index.
@@ -40,18 +40,18 @@ public interface ID1Searchable
 }
 
 /// <summary>
-/// Searchable client for connection to a D1 server.
+/// Index client for connection to a D1 server.
 /// </summary>
-public class D1SearchableClient : ID1Searchable
+public class D1IndexClient : ID1Index
 {
-    private readonly Protobuf.Searchable.Searchable.SearchableClient client;
+    private readonly Protobuf.Index.Index.IndexClient client;
 
     /// <summary>
-    /// Initialize a new instance of the <see cref="D1SearchableClient"/> class.
+    /// Initialize a new instance of the <see cref="D1IndexClient"/> class.
     /// </summary>
     /// <param name="channel">gRPC channel.</param>
-    /// <returns>A new instance of the <see cref="D1SearchableClient"/> class.</returns>
-    public D1SearchableClient(GrpcChannel channel)
+    /// <returns>A new instance of the <see cref="D1IndexClient"/> class.</returns>
+    public D1IndexClient(GrpcChannel channel)
     {
         client = new(channel);
     }
@@ -59,7 +59,7 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public async Task AddAsync(List<string> keywords, string identifier)
     {
-        var response = new Protobuf.Searchable.AddRequest { Identifier = identifier };
+        var response = new Protobuf.Index.AddRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
         await client.AddAsync(response).ConfigureAwait(false);
     }
@@ -67,7 +67,7 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public void Add(List<string> keywords, string identifier)
     {
-        var response = new Protobuf.Searchable.AddRequest { Identifier = identifier };
+        var response = new Protobuf.Index.AddRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
         client.Add(response);
     }
@@ -75,7 +75,7 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public async Task<SearchResponse> SearchAsync(string keyword)
     {
-        var response = await client.SearchAsync(new Protobuf.Searchable.SearchRequest
+        var response = await client.SearchAsync(new Protobuf.Index.SearchRequest
         {
             Keyword = keyword
         }).ConfigureAwait(false);
@@ -86,7 +86,7 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public SearchResponse Search(string keyword)
     {
-        var response = client.Search(new Protobuf.Searchable.SearchRequest
+        var response = client.Search(new Protobuf.Index.SearchRequest
         {
             Keyword = keyword
         });
@@ -97,7 +97,7 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public async Task DeleteAsync(List<string> keywords, string identifier)
     {
-        var response = new Protobuf.Searchable.DeleteRequest { Identifier = identifier };
+        var response = new Protobuf.Index.DeleteRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
         await client.DeleteAsync(response).ConfigureAwait(false);
     }
@@ -105,7 +105,7 @@ public class D1SearchableClient : ID1Searchable
     /// <inheritdoc />
     public void Delete(List<string> keywords, string identifier)
     {
-        var response = new Protobuf.Searchable.DeleteRequest { Identifier = identifier };
+        var response = new Protobuf.Index.DeleteRequest { Identifier = identifier };
         response.Keywords.AddRange(keywords);
         client.Delete(response);
     }

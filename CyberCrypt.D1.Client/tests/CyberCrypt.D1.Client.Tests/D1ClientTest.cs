@@ -139,11 +139,11 @@ public class D1ClientTest
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
         using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        await client2.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
+        await client2.Index.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
 
         foreach (var keyword in keywordsRange)
         {
-            var searchResponse = await client2.Searchable.SearchAsync(keyword).ConfigureAwait(false);
+            var searchResponse = await client2.Index.SearchAsync(keyword).ConfigureAwait(false);
             Assert.Equal(identifier, searchResponse.Identifiers[0]);
         }
 
@@ -162,12 +162,12 @@ public class D1ClientTest
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
         using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        await client2.Searchable.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
-        await client2.Searchable.DeleteAsync(keywordsRange, identifier).ConfigureAwait(false);
+        await client2.Index.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
+        await client2.Index.DeleteAsync(keywordsRange, identifier).ConfigureAwait(false);
 
         foreach (var keyword in keywordsRange)
         {
-            var searchResponse = await client2.Searchable.SearchAsync(keyword).ConfigureAwait(false);
+            var searchResponse = await client2.Index.SearchAsync(keyword).ConfigureAwait(false);
             Assert.Equal(0, searchResponse.Identifiers.Count);
         }
 
@@ -297,11 +297,11 @@ public class D1ClientTest
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
         using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        client2.Searchable.Add(keywordsRange, identifier);
+        client2.Index.Add(keywordsRange, identifier);
 
         foreach (var keyword in keywordsRange)
         {
-            var searchResponse = client2.Searchable.Search(keyword);
+            var searchResponse = client2.Index.Search(keyword);
             Assert.Equal(identifier, searchResponse.Identifiers[0]);
         }
 
@@ -320,12 +320,12 @@ public class D1ClientTest
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
         using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
 
-        client2.Searchable.Add(keywordsRange, identifer);
-        client2.Searchable.Delete(keywordsRange, identifer);
+        client2.Index.Add(keywordsRange, identifer);
+        client2.Index.Delete(keywordsRange, identifer);
 
         foreach (var keyword in keywordsRange)
         {
-            var searchResponse = client2.Searchable.Search(keyword);
+            var searchResponse = client2.Index.Search(keyword);
             Assert.Equal(0, searchResponse.Identifiers.Count);
         }
 
