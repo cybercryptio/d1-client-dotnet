@@ -33,7 +33,7 @@ services:
       - storage
 
   d1-service-generic:
-    image: ghcr.io/cybercryptio/d1-service-generic:v0.1.49-ci.46
+    image: ghcr.io/cybercryptio/d1-service-generic:v0.1.49-ci.48
     container_name: d1-service-generic
     environment:
       <<: *config
