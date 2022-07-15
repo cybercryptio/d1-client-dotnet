@@ -15,7 +15,7 @@ x-config:
 
 services:
   d1-service-storage:
-    image: ghcr.io/cybercryptio/d1-service-storage:v0.1.27-ci.13
+    image: ghcr.io/cybercryptio/d1-service-storage:v0.1.27-ci.35
     container_name: d1-service-storage
     environment:
       <<: *config
