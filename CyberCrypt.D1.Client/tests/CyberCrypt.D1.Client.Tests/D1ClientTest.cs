@@ -128,7 +128,7 @@ public class D1ClientTest
     }
 
     [Fact]
-    public async void TestAddSearchAsync()
+    public async void TestAddToIndexAsync()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
         List<string> keywordsRange = new List<string>(keywords);
@@ -151,7 +151,7 @@ public class D1ClientTest
     }
 
     [Fact]
-    public async void TestAddDeleteSearchAsync()
+    public async void TestAddToDeleteFromIndexAsync()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
         List<string> keywordsRange = new List<string>(keywords);
@@ -286,7 +286,7 @@ public class D1ClientTest
     }
 
     [Fact]
-    public void TestAddSearch()
+    public void TestAddToIndex()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
         List<string> keywordsRange = new List<string>(keywords);
@@ -309,7 +309,7 @@ public class D1ClientTest
     }
 
     [Fact]
-    public void TestAddDeleteSearch()
+    public void TestAddToDeleteFromIndex()
     {
         string[] keywords = { "keyword1", "keyword2", "keyword3" };
         List<string> keywordsRange = new List<string>(keywords);
