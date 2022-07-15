@@ -4,18 +4,12 @@ x-config:
   &config
   D1_SERVICE_INSECURE: "1"
 
-  # S3 config
-  D1_IO_S3_URL: "http://minio:9000"
-  D1_IO_S3_BUCKET: &storage_bucket "objects"
-  D1_IO_S3_ID: &storage_id "storageid"
-  D1_IO_S3_KEY: &storage_key "storagekey"
-
-  # TiKV config
-  D1_IO_TIKV_ADDRESS: "pd:2379"
+  # IO Provider
+  D1_IO_REDIS_ADDRESS: "redis:6379"
 
 services:
   d1-service-storage:
-    image: ghcr.io/cybercryptio/d1-service-storage:v0.1.27-ci.13
+    image: ghcr.io/cybercryptio/d1-service-storage:v0.1.27-ci.35
     container_name: d1-service-storage
     environment:
       <<: *config
@@ -24,16 +18,13 @@ services:
     ports:
       - 9000:9000
     depends_on:
-      minio:
-        condition: service_healthy
-      minio-init:
-        condition: service_completed_successfully
+      - redis
     tty: true
     profiles:
       - storage
 
   d1-service-generic:
-    image: ghcr.io/cybercryptio/d1-service-generic:v0.1.47-ci.192
+    image: ghcr.io/cybercryptio/d1-service-generic:v0.1.49-ci.48
     container_name: d1-service-generic
     environment:
       <<: *config
@@ -42,77 +33,12 @@ services:
     ports:
       - 9000:9000
     depends_on:
-      - pd
-      - tikv
+      - redis
     tty: true
     profiles:
       - generic
 
-  # MinIO
-  minio:
-    image: minio/minio:RELEASE.2022-06-25T15-50-16Z
-    container_name: minio
-    volumes:
-      - /data
-    ports:
-      - 7000:9000
-    environment:
-      MINIO_ACCESS_KEY: *storage_id
-      MINIO_SECRET_KEY: *storage_key
-      MINIO_DEFAULT_BUCKETS: *storage_bucket
-    command: server /data
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-f",
-          "localhost:9000/minio/health/live"
-        ]
-      timeout: 30s
-      interval: 5s
-      retries: 5
-    profiles:
-      - storage
-
-  minio-init:
-    image: minio/mc:RELEASE.2022-06-26T18-51-48Z
-    container_name: minio-init
-    environment:
-      MINIO_ACCESS_KEY: *storage_id
-      MINIO_SECRET_KEY: *storage_key
-      MINIO_DEFAULT_BUCKETS: *storage_bucket
-    entrypoint: |
-      /bin/sh -c "
-      /usr/bin/mc config host add --api s3v4 storage http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY};
-      /usr/bin/mc mb storage/$${MINIO_DEFAULT_BUCKETS};
-      /usr/bin/mc policy set public storage/$${MINIO_DEFAULT_BUCKETS};
-      "
-    depends_on:
-      minio:
-        condition: service_healthy
-    profiles:
-      - storage
-
-  # TiKV
-  pd:
-    image: pingcap/pd:v5.4.0
-    container_name: pd
-    command: |
-      --name pd
-      --client-urls http://0.0.0.0:2379
-      --peer-urls http://0.0.0.0:2380
-      --advertise-client-urls http://pd:2379
-      --advertise-peer-urls http://pd:2380
-    profiles:
-      - generic
-
-  tikv:
-    image: pingcap/tikv:v5.4.0
-    container_name: tikv
-    command: |
-      --addr 0.0.0.0:20160
-      --advertise-addr tikv:20160
-      --pd-endpoints pd:2379
-    profiles:
-      - generic
+  # redis
+  redis:
+    image: redis:7.0.3-alpine
+    container_name: redis

@@ -25,7 +25,7 @@
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\authz.proto" GrpcServices="client" Access="internal" />
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\generic.proto" GrpcServices="client" Access="internal" />
     <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\storage.proto" GrpcServices="client" Access="internal" />
-    <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\searchable.proto" GrpcServices="client" Access="internal" />
+    <Protobuf ProtoRoot="$(ProtoRoot)" Include="$(ProtoRoot)\index.proto" GrpcServices="client" Access="internal" />
   </ItemGroup>
 
   <!-- Also clean obj and bin folders -->

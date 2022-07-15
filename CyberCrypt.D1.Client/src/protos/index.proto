@@ -2,14 +2,14 @@
 
 syntax = "proto3";
 
-package d1.searchable;
-option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/searchable";
-option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Searchable";
-option java_package = "io.cybercrypt.d1.protobuf.searchable";
-option java_outer_classname = "SearchableProto";
+package d1.index;
+option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/index";
+option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Index";
+option java_package = "io.cybercrypt.d1.protobuf.index";
+option java_outer_classname = "IndexProto";
 
-// Service for searchable encryption.
-service Searchable {
+// Service for using secure index.
+service Index {
   // Adds keywords/identifier pairs to secure index.
   rpc Add (AddRequest) returns (AddResponse) {}
 

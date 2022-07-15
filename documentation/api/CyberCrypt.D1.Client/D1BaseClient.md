@@ -12,7 +12,7 @@ public abstract class D1BaseClient : IAsyncDisposable, ID1Base, IDisposable
 | --- | --- |
 | [Authn](D1BaseClient/Authn.md) { get; } |  |
 | [Authz](D1BaseClient/Authz.md) { get; } |  |
-| [Searchable](D1BaseClient/Searchable.md) { get; } |  |
+| [Index](D1BaseClient/Index.md) { get; } |  |
 | [User](D1BaseClient/User.md) { get; } |  |
 | [Version](D1BaseClient/Version.md) { get; } |  |
 | [Dispose](D1BaseClient/Dispose.md)() | Dispose the client. |
