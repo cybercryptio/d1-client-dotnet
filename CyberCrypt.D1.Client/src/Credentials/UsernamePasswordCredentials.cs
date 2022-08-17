@@ -22,10 +22,9 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <summary>
     /// Initialize a new instance of the <see cref="UsernamePasswordCredentials"/> class.
     /// </summary>
-    /// <param name="endpoint">The endpoint of the D1 server.</param>
     /// <param name="username">The username.</param>
     /// <param name="password">The password.</param>
-    /// <param name="certPath">The certificate path.</param>
+    /// <param name="channel">The <see cref="GrpcChannel"/> to use.</param>
     /// <returns>A new instance of the <see cref="UsernamePasswordCredentials"/> class.</returns>
     public UsernamePasswordCredentials(string username, string password, GrpcChannel channel)
     {

@@ -10,7 +10,7 @@ public class D1Channel
 
 | name | description |
 | --- | --- |
-| [D1Channel](D1Channel/D1Channel.md)(…) |  (2 constructors) |
+| [D1Channel](D1Channel/D1Channel.md)(…) | Initializes a new instance of the [`D1Channel`](./D1Channel.md) class. (2 constructors) |
 | [ChannelCredentials](D1Channel/ChannelCredentials.md) { get; set; } | The [`ChannelCredentials`](./D1Channel/ChannelCredentials.md) to use. Must be specified. |
 | [HttpClientHandler](D1Channel/HttpClientHandler.md) { get; set; } | The [`HttpClientHandler`](./D1Channel/HttpClientHandler.md) to use. If not specified, a default one is created. |
 | [Build](D1Channel/Build.md)() | Create the gRPC channel. |

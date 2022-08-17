@@ -8,10 +8,9 @@ public UsernamePasswordCredentials(string username, string password, GrpcChannel
 
 | parameter | description |
 | --- | --- |
-| endpoint | The endpoint of the D1 server. |
 | username | The username. |
 | password | The password. |
-| certPath | The certificate path. |
+| channel | The GrpcChannel to use. |
 
 ## Return Value
 

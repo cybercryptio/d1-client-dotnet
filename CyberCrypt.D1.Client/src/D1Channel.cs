@@ -15,12 +15,25 @@ public class D1Channel
     private readonly string? password;
     internal ID1CallCredentials? d1CallCredentials;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="D1Channel"/> class.
+    /// </summary>
+    /// <param name="endpoint">The endpoint of the D1 server.</param>
+    /// <param name="callCredentials">The call credentials.</param>
+    /// <returns>The <see cref="D1Channel"/>.</returns>
     public D1Channel(Uri endpoint, ID1CallCredentials callCredentials)
     {
         this.endpoint = endpoint;
         this.d1CallCredentials = callCredentials ?? throw new ArgumentNullException(nameof(callCredentials));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="D1Channel"/> class.
+    /// </summary>
+    /// <param name="endpoint">The endpoint of the D1 server.</param>
+    /// <param name="username">The username.</param>
+    /// <param name="password">The password.</param>
+    /// <returns>The <see cref="D1Channel"/>.</returns>
     public D1Channel(Uri endpoint, string username, string password)
     {
         if (string.IsNullOrEmpty(username))
