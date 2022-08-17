@@ -13,7 +13,6 @@ public class D1ClientTest
     private string d1User;
     private string d1Password;
     private Uri d1Endpoint;
-    // private readonly UsernamePasswordCredentials credentials;
     private readonly D1Channel d1Channel;
 
     public D1ClientTest()
