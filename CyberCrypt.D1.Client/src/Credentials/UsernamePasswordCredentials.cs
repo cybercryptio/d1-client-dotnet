@@ -6,7 +6,7 @@ namespace CyberCrypt.D1.Client.Credentials;
 /// <summary>
 /// Credentials from username and password.
 /// </summary>
-public class UsernamePasswordCredentials : ID1Credentials
+public class UsernamePasswordCredentials : ID1CallCredentials
 {
     private readonly Protobuf.Authn.Authn.AuthnClient client;
     private readonly string username;
@@ -27,7 +27,7 @@ public class UsernamePasswordCredentials : ID1Credentials
     /// <param name="password">The password.</param>
     /// <param name="certPath">The certificate path.</param>
     /// <returns>A new instance of the <see cref="UsernamePasswordCredentials"/> class.</returns>
-    public UsernamePasswordCredentials(string endpoint, string username, string password, string? certPath = null)
+    public UsernamePasswordCredentials(string username, string password, GrpcChannel channel)
     {
         if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
         {
@@ -37,21 +37,6 @@ public class UsernamePasswordCredentials : ID1Credentials
         else
         {
             throw new ArgumentNullException("username and password must be provided");
-        }
-
-        GrpcChannel channel;
-        if (string.IsNullOrWhiteSpace(certPath))
-        {
-            channel = GrpcChannel.ForAddress(endpoint);
-        }
-        else
-        {
-            var cert = new X509Certificate2(File.ReadAllBytes(certPath));
-
-            var handler = new HttpClientHandler();
-            handler.ClientCertificates.Add(cert);
-
-            channel = GrpcChannel.ForAddress(endpoint, new GrpcChannelOptions { HttpHandler = handler });
         }
 
         client = new(channel);

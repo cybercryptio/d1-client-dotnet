@@ -1,6 +1,5 @@
 // Copyright 2020-2022 CYBERCRYPT
 using System.Runtime.CompilerServices;
-using CyberCrypt.D1.Client.Credentials;
 using CyberCrypt.D1.Client.ServiceClients;
 
 [assembly: InternalsVisibleTo("CyberCrypt.D1.Client.Tests")]
@@ -33,13 +32,10 @@ public class D1GenericClient : D1BaseClient, ID1Generic
     /// <summary>
     /// Initialize a new instance of the <see cref="D1GenericClient"/> class.
     /// </summary>
-    /// <param name="endpoint">The endpoint of the D1 server.</param>
-    /// <param name="options">Client options <see cref="D1ClientOptions" />.</param>
-    /// <param name="credentials">Credentials used to authenticate with D1.</param>
+    /// <param name="d1Channel">The <see cref="D1Channel"/> to use.</param>
     /// <returns>A new instance of the <see cref="D1GenericClient"/> class.</returns>
-    public D1GenericClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
-        : base(endpoint, credentials, options)
+    public D1GenericClient(D1Channel d1Channel) : base(d1Channel)
     {
-        Generic = new D1EncryptClient(channel);
+        Generic = new D1EncryptClient(base.channel);
     }
 }

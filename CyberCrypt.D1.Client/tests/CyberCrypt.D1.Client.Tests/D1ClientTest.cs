@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Xunit;
 using CyberCrypt.D1.Client.Utils;
 using CyberCrypt.D1.Client.Credentials;
+using Grpc.Core;
 
 namespace CyberCrypt.D1.Client.Tests;
 
@@ -11,21 +12,32 @@ public class D1ClientTest
 {
     private string d1User;
     private string d1Password;
-    private string d1Endpoint;
-    private readonly UsernamePasswordCredentials credentials;
+    private Uri d1Endpoint;
+    // private readonly UsernamePasswordCredentials credentials;
+    private readonly D1Channel d1Channel;
 
     public D1ClientTest()
     {
         d1User = Environment.GetEnvironmentVariable("E2E_TEST_UID") ?? throw new ArgumentNullException("E2E_TEST_UID must be set");
         d1Password = Environment.GetEnvironmentVariable("E2E_TEST_PASS") ?? throw new ArgumentNullException("E2E_TEST_PASS must be set");
-        d1Endpoint = Environment.GetEnvironmentVariable("E2E_TEST_URL") ?? "http://127.0.0.1:9000";
-        credentials = new UsernamePasswordCredentials(d1Endpoint, d1User, d1Password);
+        d1Endpoint = new Uri(Environment.GetEnvironmentVariable("E2E_TEST_URL") ?? "http://127.0.0.1:9000");
+        d1Channel = new D1Channel(d1Endpoint, d1User, d1Password) { ChannelCredentials = ChannelCredentials.Insecure };
+    }
+
+    private D1GenericClient CreateD1GenericClient(string username, string password)
+    {
+        return new D1GenericClient(new D1Channel(d1Endpoint, username, password) { ChannelCredentials = ChannelCredentials.Insecure });
+    }
+
+    private D1StorageClient CreateD1StorageClient(string username, string password)
+    {
+        return new D1StorageClient(new D1Channel(d1Endpoint, username, password) { ChannelCredentials = ChannelCredentials.Insecure });
     }
 
     [Fact]
     public async void TestClientConnectionAsync()
     {
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         await client.Version.VersionAsync().ConfigureAwait(false);
 
@@ -35,7 +47,7 @@ public class D1ClientTest
     [Fact]
     public async void TestUserManagementAsync()
     {
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { }).ConfigureAwait(false);
         var createGroupResponse = await client.Authn.CreateGroupAsync(new List<Scope> { }).ConfigureAwait(false);
@@ -55,10 +67,10 @@ public class D1ClientTest
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create }).ConfigureAwait(false);
-        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
 
         var encryptResponse = await client2.Generic.EncryptAsync(plaintext, associatedData).ConfigureAwait(false);
         var decryptResponse = await client2.Generic.DecryptAsync(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData)
@@ -78,10 +90,10 @@ public class D1ClientTest
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
         var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        var client = new D1StorageClient(d1Endpoint, credentials);
+        using var client = new D1StorageClient(d1Channel);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete }).ConfigureAwait(false);
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
 
         var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
         var retrieveResponse = await client2.Storage.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false);
@@ -108,10 +120,10 @@ public class D1ClientTest
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new D1StorageClient(d1Endpoint, credentials);
+        using var client = new D1StorageClient(d1Channel);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Create, Scope.GetAccess, Scope.ModifyAccess }).ConfigureAwait(false);
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
 
         var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
 
@@ -134,10 +146,10 @@ public class D1ClientTest
         List<string> keywordsRange = new List<string>(keywords);
         var identifier = "id1";
 
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
-        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
 
         await client2.Index.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
 
@@ -157,10 +169,10 @@ public class D1ClientTest
         List<string> keywordsRange = new List<string>(keywords);
         var identifier = "id1";
 
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Index }).ConfigureAwait(false);
-        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
 
         await client2.Index.AddAsync(keywordsRange, identifier).ConfigureAwait(false);
         await client2.Index.DeleteAsync(keywordsRange, identifier).ConfigureAwait(false);
@@ -175,21 +187,9 @@ public class D1ClientTest
     }
 
     [Fact]
-    public async void TestClientRefreshTokenAsync()
-    {
-        var client = new D1GenericClient(d1Endpoint, credentials);
-
-        credentials.ExpiryTime = DateTime.Now;
-
-        await client.Version.VersionAsync().ConfigureAwait(false);
-
-        await client.DisposeAsync();
-    }
-
-    [Fact]
     public void TestClientConnection()
     {
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        var client = new D1GenericClient(d1Channel);
 
         client.Version.Version();
 
@@ -199,7 +199,7 @@ public class D1ClientTest
     [Fact]
     public void TestUserManagement()
     {
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { });
         var createGroupResponse = client.Authn.CreateGroup(new List<Scope> { });
@@ -219,10 +219,10 @@ public class D1ClientTest
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create });
-        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
 
         var encryptResponse = client2.Generic.Encrypt(plaintext, associatedData);
         var decryptResponse = client2.Generic.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
@@ -241,10 +241,10 @@ public class D1ClientTest
         var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
         var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
 
-        var client = new D1StorageClient(d1Endpoint, credentials);
+        using var client = new D1StorageClient(d1Channel);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete });
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
 
         var storeResponse = client2.Storage.Store(plaintext, associatedData);
         var retrieveResponse = client2.Storage.Retrieve(storeResponse.ObjectId);
@@ -268,11 +268,10 @@ public class D1ClientTest
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
         var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
 
-        using var client = new D1StorageClient(d1Endpoint, credentials);
+        using var client = new D1StorageClient(d1Channel);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Create, Scope.GetAccess, Scope.ModifyAccess });
-
-        using var client2 = new D1StorageClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
 
         var storeResponse = client2.Storage.Store(plaintext, associatedData);
 
@@ -292,10 +291,10 @@ public class D1ClientTest
         List<string> keywordsRange = new List<string>(keywords);
         var identifier = "id1";
 
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
-        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
 
         client2.Index.Add(keywordsRange, identifier);
 
@@ -315,10 +314,10 @@ public class D1ClientTest
         List<string> keywordsRange = new List<string>(keywords);
         string identifer = "id1";
 
-        var client = new D1GenericClient(d1Endpoint, credentials);
+        using var client = new D1GenericClient(d1Channel);
 
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Index });
-        using var client2 = new D1GenericClient(d1Endpoint, new UsernamePasswordCredentials(d1Endpoint, createUserResponse.UserId, createUserResponse.Password));
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
 
         client2.Index.Add(keywordsRange, identifer);
         client2.Index.Delete(keywordsRange, identifer);
@@ -328,18 +327,6 @@ public class D1ClientTest
             var searchResponse = client2.Index.Search(keyword);
             Assert.Equal(0, searchResponse.Identifiers.Count);
         }
-
-        client.Dispose();
-    }
-
-    [Fact]
-    public void TestClientRefreshToken()
-    {
-        var client = new D1GenericClient(d1Endpoint, credentials);
-
-        credentials.ExpiryTime = DateTime.Now;
-
-        client.Version.Version();
 
         client.Dispose();
     }
