@@ -3,7 +3,7 @@ namespace CyberCrypt.D1.Client.Credentials;
 /// <summary>
 /// Interface for credential implementations.
 /// </summary>
-public interface ID1Credentials
+public interface ID1CallCredentials
 {
     /// <summary>
     /// Gets the token.
