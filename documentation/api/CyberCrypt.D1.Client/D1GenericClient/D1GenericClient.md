@@ -3,14 +3,12 @@
 Initialize a new instance of the [`D1GenericClient`](../D1GenericClient.md) class.
 
 ```csharp
-public D1GenericClient(string endpoint, ID1Credentials credentials, D1ClientOptions? options = null)
+public D1GenericClient(D1Channel d1Channel)
 ```
 
 | parameter | description |
 | --- | --- |
-| endpoint | The endpoint of the D1 server. |
-| options | Client options [`D1ClientOptions`](../D1ClientOptions.md). |
-| credentials | Credentials used to authenticate with D1. |
+| d1Channel | The [`D1Channel`](../D1Channel.md) to use. |
 
 ## Return Value
 
@@ -18,8 +16,7 @@ A new instance of the [`D1GenericClient`](../D1GenericClient.md) class.
 
 ## See Also
 
-* interface [ID1Credentials](../../CyberCrypt.D1.Client.Credentials/ID1Credentials.md)
-* class [D1ClientOptions](../D1ClientOptions.md)
+* class [D1Channel](../D1Channel.md)
 * class [D1GenericClient](../D1GenericClient.md)
 * namespace [CyberCrypt.D1.Client](../../CyberCrypt.D1.Client.md)
 

@@ -3,8 +3,7 @@
 Initialize a new instance of the [`UsernamePasswordCredentials`](../UsernamePasswordCredentials.md) class.
 
 ```csharp
-public UsernamePasswordCredentials(string endpoint, string username, string password, 
-    string? certPath = null)
+public UsernamePasswordCredentials(string username, string password, GrpcChannel channel)
 ```
 
 | parameter | description |

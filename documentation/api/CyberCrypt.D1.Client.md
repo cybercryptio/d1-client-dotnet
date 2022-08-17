@@ -5,6 +5,7 @@
 | public type | description |
 | --- | --- |
 | abstract class [D1BaseClient](./CyberCrypt.D1.Client/D1BaseClient.md) | Client for connection to a D1 server. |
+| class [D1Channel](./CyberCrypt.D1.Client/D1Channel.md) | Channel for communication with the D1 server. |
 | class [D1ClientOptions](./CyberCrypt.D1.Client/D1ClientOptions.md) | Options for the [`D1BaseClient`](./CyberCrypt.D1.Client/D1BaseClient.md). |
 | class [D1GenericClient](./CyberCrypt.D1.Client/D1GenericClient.md) | Client for connection to a D1 Generic server. |
 | class [D1StorageClient](./CyberCrypt.D1.Client/D1StorageClient.md) | Client for connection to a D1 Storage server. |
@@ -16,7 +17,7 @@
 
 | public type | description |
 | --- | --- |
-| interface [ID1Credentials](./CyberCrypt.D1.Client.Credentials/ID1Credentials.md) | Interface for credential implementations. |
+| interface [ID1CallCredentials](./CyberCrypt.D1.Client.Credentials/ID1CallCredentials.md) | Interface for credential implementations. |
 | class [TokenCredentials](./CyberCrypt.D1.Client.Credentials/TokenCredentials.md) | Credentials based off a user provide token. |
 | class [UsernamePasswordCredentials](./CyberCrypt.D1.Client.Credentials/UsernamePasswordCredentials.md) | Credentials from username and password. |
 
