@@ -44,10 +44,11 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <inheritdoc />
     public string? GetToken()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (DateTime.UtcNow > ExpiryTime.AddMinutes(-1))
         {
             var req = client.LoginUser(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password });
             accessToken = req.AccessToken;
+            ExpiryTime = DateTimeOffset.FromUnixTimeSeconds(req.ExpiryTime).UtcDateTime;
         }
 
         return accessToken;
@@ -56,10 +57,11 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <inheritdoc />
     public async Task<string?> GetTokenAsync()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (DateTime.UtcNow > ExpiryTime.AddMinutes(-1))
         {
             var req = await client.LoginUserAsync(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password }).ConfigureAwait(false);
             accessToken = req.AccessToken;
+            ExpiryTime = DateTimeOffset.FromUnixTimeSeconds(req.ExpiryTime).UtcDateTime;
         }
 
         return accessToken;
