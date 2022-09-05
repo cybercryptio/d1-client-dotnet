@@ -16,7 +16,7 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <summary>
     /// The token expiration time.
     /// </summary>
-    public DateTime ExpiryTime { get; internal set; } = DateTime.MinValue.AddMinutes(1); // Have to add one minute to avoid exception because of underflow when calculating if the token is expired.
+    public DateTime ExpiryTime { get; internal set; }
 
 
     /// <summary>
@@ -44,10 +44,11 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <inheritdoc />
     public string? GetToken()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (DateTime.UtcNow.AddMinutes(-1) > ExpiryTime)
         {
             var req = client.LoginUser(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password });
             accessToken = req.AccessToken;
+            ExpiryTime = DateTimeOffset.FromUnixTimeSeconds(req.ExpiryTime).UtcDateTime;
         }
 
         return accessToken;
@@ -56,10 +57,11 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <inheritdoc />
     public async Task<string?> GetTokenAsync()
     {
-        if (DateTime.Now > ExpiryTime.AddMinutes(-1))
+        if (DateTime.UtcNow.AddMinutes(-1) > ExpiryTime)
         {
             var req = await client.LoginUserAsync(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password }).ConfigureAwait(false);
             accessToken = req.AccessToken;
+            ExpiryTime = DateTimeOffset.FromUnixTimeSeconds(req.ExpiryTime).UtcDateTime;
         }
 
         return accessToken;
