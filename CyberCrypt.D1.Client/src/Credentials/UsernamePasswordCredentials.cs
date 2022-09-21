@@ -44,7 +44,7 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <inheritdoc />
     public string? GetToken()
     {
-        if (DateTime.UtcNow.AddMinutes(-1) > ExpiryTime)
+        if (DateTime.UtcNow.AddMinutes(1) > ExpiryTime)
         {
             var req = client.LoginUser(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password });
             accessToken = req.AccessToken;
@@ -57,7 +57,7 @@ public class UsernamePasswordCredentials : ID1CallCredentials
     /// <inheritdoc />
     public async Task<string?> GetTokenAsync()
     {
-        if (DateTime.UtcNow.AddMinutes(-1) > ExpiryTime)
+        if (DateTime.UtcNow.AddMinutes(1) > ExpiryTime)
         {
             var req = await client.LoginUserAsync(new Protobuf.Authn.LoginUserRequest { UserId = username, Password = password }).ConfigureAwait(false);
             accessToken = req.AccessToken;
