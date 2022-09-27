@@ -1,7 +1,8 @@
 # ID1Store.StoreAsync method
 
 ```csharp
-public Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData)
+public Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData, 
+    IEnumerable<string>? groupIds = null)
 ```
 
 ## See Also

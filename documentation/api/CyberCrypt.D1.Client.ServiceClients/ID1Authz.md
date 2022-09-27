@@ -12,6 +12,8 @@ public interface ID1Authz
 | --- | --- |
 | [AddPermission](ID1Authz/AddPermission.md)(…) | Give a group permission to access an object. |
 | [AddPermissionAsync](ID1Authz/AddPermissionAsync.md)(…) |  |
+| [CheckPermission](ID1Authz/CheckPermission.md)(…) | Check if the user has access to an object. |
+| [CheckPermissionAsync](ID1Authz/CheckPermissionAsync.md)(…) |  |
 | [GetPermissions](ID1Authz/GetPermissions.md)(…) | Get the permissions applied to an object. |
 | [GetPermissionsAsync](ID1Authz/GetPermissionsAsync.md)(…) |  |
 | [RemovePermission](ID1Authz/RemovePermission.md)(…) | Revoke a groups permission to access an object. |

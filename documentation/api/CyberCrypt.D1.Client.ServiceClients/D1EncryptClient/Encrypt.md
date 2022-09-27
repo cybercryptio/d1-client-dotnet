@@ -1,7 +1,8 @@
 # D1EncryptClient.Encrypt method
 
 ```csharp
-public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData)
+public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData, 
+    IEnumerable<string>? groupIds = null)
 ```
 
 ## See Also

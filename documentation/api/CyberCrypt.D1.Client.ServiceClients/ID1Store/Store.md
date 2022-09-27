@@ -3,13 +3,15 @@
 Store some data encrypted in the storage attached to D1.
 
 ```csharp
-public StoreResponse Store(byte[] plaintext, byte[] associatedData)
+public StoreResponse Store(byte[] plaintext, byte[] associatedData, 
+    IEnumerable<string>? groupIds = null)
 ```
 
 | parameter | description |
 | --- | --- |
 | plaintext | The plaintext to store. |
 | associatedData | The attached associated data. |
+| groupIds | The IDs for the groups that should have access to the object. |
 
 ## Return Value
 
