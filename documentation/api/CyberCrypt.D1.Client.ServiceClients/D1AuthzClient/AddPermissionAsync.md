@@ -1,7 +1,7 @@
 # D1AuthzClient.AddPermissionAsync method
 
 ```csharp
-public Task AddPermissionAsync(string objectId, string groupId)
+public Task AddPermissionAsync(string objectId, IEnumerable<string> groupIds)
 ```
 
 ## See Also

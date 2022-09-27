@@ -3,13 +3,13 @@
 Give a group permission to access an object.
 
 ```csharp
-public void AddPermission(string objectId, string groupId)
+public void AddPermission(string objectId, IEnumerable<string> groupIds)
 ```
 
 | parameter | description |
 | --- | --- |
 | objectId | The ID of the object. |
-| groupId | The ID of the group. |
+| groupIds | The ID of the groups. |
 
 ## See Also
 

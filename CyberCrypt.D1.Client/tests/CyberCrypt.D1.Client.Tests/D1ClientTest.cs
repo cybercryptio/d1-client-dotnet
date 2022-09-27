@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using CyberCrypt.D1.Client.Utils;
-using CyberCrypt.D1.Client.Credentials;
 using Grpc.Core;
 
 namespace CyberCrypt.D1.Client.Tests;
@@ -51,8 +50,8 @@ public class D1ClientTest
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { }).ConfigureAwait(false);
         var createGroupResponse = await client.Authn.CreateGroupAsync(new List<Scope> { }).ConfigureAwait(false);
 
-        await client.Authn.AddUserToGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
-        await client.Authn.RemoveUserFromGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
+        await client.Authn.AddUserToGroupsAsync(createUserResponse.UserId, new [] { createGroupResponse.GroupId }).ConfigureAwait(false);
+        await client.Authn.RemoveUserFromGroupsAsync(createUserResponse.UserId, new[] { createGroupResponse.GroupId }).ConfigureAwait(false);
 
         await client.Authn.RemoveUserAsync(createUserResponse.UserId).ConfigureAwait(false);
 
@@ -126,11 +125,11 @@ public class D1ClientTest
 
         var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
 
-        await client2.Authz.AddPermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        await client2.Authz.AddPermissionAsync(storeResponse.ObjectId, new[] { createUserResponse.UserId }).ConfigureAwait(false);
         var getPermissionsResponse = await client2.Authz.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false);
         Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-        await client2.Authz.RemovePermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        await client2.Authz.RemovePermissionAsync(storeResponse.ObjectId, new[] { createUserResponse.UserId }).ConfigureAwait(false);
         var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.Authz.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false))
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
@@ -203,8 +202,8 @@ public class D1ClientTest
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { });
         var createGroupResponse = client.Authn.CreateGroup(new List<Scope> { });
 
-        client.Authn.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
-        client.Authn.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
+        client.Authn.AddUserToGroups(createUserResponse.UserId, new[] { createGroupResponse.GroupId });
+        client.Authn.RemoveUserFromGroups(createUserResponse.UserId, new[] { createGroupResponse.GroupId });
 
         client.Authn.RemoveUser(createUserResponse.UserId);
 
@@ -274,11 +273,11 @@ public class D1ClientTest
 
         var storeResponse = client2.Storage.Store(plaintext, associatedData);
 
-        client2.Authz.AddPermission(storeResponse.ObjectId, createUserResponse.UserId);
+        client2.Authz.AddPermission(storeResponse.ObjectId, new[] { createUserResponse.UserId });
         var getPermissionsResponse = client2.Authz.GetPermissions(storeResponse.ObjectId);
         Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-        client2.Authz.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId);
+        client2.Authz.RemovePermission(storeResponse.ObjectId, new[] { createUserResponse.UserId });
         var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Authz.GetPermissions(storeResponse.ObjectId));
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
     }

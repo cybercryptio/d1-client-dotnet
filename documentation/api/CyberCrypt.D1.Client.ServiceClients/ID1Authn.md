@@ -10,16 +10,16 @@ public interface ID1Authn
 
 | name | description |
 | --- | --- |
-| [AddUserToGroup](ID1Authn/AddUserToGroup.md)(…) | Add a user to a group. |
-| [AddUserToGroupAsync](ID1Authn/AddUserToGroupAsync.md)(…) |  |
+| [AddUserToGroups](ID1Authn/AddUserToGroups.md)(…) | Add a user to a group. |
+| [AddUserToGroupsAsync](ID1Authn/AddUserToGroupsAsync.md)(…) |  |
 | [CreateGroup](ID1Authn/CreateGroup.md)(…) | Create a new group. |
 | [CreateGroupAsync](ID1Authn/CreateGroupAsync.md)(…) |  |
 | [CreateUser](ID1Authn/CreateUser.md)(…) | Create a new user. |
 | [CreateUserAsync](ID1Authn/CreateUserAsync.md)(…) |  |
 | [RemoveUser](ID1Authn/RemoveUser.md)(…) | Delete a user. |
 | [RemoveUserAsync](ID1Authn/RemoveUserAsync.md)(…) |  |
-| [RemoveUserFromGroup](ID1Authn/RemoveUserFromGroup.md)(…) | Remove a user from a group. |
-| [RemoveUserFromGroupAsync](ID1Authn/RemoveUserFromGroupAsync.md)(…) |  |
+| [RemoveUserFromGroups](ID1Authn/RemoveUserFromGroups.md)(…) | Remove a user from a group. |
+| [RemoveUserFromGroupsAsync](ID1Authn/RemoveUserFromGroupsAsync.md)(…) |  |
 
 ## See Also
 

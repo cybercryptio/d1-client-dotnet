@@ -3,7 +3,7 @@
 syntax = "proto3";
 
 package d1.generic;
-option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/generic";
+option go_package = "github.com/cybercryptio/d1-service-generic/v2/protobuf/generic";
 option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Generic";
 option java_package = "io.cybercrypt.d1.protobuf.generic";
 option java_outer_classname = "GenericProto";
@@ -23,6 +23,8 @@ message EncryptRequest {
   bytes plaintext = 1;
   // Associated data.
   bytes associated_data = 2;
+  // Optional additional groups to add to the access list.
+  repeated string group_ids = 3;
 }
 
 // Represents a response to an encryption request.

@@ -12,11 +12,11 @@ public interface ID1Authz
     /// Give a group permission to access an object.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
-    /// <param name="groupId">The ID of the group.</param>
-    void AddPermission(string objectId, string groupId);
+    /// <param name="groupIds">The ID of the groups.</param>
+    void AddPermission(string objectId, IEnumerable<string> groupIds);
 
     /// <inheritdoc cref="AddPermission"/>
-    Task AddPermissionAsync(string objectId, string groupId);
+    Task AddPermissionAsync(string objectId, IEnumerable<string> groupIds);
 
     /// <summary>
     /// Get the permissions applied to an object.
@@ -32,11 +32,11 @@ public interface ID1Authz
     /// Revoke a groups permission to access an object.
     /// </summary>
     /// <param name="objectId">The ID of the object.</param>
-    /// <param name="groupId">The ID of the group.</param>
-    void RemovePermission(string objectId, string groupId);
+    /// <param name="groupIds">The ID of the group.</param>
+    void RemovePermission(string objectId, IEnumerable<string> groupIds);
 
     /// <inheritdoc cref="RemovePermission"/>
-    Task RemovePermissionAsync(string objectId, string groupId);
+    Task RemovePermissionAsync(string objectId, IEnumerable<string> groupIds);
 }
 
 /// <summary>
@@ -74,28 +74,36 @@ public class D1AuthzClient : ID1Authz
     }
 
     /// <inheritdoc />
-    public async Task AddPermissionAsync(string objectId, string groupId)
+    public async Task AddPermissionAsync(string objectId, IEnumerable<string> groupIds)
     {
-        await client.AddPermissionAsync(new Protobuf.Authz.AddPermissionRequest { ObjectId = objectId, GroupId = groupId })
+        var request = new Protobuf.Authz.AddPermissionRequest { ObjectId = objectId };
+        request.GroupIds.AddRange(groupIds);
+        await client.AddPermissionAsync(request)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public void AddPermission(string objectId, string groupId)
+    public void AddPermission(string objectId, IEnumerable<string> groupIds)
     {
-        client.AddPermission(new Protobuf.Authz.AddPermissionRequest { ObjectId = objectId, GroupId = groupId });
+        var request = new Protobuf.Authz.AddPermissionRequest { ObjectId = objectId };
+        request.GroupIds.AddRange(groupIds);
+        client.AddPermission(request);
     }
 
     /// <inheritdoc />
-    public async Task RemovePermissionAsync(string objectId, string groupId)
+    public async Task RemovePermissionAsync(string objectId, IEnumerable<string> groupIds)
     {
-        await client.RemovePermissionAsync(new Protobuf.Authz.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId })
+        var request = new Protobuf.Authz.RemovePermissionRequest { ObjectId = objectId };
+        request.GroupIds.AddRange(groupIds);
+        await client.RemovePermissionAsync(request)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public void RemovePermission(string objectId, string groupId)
+    public void RemovePermission(string objectId, IEnumerable<string> groupIds)
     {
-        client.RemovePermission(new Protobuf.Authz.RemovePermissionRequest { ObjectId = objectId, GroupId = groupId });
+        var request = new Protobuf.Authz.RemovePermissionRequest { ObjectId = objectId };
+        request.GroupIds.AddRange(groupIds);
+        client.RemovePermission(request);
     }
 }

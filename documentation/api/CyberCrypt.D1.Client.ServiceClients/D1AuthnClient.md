@@ -11,16 +11,16 @@ public class D1AuthnClient : ID1Authn
 | name | description |
 | --- | --- |
 | [D1AuthnClient](D1AuthnClient/D1AuthnClient.md)(…) | Initialize a new instance of the [`D1AuthnClient`](./D1AuthnClient.md) class. |
-| [AddUserToGroup](D1AuthnClient/AddUserToGroup.md)(…) |  |
-| [AddUserToGroupAsync](D1AuthnClient/AddUserToGroupAsync.md)(…) |  |
+| [AddUserToGroups](D1AuthnClient/AddUserToGroups.md)(…) |  |
+| [AddUserToGroupsAsync](D1AuthnClient/AddUserToGroupsAsync.md)(…) |  |
 | [CreateGroup](D1AuthnClient/CreateGroup.md)(…) |  |
 | [CreateGroupAsync](D1AuthnClient/CreateGroupAsync.md)(…) |  |
 | [CreateUser](D1AuthnClient/CreateUser.md)(…) |  |
 | [CreateUserAsync](D1AuthnClient/CreateUserAsync.md)(…) |  |
 | [RemoveUser](D1AuthnClient/RemoveUser.md)(…) |  |
 | [RemoveUserAsync](D1AuthnClient/RemoveUserAsync.md)(…) |  |
-| [RemoveUserFromGroup](D1AuthnClient/RemoveUserFromGroup.md)(…) |  |
-| [RemoveUserFromGroupAsync](D1AuthnClient/RemoveUserFromGroupAsync.md)(…) |  |
+| [RemoveUserFromGroups](D1AuthnClient/RemoveUserFromGroups.md)(…) |  |
+| [RemoveUserFromGroupsAsync](D1AuthnClient/RemoveUserFromGroupsAsync.md)(…) |  |
 
 ## See Also
 

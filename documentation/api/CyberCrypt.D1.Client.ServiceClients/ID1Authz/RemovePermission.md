@@ -3,13 +3,13 @@
 Revoke a groups permission to access an object.
 
 ```csharp
-public void RemovePermission(string objectId, string groupId)
+public void RemovePermission(string objectId, IEnumerable<string> groupIds)
 ```
 
 | parameter | description |
 | --- | --- |
 | objectId | The ID of the object. |
-| groupId | The ID of the group. |
+| groupIds | The ID of the group. |
 
 ## See Also
 
