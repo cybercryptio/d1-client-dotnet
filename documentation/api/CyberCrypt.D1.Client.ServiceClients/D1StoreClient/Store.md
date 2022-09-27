@@ -1,7 +1,8 @@
 # D1StoreClient.Store method
 
 ```csharp
-public StoreResponse Store(byte[] plaintext, byte[] associatedData)
+public StoreResponse Store(byte[] plaintext, byte[] associatedData, 
+    IEnumerable<string>? groupIds = null)
 ```
 
 ## See Also

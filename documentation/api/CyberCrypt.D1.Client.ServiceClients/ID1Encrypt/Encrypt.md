@@ -3,13 +3,15 @@
 Encrypt an object with associated data.
 
 ```csharp
-public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData)
+public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData, 
+    IEnumerable<string>? groupIds = null)
 ```
 
 | parameter | description |
 | --- | --- |
 | plaintext | The plaintext to encrypt. |
 | associatedData | The attached associated data. |
+| groupIds | The group IDs that should have access to the object. |
 
 ## Return Value
 

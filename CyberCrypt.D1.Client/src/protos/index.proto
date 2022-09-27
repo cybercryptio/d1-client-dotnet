@@ -3,7 +3,7 @@
 syntax = "proto3";
 
 package d1.index;
-option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/index";
+option go_package = "github.com/cybercryptio/d1-service-generic/v2/protobuf/index";
 option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Index";
 option java_package = "io.cybercrypt.d1.protobuf.index";
 option java_outer_classname = "IndexProto";
@@ -44,7 +44,7 @@ message SearchResponse {
   repeated string identifiers = 2;
 }
 
- // Represents a request to delete keywords/identifier pairs from secure index.
+// Represents a request to delete keywords/identifier pairs from secure index.
 message DeleteRequest {
   // Keywords that are associated with identifier in secure index.
   repeated string keywords = 1;

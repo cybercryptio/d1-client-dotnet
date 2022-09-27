@@ -1,7 +1,7 @@
 # ID1Authz.RemovePermissionAsync method
 
 ```csharp
-public Task RemovePermissionAsync(string objectId, string groupId)
+public Task RemovePermissionAsync(string objectId, IEnumerable<string> groupIds)
 ```
 
 ## See Also

@@ -1,7 +1,7 @@
 # D1AuthzClient.RemovePermission method
 
 ```csharp
-public void RemovePermission(string objectId, string groupId)
+public void RemovePermission(string objectId, IEnumerable<string> groupIds)
 ```
 
 ## See Also

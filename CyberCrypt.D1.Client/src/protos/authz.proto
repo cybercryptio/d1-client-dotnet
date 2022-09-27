@@ -3,41 +3,38 @@
 syntax = "proto3";
 
 package d1.authz;
-option go_package = "github.com/cybercryptio/d1-service-generic/protobuf/authz";
+option go_package = "github.com/cybercryptio/d1-service-generic/v2/protobuf/authz";
 option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Authz";
 option java_package = "io.cybercrypt.d1.protobuf.authz";
 option java_outer_classname = "AuthzProto";
 
 // Service for managing authorization rules.
 service Authz {
-  /**
-   * Returns a list of groups with access to the specified object.
-   * This call can fail if the auth storage cannot be reached, in which case an error is returned.
-   * The calling user has to be authenticated and authorized to access the object in order to get the object permissions.
-   * Requires the scope `OBJECTPERMISSIONS`.
-   */
+  // Returns a list of groups with access to the specified object.
+  // This call can fail if the auth storage cannot be reached, in which case an error is returned.
+  // The calling user has to be authenticated and authorized to access the object in order to get the object permissions.
+  // Requires the scope `GETACCESS`.
   rpc GetPermissions (GetPermissionsRequest) returns (GetPermissionsResponse) {}
 
-  /**
-   * Adds a group to the access list of the specified object.
-   * This call can fail if the caller does not have access to the object, if the target group does not exist, or if the auth storage cannot be reached.
-   * In these cases, an error is returned.
-   * Requires the scope `OBJECTPERMISSIONS`.
-   */
+  // Adds one or more groups to the access list of the specified object.
+  // This call can fail if the caller does not have access to the object, if the target group does not exist, or if the auth storage cannot be reached.
+  // In these cases, an error is returned.
+  // Requires the scope `MODIFYACCESS`.
   rpc AddPermission (AddPermissionRequest) returns (AddPermissionResponse) {}
 
-  /**
-   * Removes a group from the access list of the specified object.
-   * This call can fail if the caller does not have access to the object or if the auth storage cannot reached.
-   * In these cases, an error is returned.
-   * Requires the scope `OBJECTPERMISSIONS`.
-   */
+  // Removes one or more groups from the access list of the specified object.
+  // This call can fail if the caller does not have access to the object or if the auth storage cannot reached.
+  // In these cases, an error is returned.
+  // Requires the scope `MODIFYACCESS`.
   rpc RemovePermission (RemovePermissionRequest) returns (RemovePermissionResponse) {}
+
+  // Checks whether the caller has access to the specified object.
+  // This call can fail if the auth storage cannot be reached. In this cases, an error is returned.
+  // Requires the scope `GETACCESS`.
+  rpc CheckPermission (CheckPermissionRequest) returns (CheckPermissionResponse) {}
 }
 
-/**
- * Represents a request to get the permissions of an object.
- */
+// Represents a request to get the permissions of an object.
 message GetPermissionsRequest {
   // The ID of the object to get the permission list for.
   string object_id = 1;
@@ -49,30 +46,38 @@ message GetPermissionsResponse {
   repeated string group_ids = 1;
 }
 
-/**
- * Represents a request to add permission to an object.
- */
+// Represents a request to add permission to an object.
 message AddPermissionRequest {
   // The ID of the object to add the permission to.
   string object_id = 1;
-  // The ID of the group to give access.
-  string group_id = 2;
+  // The IDs of the groups to give access.
+  repeated string group_ids = 2;
 }
 
 // Represents the result of a request to add permission to an object.
 message AddPermissionResponse {
 }
 
-/**
- * Represents a request to remove permission to an object.
- */
+// Represents a request to remove permission to an object.
 message RemovePermissionRequest {
   // The ID of the object to remove the permission for.
   string object_id = 1;
-  // The ID of the group to revoke permission for.
-  string group_id = 2;
+  // The IDs of the groups to revoke permission for.
+  repeated string group_ids = 2;
 }
 
 // Represents the result of a request to remove permission to an object.
 message RemovePermissionResponse {
+}
+
+// Represents a request to check whether the user has permission to an object.
+message CheckPermissionRequest {
+  // The ID of the object to check permission for.
+  string object_id = 1;
+}
+
+// Represents the result of a request to check whether a user has permission to an object.
+message CheckPermissionResponse {
+  // Indicates whether the caller has access to the object.
+  bool has_permission = 1;
 }

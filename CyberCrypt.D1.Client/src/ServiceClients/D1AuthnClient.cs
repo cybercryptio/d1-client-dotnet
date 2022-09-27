@@ -13,11 +13,11 @@ public interface ID1Authn
     /// Add a user to a group.
     /// </summary>
     /// <param name="userId">The ID of the user.</param>
-    /// <param name="groupId">The ID of group.</param>
-    void AddUserToGroup(string userId, string groupId);
+    /// <param name="groupIds">The ID of groups.</param>
+    void AddUserToGroups(string userId, IEnumerable<string> groupIds);
 
-    /// <inheritdoc cref="AddUserToGroup"/>
-    Task AddUserToGroupAsync(string userId, string groupId);
+    /// <inheritdoc cref="AddUserToGroups"/>
+    Task AddUserToGroupsAsync(string userId, IEnumerable<string> groupIds);
 
     /// <summary>
     /// Create a new group.
@@ -52,11 +52,11 @@ public interface ID1Authn
     /// Remove a user from a group.
     /// </summary>
     /// <param name="userId">The ID of the user.</param>
-    /// <param name="groupId">The ID of group.</param>
-    void RemoveUserFromGroup(string userId, string groupId);
+    /// <param name="groupIds">The ID of groups.</param>
+    void RemoveUserFromGroups(string userId, IEnumerable<string> groupIds);
 
-    /// <inheritdoc cref="RemoveUserFromGroup"/>
-    Task RemoveUserFromGroupAsync(string userId, string groupId);
+    /// <inheritdoc cref="RemoveUserFromGroups"/>
+    Task RemoveUserFromGroupsAsync(string userId, IEnumerable<string> groupIds);
 }
 
 /// <summary>
@@ -145,27 +145,35 @@ public class D1AuthnClient : ID1Authn
     }
 
     /// <inheritdoc />
-    public async Task AddUserToGroupAsync(string userId, string groupId)
+    public async Task AddUserToGroupsAsync(string userId, IEnumerable<string> groupIds)
     {
-        await client.AddUserToGroupAsync(new Protobuf.Authn.AddUserToGroupRequest { UserId = userId, GroupId = groupId })
+        var request = new Protobuf.Authn.AddUserToGroupsRequest { UserId = userId };
+        request.GroupIds.AddRange(groupIds);
+        await client.AddUserToGroupsAsync(request)
             .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public void AddUserToGroup(string userId, string groupId)
+    public void AddUserToGroups(string userId, IEnumerable<string> groupIds)
     {
-        client.AddUserToGroup(new Protobuf.Authn.AddUserToGroupRequest { UserId = userId, GroupId = groupId });
+        var request = new Protobuf.Authn.AddUserToGroupsRequest { UserId = userId };
+        request.GroupIds.AddRange(groupIds);
+        client.AddUserToGroups(request);
     }
 
     /// <inheritdoc />
-    public async Task RemoveUserFromGroupAsync(string userId, string groupId)
+    public async Task RemoveUserFromGroupsAsync(string userId, IEnumerable<string> groupIds)
     {
-        await client.RemoveUserFromGroupAsync(new Protobuf.Authn.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId }).ConfigureAwait(false);
+        var request = new Protobuf.Authn.RemoveUserFromGroupsRequest { UserId = userId };
+        request.GroupIds.AddRange(groupIds);
+        await client.RemoveUserFromGroupsAsync(request).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public void RemoveUserFromGroup(string userId, string groupId)
+    public void RemoveUserFromGroups(string userId, IEnumerable<string> groupIds)
     {
-        client.RemoveUserFromGroup(new Protobuf.Authn.RemoveUserFromGroupRequest { UserId = userId, GroupId = groupId });
+        var request = new Protobuf.Authn.RemoveUserFromGroupsRequest { UserId = userId };
+        request.GroupIds.AddRange(groupIds);
+        client.RemoveUserFromGroups(request);
     }
 }

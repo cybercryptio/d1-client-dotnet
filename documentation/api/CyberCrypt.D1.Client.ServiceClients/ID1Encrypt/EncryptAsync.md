@@ -1,7 +1,8 @@
 # ID1Encrypt.EncryptAsync method
 
 ```csharp
-public Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData)
+public Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData, 
+    IEnumerable<string>? groupIds = null)
 ```
 
 ## See Also

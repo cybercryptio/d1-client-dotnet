@@ -1,8 +1,14 @@
-# ID1Authz.AddPermissionAsync method
+# ID1Authz.CheckPermission method
+
+Check if the user has access to an object.
 
 ```csharp
-public Task AddPermissionAsync(string objectId, IEnumerable<string> groupIds)
+public bool CheckPermission(string objectId)
 ```
+
+| parameter | description |
+| --- | --- |
+| objectId | The object ID. |
 
 ## See Also
 

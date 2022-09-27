@@ -2,7 +2,7 @@
 syntax = "proto3";
 
 package d1.storage;
-option go_package = "github.com/cybercryptio/d1-service-storage/protobuf/storage";
+option go_package = "github.com/cybercryptio/d1-service-storage/v2/protobuf/storage";
 option csharp_namespace = "CyberCrypt.D1.Client.Protobuf.Storage";
 option java_package = "io.cybercrypt.d1.protobuf.storage";
 option java_outer_classname = "StorageProto";
@@ -28,6 +28,8 @@ message StoreRequest {
   bytes plaintext = 1;
   // Associated data.
   bytes associated_data = 2;
+  // Optional additional groups to add to the access list.
+  repeated string group_ids = 3;
 }
 
 // Represents a response to a store request.

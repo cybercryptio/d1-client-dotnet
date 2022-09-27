@@ -13,6 +13,8 @@ public class D1AuthzClient : ID1Authz
 | [D1AuthzClient](D1AuthzClient/D1AuthzClient.md)(…) | Initialize a new instance of the [`D1AuthzClient`](./D1AuthzClient.md) class. |
 | [AddPermission](D1AuthzClient/AddPermission.md)(…) |  |
 | [AddPermissionAsync](D1AuthzClient/AddPermissionAsync.md)(…) |  |
+| [CheckPermission](D1AuthzClient/CheckPermission.md)(…) |  |
+| [CheckPermissionAsync](D1AuthzClient/CheckPermissionAsync.md)(…) |  |
 | [GetPermissions](D1AuthzClient/GetPermissions.md)(…) |  |
 | [GetPermissionsAsync](D1AuthzClient/GetPermissionsAsync.md)(…) |  |
 | [RemovePermission](D1AuthzClient/RemovePermission.md)(…) |  |

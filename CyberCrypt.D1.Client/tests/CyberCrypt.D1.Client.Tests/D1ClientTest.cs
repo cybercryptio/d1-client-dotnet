@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using CyberCrypt.D1.Client.Utils;
-using CyberCrypt.D1.Client.Credentials;
 using Grpc.Core;
 
 namespace CyberCrypt.D1.Client.Tests;
@@ -51,8 +50,8 @@ public class D1ClientTest
         var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { }).ConfigureAwait(false);
         var createGroupResponse = await client.Authn.CreateGroupAsync(new List<Scope> { }).ConfigureAwait(false);
 
-        await client.Authn.AddUserToGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
-        await client.Authn.RemoveUserFromGroupAsync(createUserResponse.UserId, createGroupResponse.GroupId).ConfigureAwait(false);
+        await client.Authn.AddUserToGroupsAsync(createUserResponse.UserId, new [] { createGroupResponse.GroupId }).ConfigureAwait(false);
+        await client.Authn.RemoveUserFromGroupsAsync(createUserResponse.UserId, new[] { createGroupResponse.GroupId }).ConfigureAwait(false);
 
         await client.Authn.RemoveUserAsync(createUserResponse.UserId).ConfigureAwait(false);
 
@@ -76,6 +75,31 @@ public class D1ClientTest
             .ConfigureAwait(false);
         Assert.Equal(plaintext, decryptResponse.Plaintext);
         Assert.Equal(associatedData, decryptResponse.AssociatedData);
+
+        await client.DisposeAsync();
+    }
+    
+    [Fact]
+    [Trait("Category", "Generic")]
+    public async void TestEncryptionWithGroupsAsync()
+    {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+
+        using var client = new D1GenericClient(d1Channel);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create }).ConfigureAwait(false);
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+        createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create }).ConfigureAwait(false);
+        using var client3 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+
+        var encryptResponse = await client2.Generic.EncryptAsync(plaintext, associatedData, new[] { createUserResponse.UserId  }).ConfigureAwait(false);
+        var decryptResponse = await client2.Generic.DecryptAsync(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData)
+            .ConfigureAwait(false);
+        Assert.Equal(plaintext, decryptResponse.Plaintext);
+        Assert.Equal(associatedData, decryptResponse.AssociatedData);
+        
+        await client3.Generic.DecryptAsync(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
 
         await client.DisposeAsync();
     }
@@ -114,6 +138,43 @@ public class D1ClientTest
 
     [Fact]
     [Trait("Category", "Storage")]
+    public async void TestStoreWithGroupsAsync()
+    {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+        var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
+        var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
+
+        using var client = new D1StorageClient(d1Channel);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete }).ConfigureAwait(false);
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+
+        createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read }).ConfigureAwait(false);
+        using var client3 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+
+        var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData, new[] { createUserResponse.UserId }).ConfigureAwait(false);
+        var retrieveResponse = await client2.Storage.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false);
+        Assert.Equal(plaintext, retrieveResponse.Plaintext);
+        Assert.Equal(associatedData, retrieveResponse.AssociatedData);
+
+        await client2.Storage.UpdateAsync(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData).ConfigureAwait(false);
+        var retrieveResponseAfterUpdate = await client2.Storage.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false);
+        Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
+        Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
+        
+        await client3.Storage.RetrieveAsync(storeResponse.ObjectId);
+
+        await client2.Storage.DeleteAsync(storeResponse.ObjectId).ConfigureAwait(false);
+        var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.Storage.RetrieveAsync(storeResponse.ObjectId).ConfigureAwait(false))
+            .ConfigureAwait(false);
+        Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
+
+        await client.DisposeAsync();
+    }
+    
+    [Fact]
+    [Trait("Category", "Storage")]
     public async void TestPermissionsAsync()
     {
         var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
@@ -126,11 +187,11 @@ public class D1ClientTest
 
         var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData).ConfigureAwait(false);
 
-        await client2.Authz.AddPermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        await client2.Authz.AddPermissionAsync(storeResponse.ObjectId, new[] { createUserResponse.UserId }).ConfigureAwait(false);
         var getPermissionsResponse = await client2.Authz.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false);
         Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-        await client2.Authz.RemovePermissionAsync(storeResponse.ObjectId, createUserResponse.UserId).ConfigureAwait(false);
+        await client2.Authz.RemovePermissionAsync(storeResponse.ObjectId, new[] { createUserResponse.UserId }).ConfigureAwait(false);
         var e = await Assert.ThrowsAsync<Grpc.Core.RpcException>(async () => await client2.Authz.GetPermissionsAsync(storeResponse.ObjectId).ConfigureAwait(false))
             .ConfigureAwait(false);
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
@@ -203,8 +264,8 @@ public class D1ClientTest
         var createUserResponse = client.Authn.CreateUser(new List<Scope> { });
         var createGroupResponse = client.Authn.CreateGroup(new List<Scope> { });
 
-        client.Authn.AddUserToGroup(createUserResponse.UserId, createGroupResponse.GroupId);
-        client.Authn.RemoveUserFromGroup(createUserResponse.UserId, createGroupResponse.GroupId);
+        client.Authn.AddUserToGroups(createUserResponse.UserId, new[] { createGroupResponse.GroupId });
+        client.Authn.RemoveUserFromGroups(createUserResponse.UserId, new[] { createGroupResponse.GroupId });
 
         client.Authn.RemoveUser(createUserResponse.UserId);
 
@@ -227,6 +288,30 @@ public class D1ClientTest
         var decryptResponse = client2.Generic.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
         Assert.Equal(plaintext, decryptResponse.Plaintext);
         Assert.Equal(associatedData, decryptResponse.AssociatedData);
+
+        client.Dispose();
+    }
+    
+    [Fact]
+    [Trait("Category", "Generic")]
+    public void TestEncryptionWithGroups()
+    {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+
+        var client = new D1GenericClient(d1Channel);
+
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create });
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+        createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create });
+        using var client3 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+        
+        var encryptResponse = client2.Generic.Encrypt(plaintext, associatedData, new[] { createUserResponse.UserId });
+        var decryptResponse = client2.Generic.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
+        Assert.Equal(plaintext, decryptResponse.Plaintext);
+        Assert.Equal(associatedData, decryptResponse.AssociatedData);
+        
+        client3.Generic.Decrypt(encryptResponse.ObjectId, encryptResponse.Ciphertext, encryptResponse.AssociatedData);
 
         client.Dispose();
     }
@@ -259,6 +344,39 @@ public class D1ClientTest
         var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Storage.Retrieve(storeResponse.ObjectId));
         Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
     }
+    
+    [Fact]
+    [Trait("Category", "Storage")]
+    public void TestStoreWithGroups()
+    {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+        var updatedPlaintext = System.Text.Encoding.ASCII.GetBytes("updatedPlaintext");
+        var updatedAssociatedData = System.Text.Encoding.ASCII.GetBytes("updatedAssociatedData");
+
+        using var client = new D1StorageClient(d1Channel);
+
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete });
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+        createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read });
+        using var client3 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+
+        var storeResponse = client2.Storage.Store(plaintext, associatedData);
+        var retrieveResponse = client2.Storage.Retrieve(storeResponse.ObjectId);
+        Assert.Equal(plaintext, retrieveResponse.Plaintext);
+        Assert.Equal(associatedData, retrieveResponse.AssociatedData);
+
+        client2.Storage.Update(storeResponse.ObjectId, updatedPlaintext, updatedAssociatedData);
+        var retrieveResponseAfterUpdate = client2.Storage.Retrieve(storeResponse.ObjectId);
+        Assert.Equal(updatedPlaintext, retrieveResponseAfterUpdate.Plaintext);
+        Assert.Equal(updatedAssociatedData, retrieveResponseAfterUpdate.AssociatedData);
+        
+        client3.Storage.RetrieveAsync(storeResponse.ObjectId);
+
+        client2.Storage.Delete(storeResponse.ObjectId);
+        var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Storage.Retrieve(storeResponse.ObjectId));
+        Assert.Equal(Grpc.Core.StatusCode.NotFound, e.StatusCode);
+    }
 
     [Fact]
     [Trait("Category", "Storage")]
@@ -274,11 +392,11 @@ public class D1ClientTest
 
         var storeResponse = client2.Storage.Store(plaintext, associatedData);
 
-        client2.Authz.AddPermission(storeResponse.ObjectId, createUserResponse.UserId);
+        client2.Authz.AddPermission(storeResponse.ObjectId, new[] { createUserResponse.UserId });
         var getPermissionsResponse = client2.Authz.GetPermissions(storeResponse.ObjectId);
         Assert.Contains(createUserResponse.UserId, getPermissionsResponse.GroupIds);
 
-        client2.Authz.RemovePermission(storeResponse.ObjectId, createUserResponse.UserId);
+        client2.Authz.RemovePermission(storeResponse.ObjectId, new[] { createUserResponse.UserId });
         var e = Assert.Throws<Grpc.Core.RpcException>(() => client2.Authz.GetPermissions(storeResponse.ObjectId));
         Assert.Equal(Grpc.Core.StatusCode.PermissionDenied, e.StatusCode);
     }
@@ -328,5 +446,85 @@ public class D1ClientTest
         }
 
         client.Dispose();
+    }
+    
+    [Fact]
+    [Trait("Category", "Generic")]
+    public async void TestCheckPermissionAsync() {
+        using var client = new D1GenericClient(d1Channel);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create, Scope.GetAccess }).ConfigureAwait(false);
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+        createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create, Scope.GetAccess }).ConfigureAwait(false);
+        using var client3 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+        
+        var response = await client2.Generic.EncryptAsync(System.Text.Encoding.ASCII.GetBytes("plaintext"), System.Text.Encoding.ASCII.GetBytes(""));
+        var hasPermission = await client2.Authz.CheckPermissionAsync(response.ObjectId);
+        Assert.True(hasPermission);
+        hasPermission = await client3.Authz.CheckPermissionAsync(response.ObjectId);
+        Assert.False(hasPermission);
+    }
+    
+    [Fact]
+    [Trait("Category", "Generic")]
+    public void TestCheckPermission() {
+        using var client = new D1GenericClient(d1Channel);
+
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create, Scope.GetAccess });
+        using var client2 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+        createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create, Scope.GetAccess });
+        using var client3 = CreateD1GenericClient(createUserResponse.UserId, createUserResponse.Password);
+        
+        var response = client2.Generic.Encrypt(System.Text.Encoding.ASCII.GetBytes("plaintext"), System.Text.Encoding.ASCII.GetBytes(""));
+        var hasPermission = client2.Authz.CheckPermission(response.ObjectId);
+        Assert.True(hasPermission);
+        hasPermission = client3.Authz.CheckPermission(response.ObjectId);
+        Assert.False(hasPermission);
+    }
+    
+    [Fact]
+    [Trait("Category", "Storage")]
+    public async void TestStorageCheckPermissionAsync()
+    {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+
+        using var client = new D1StorageClient(d1Channel);
+
+        var createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete, Scope.GetAccess });
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+        createUserResponse = await client.Authn.CreateUserAsync(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete, Scope.GetAccess });
+        using var client3 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+
+        var storeResponse = await client2.Storage.StoreAsync(plaintext, associatedData);
+        
+        var hasPermission = await client2.Authz.CheckPermissionAsync(storeResponse.ObjectId);
+        Assert.True(hasPermission);
+        hasPermission = await client3.Authz.CheckPermissionAsync(storeResponse.ObjectId);
+        Assert.False(hasPermission);
+        
+        await client.DisposeAsync();
+    }
+    
+    [Fact]
+    [Trait("Category", "Storage")]
+    public void TestStorageCheckPermission()
+    {
+        var plaintext = System.Text.Encoding.ASCII.GetBytes("plaintext");
+        var associatedData = System.Text.Encoding.ASCII.GetBytes("associatedData");
+
+        using var client = new D1StorageClient(d1Channel);
+
+        var createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete, Scope.GetAccess });
+        using var client2 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+        createUserResponse = client.Authn.CreateUser(new List<Scope> { Scope.Read, Scope.Create, Scope.Update, Scope.Delete, Scope.GetAccess });
+        using var client3 = CreateD1StorageClient(createUserResponse.UserId, createUserResponse.Password);
+
+        var storeResponse = client2.Storage.Store(plaintext, associatedData);
+        
+        var hasPermission = client2.Authz.CheckPermission(storeResponse.ObjectId);
+        Assert.True(hasPermission);
+        hasPermission = client3.Authz.CheckPermission(storeResponse.ObjectId);
+        Assert.False(hasPermission);
     }
 }
