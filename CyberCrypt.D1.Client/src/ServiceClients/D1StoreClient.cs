@@ -33,11 +33,12 @@ public interface ID1Store
     /// </summary>
     /// <param name="plaintext">The plaintext to store.</param>
     /// <param name="associatedData">The attached associated data.</param>
+    /// <param name="groupIds">The IDs for the groups that should have access to the object.</param>
     /// <returns>An instance of <see cref="StoreResponse" />.</returns>
-    StoreResponse Store(byte[] plaintext, byte[] associatedData);
+    StoreResponse Store(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null);
 
     /// <inheritdoc cref="Store"/>
-    Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData);
+    Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null);
 
     /// <summary>
     /// Update some data stored in the storage attached to D1.
@@ -69,25 +70,33 @@ public class D1StoreClient : ID1Store
     }
 
     /// <inheritdoc />
-    public async Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData)
+    public async Task<StoreResponse> StoreAsync(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null)
     {
-        var response = await client.StoreAsync(new Protobuf.Storage.StoreRequest
+        var request = new Protobuf.Storage.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }).ConfigureAwait(false);
+        };
+        if (groupIds is not null) {
+            request.GroupIds.AddRange(groupIds);
+        }
+        var response = await client.StoreAsync(request).ConfigureAwait(false);
 
         return new StoreResponse(response.ObjectId);
     }
 
     /// <inheritdoc />
-    public StoreResponse Store(byte[] plaintext, byte[] associatedData)
+    public StoreResponse Store(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null)
     {
-        var response = client.Store(new Protobuf.Storage.StoreRequest
+        var request = new Protobuf.Storage.StoreRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        });
+        };
+        if (groupIds is not null) {
+            request.GroupIds.AddRange(groupIds);
+        }
+        var response = client.Store(request);
 
         return new StoreResponse(response.ObjectId);
     }

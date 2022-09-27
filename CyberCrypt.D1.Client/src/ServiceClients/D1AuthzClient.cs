@@ -37,6 +37,15 @@ public interface ID1Authz
 
     /// <inheritdoc cref="RemovePermission"/>
     Task RemovePermissionAsync(string objectId, IEnumerable<string> groupIds);
+    
+    /// <inheritdoc cref="CheckPermission"/>
+    Task<bool> CheckPermissionAsync(string objectId);
+    
+    /// <summary>
+    /// Check if the user has access to an object.
+    /// </summary>
+    /// <param name="objectId">The object ID.</param>
+    bool CheckPermission(string objectId);
 }
 
 /// <summary>
@@ -105,5 +114,19 @@ public class D1AuthzClient : ID1Authz
         var request = new Protobuf.Authz.RemovePermissionRequest { ObjectId = objectId };
         request.GroupIds.AddRange(groupIds);
         client.RemovePermission(request);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> CheckPermissionAsync(string objectId)
+    {
+        var response = await client.CheckPermissionAsync(new Protobuf.Authz.CheckPermissionRequest { ObjectId = objectId });
+        return response.HasPermission;
+    }
+
+    /// <inheritdoc />
+    public bool CheckPermission(string objectId)
+    {
+        var response = client.CheckPermission(new Protobuf.Authz.CheckPermissionRequest { ObjectId = objectId });
+        return response.HasPermission;
     }
 }

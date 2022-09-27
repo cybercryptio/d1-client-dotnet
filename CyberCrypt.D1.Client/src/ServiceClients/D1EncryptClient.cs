@@ -26,11 +26,12 @@ public interface ID1Encrypt
     /// </summary>
     /// <param name="plaintext">The plaintext to encrypt.</param>
     /// <param name="associatedData">The attached associated data.</param>
+    /// <param name="groupIds">The group IDs that should have access to the object.</param>
     /// <returns>An instance of <see cref="EncryptResponse" />.</returns>
-    EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData);
+    EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null);
 
     /// <inheritdoc cref="Encrypt"/>
-    Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData);
+    Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null);
 }
 
 /// <summary>
@@ -51,25 +52,34 @@ public class D1EncryptClient : ID1Encrypt
     }
 
     /// <inheritdoc />
-    public async Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData)
+    public async Task<EncryptResponse> EncryptAsync(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null)
     {
-        var response = await client.EncryptAsync(new Protobuf.Generic.EncryptRequest
+        var request = new Protobuf.Generic.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        }).ConfigureAwait(false);
+        };
+        if (groupIds is not null) {
+            request.GroupIds.AddRange(groupIds);
+        }
+        var response = await client.EncryptAsync(request).ConfigureAwait(false);
 
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
 
     /// <inheritdoc />
-    public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData)
+    public EncryptResponse Encrypt(byte[] plaintext, byte[] associatedData, IEnumerable<string>? groupIds = null)
     {
-        var response = client.Encrypt(new Protobuf.Generic.EncryptRequest
+        var request = new Protobuf.Generic.EncryptRequest
         {
             Plaintext = ByteString.CopyFrom(plaintext),
             AssociatedData = ByteString.CopyFrom(associatedData)
-        });
+        };
+        if (groupIds is not null) {
+            request.GroupIds.AddRange(groupIds);
+        }
+
+        var response = client.Encrypt(request);
 
         return new EncryptResponse(response.ObjectId, response.Ciphertext.ToByteArray(), response.AssociatedData.ToByteArray());
     }
