@@ -9,6 +9,8 @@
     <Company>Cybercrypt A/S</Company>
     <PackageDescription>Client for communicating with CyberCrypt D1</PackageDescription>
     <RepositoryUrl>https://github.com/cybercryptio/d1-client-dotnet</RepositoryUrl>
+    <PackageLicenseUrl>https://licenses.nuget.org/Apache-2.0</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.19.4" />
