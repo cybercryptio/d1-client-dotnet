@@ -9,6 +9,7 @@
     <Company>Cybercrypt A/S</Company>
     <PackageDescription>Client for communicating with CyberCrypt D1</PackageDescription>
     <RepositoryUrl>https://github.com/cybercryptio/d1-client-dotnet</RepositoryUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.19.4" />
